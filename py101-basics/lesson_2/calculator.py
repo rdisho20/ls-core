@@ -1,5 +1,21 @@
+import json
+
+# Open the JSON file for reading
+"""with open('calculator_messages.json', 'r') as file:
+    data = json.load(file)
+"""
+# Now 'data' contains the contents of the JSON file as a Python dictionary or list
+
 def prompt(message):
-    print(f'==> {message}')
+    # serializing 'message' w/ .dump() -> json file
+    with open("calculator_messages.json", "w") as file:
+        json.dump(message, file)
+    
+    # decoding content in json file w/ .load()
+    with open("calculator_messages.json", "r") as file:
+        data = json.load(file) # content assigned to 'data'
+
+    print(f'==> {data}')
 
 def invalid_number(number_str):
     try:
