@@ -35,35 +35,37 @@ def monthly_duration(loan_duration):
 
 def monthly_payment(loan_amnt, mpr, month_duration):
     return loan_amnt * (mpr / (1 - (1 + mpr) ** (-(month_duration))))
-"""
-def invalid_input(message):
+
+# try / except
+def invalid_input(check_num_str):
     try:
-        float(message)
+        float(check_num_str)
     except ValueError:
         return True
     
     return False
 
-def user_input(num_string):
-    output = ''
+# function to perform error check for each 'user_input(input())' below 
+def user_input(num_str):
 
-    while invalid_input(num_string) == True:
-        output = input()
+    while invalid_input(num_str) == True:
+        prompt("Try again and enter a valid number:")
+        num_str = input()
 
-    return output
-"""
+    return float(num_str)
+
 prompt("Welcome to the Mortgage / Car Loan Calculator!")
 
-prompt("Please enter your loan dollar amount: ")
-loan_amount = float(input())
+prompt("Please enter your loan dollar amount:")
+loan_amount = user_input(input())
 prompt(f"You entered ${loan_amount:.2f}")
 
 prompt("Please enter your APR as a %: ")
-annual_percentage_rate = float(input())
+annual_percentage_rate = user_input(input())
 prompt(f"You entered {(annual_percentage_rate)}%")
 
-prompt("Please enter the loan duration in years: ") # months or years?
-loan_duration = float(input())
+prompt("Please enter the loan duration in years:")
+loan_duration = user_input(input())
 prompt(f"You entered {loan_duration} years")
 
 mpr = monthly_percentage_rate(annual_percentage_rate)
