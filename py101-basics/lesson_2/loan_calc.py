@@ -13,7 +13,7 @@ def monthly_payment(loan_amnt, mpr, month_duration):
 # try / except error check for number input
 def invalid_number_input(check_num_str):
     try:
-        if float(check_num_str) > 0:
+        if float(check_num_str) >= 0:
             return False
     except ValueError:
         return True
@@ -24,7 +24,7 @@ def invalid_number_input(check_num_str):
 def user_number_input(num_str):
 
     while invalid_number_input(num_str):
-        prompt("Try again by entering a valid number that is > 0:")
+        prompt("Try again by entering a valid number that is >= 0:")
         num_str = input()
 
     return float(num_str)
