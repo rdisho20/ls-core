@@ -1,5 +1,9 @@
 # Bonus Features
-# given collection :: choices
+# define function that takes parameter (user_choice)
+# - check if user types length < shortest (min) :: VALID_CHOICES
+# -- if one letter, assign -> corresponding choice ie. 'r' -> 'rock' etc
+# -- elif two letters, based on last letter... 'c' -> 'scissors', 'p' -> 'spock'
+# - return 'user_choice' as is
 
 import random
 
@@ -7,6 +11,22 @@ VALID_CHOICES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 
 def prompt(message):
     print(f"==> {message}")
+
+def check_then_return_input(choice):
+    if len(choice) <= 2:
+        match choice:
+            case 'r':
+                choice = "rock"
+            case 'p':
+                choice = "paper"
+            case 'l':
+                choice = "lizard"
+            case 'sc':
+                choice = "scissors"
+            case 'sp':
+                choice = "spock"
+
+    return choice
 
 def display_winner(choice, computer_choice):
     prompt(f"You chose {choice} and the computer chose {computer_choice}")
@@ -37,12 +57,15 @@ def display_winner(choice, computer_choice):
         prompt("It's a tie")
 
 while True:
-    prompt(f"Choose one: {', '.join(VALID_CHOICES)}")
-    choice = input()
+    prompt((f"""From the choices {', '.join(VALID_CHOICES)}... 
+    Type the name, the first letter or first two letters
+    of the name if choosing 'scissors' or 'spock'!
+    """))
+    choice = check_then_return_input(input())
 
     while choice not in VALID_CHOICES:
         prompt("Please try again:")
-        choice = input()
+        choice = check_then_return_input(input())
 
     computer_choice = random.choice(VALID_CHOICES)
 
