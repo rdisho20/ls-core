@@ -1,10 +1,3 @@
-# Bonus Features
-# define function that takes parameter (user_choice)
-# - check if user types length < shortest (min) :: VALID_CHOICES
-# -- if one letter, assign -> corresponding choice ie. 'r' -> 'rock' etc
-# -- elif two letters, based on last letter... 'c' -> 'scissors', 'p' -> 'spock'
-# - return 'user_choice' as is
-
 import random
 
 VALID_CHOICES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
@@ -12,64 +5,112 @@ VALID_CHOICES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 def prompt(message):
     print(f"==> {message}")
 
-def check_then_return_input(choice):
-    if len(choice) <= 2:
-        match choice:
+def check_then_return_input(option):
+    option = option.casefold()
+    
+    if len(option) <= 2:
+        match option:
             case 'r':
-                choice = "rock"
+                option = "rock"
             case 'p':
-                choice = "paper"
+                option = "paper"
             case 'l':
-                choice = "lizard"
+                option = "lizard"
             case 'sc':
-                choice = "scissors"
+                option = "scissors"
             case 'sp':
-                choice = "spock"
+                option = "spock"
 
-    return choice
+    return option
 
-def display_winner(choice, computer_choice):
-    prompt(f"You chose {choice} and the computer chose {computer_choice}")
+def determine_winner(user, computer):
+    winner = ""
 
-    if ((choice == "rock" and (computer_choice == "scissors" or
-                               computer_choice == "lizard")) or
-        (choice == "paper" and (computer_choice == "rock" or
-                                computer_choice == "spock")) or
-        (choice == "scissors" and (computer_choice == "paper" or
-                                   computer_choice == "lizard")) or
-        (choice == "lizard" and (computer_choice == "spock" or
-                                 computer_choice == "paper")) or
-        (choice == "spock" and (computer_choice == "scissors" or
-                                computer_choice == "rock"))):
-        prompt("You win!")
-    elif ((computer_choice == "rock" and (choice == "scissors" or
-                                          choice == "lizard")) or
-        (computer_choice == "paper" and (choice == "rock" or
-                                         choice == "spock")) or
-        (computer_choice == "scissors" and (choice == "paper" or
-                                            choice == "lizard")) or
-        (computer_choice == "lizard" and (choice == "spock" or
-                                          choice == "paper")) or
-        (computer_choice == "spock" and (choice == "scissors" or
-                                         choice == "rock"))):
-        prompt("Computer wins!")
+    if ((user == "rock" and (computer in {"scissors", "lizard"})) or
+        (user == "paper" and (computer in {"rock", "spock"})) or
+        (user == "scissors" and (computer in {"paper", "lizard"})) or
+        (user == "lizard" and (computer in {"spock", "paper"})) or
+        (user == "spock" and (computer in {"scissors", "rock"}))):
+        winner = "user"
+    elif ((computer == "rock" and (user in {"scissors", "lizard"})) or
+        (computer == "paper" and (user in {"rock", "spock"})) or
+        (computer == "scissors" and (user in {"paper", "lizard"})) or
+        (computer == "lizard" and (user in {"spock", "paper"})) or
+        (computer == "spock" and (user in {"scissors", "rock"}))):
+        winner = "computer"
+
+    return winner
+
+def update_user_record():
+    if round_winner == 'user':
+        user_record.append('win')
+    elif round_winner == 'computer':
+        user_record.append('loss')
     else:
-        prompt("It's a tie")
+        user_record.append('tie')
 
+def display_winner():
+    if round_winner == 'user':
+        prompt("You win this round!\n")
+    elif round_winner == 'computer':
+        prompt("Computer wins this round!\n")
+    else:
+        prompt("This round is a tie!\n")
+
+def display_match_winner():
+    if user_record.count('win') > user_record.count('loss'):
+        prompt("You win the match!\n")
+    elif user_record.count('loss') > user_record.count('win'):
+        prompt("The Computer won the match!\n")
+    else:
+        prompt("5 rounds were played and "
+               "there were too many ties. Nobody won!\n")
+
+def display_next_round():
+    if round_total < 5:
+        prompt(f"Beginning Round #{round_total}")
+
+# ---- KEEPING TRACK OF GAME FLOW STARTS HERE ----
 while True:
-    prompt((f"""From the choices {', '.join(VALID_CHOICES)}... 
-    Type the name, the first letter or first two letters
-    of the name if choosing 'scissors' or 'spock'!
-    """))
-    choice = check_then_return_input(input())
+    user_record = []
+    round_total = 1
 
-    while choice not in VALID_CHOICES:
-        prompt("Please try again:")
+    # Rounds start here
+    while round_total <= 5:
+        prompt((f"""From the choices {', '.join(VALID_CHOICES)}...
+        Type the name, the first letter or first two letters
+        of the name if choosing 'scissors' or 'spock'!
+        """))
         choice = check_then_return_input(input())
 
-    computer_choice = random.choice(VALID_CHOICES)
+        while choice not in VALID_CHOICES:
+            prompt("Please try again:")
+            choice = check_then_return_input(input())
 
-    display_winner(choice, computer_choice)
+        computer_choice = random.choice(VALID_CHOICES)
+
+        prompt(f"You chose {choice} & the computer chose {computer_choice}.")
+
+        round_winner = determine_winner(choice, computer_choice)
+
+        update_user_record()
+
+        display_winner()
+
+        if user_record.count('win') == 3 or user_record.count('loss') == 3:
+            break
+
+        round_total += 1
+
+        display_next_round()
+
+    win_count = user_record.count('win')
+    loss_count = user_record.count('loss')
+    tie_count = user_record.count('tie')
+
+    display_match_winner()
+
+    prompt(f"Your record: {win_count} W, {loss_count} L, {tie_count} Ties\n")
 
     while True:
         prompt("Would you like to play again? (y/n):")
@@ -77,8 +118,8 @@ while True:
 
         if answer.startswith('n') or answer.startswith('y'):
             break
-        else:
-            prompt("That's not a valid choice. Please, try again.")
+
+        prompt("That's not a valid choice. Please, try again.")
 
     if answer[0] == 'n':
         break
