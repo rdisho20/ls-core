@@ -2,12 +2,20 @@ import random
 
 VALID_CHOICES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 
+WIN_COMBOS = {
+    "rock": ["scissors", "lizard"],
+    "paper": ["rock", "spock"],
+    "scissors": ["paper", "lizard"],
+    "lizard": ["spock", "paper"],
+    "spock": ["scissors", "rock"]
+}
+
 def prompt(message):
     print(f"==> {message}")
 
 def check_then_return_input(option):
     option = option.casefold()
-    
+
     if len(option) <= 2:
         match option:
             case 'r':
@@ -26,17 +34,9 @@ def check_then_return_input(option):
 def determine_winner(user, computer):
     winner = ""
 
-    if ((user == "rock" and (computer in {"scissors", "lizard"})) or
-        (user == "paper" and (computer in {"rock", "spock"})) or
-        (user == "scissors" and (computer in {"paper", "lizard"})) or
-        (user == "lizard" and (computer in {"spock", "paper"})) or
-        (user == "spock" and (computer in {"scissors", "rock"}))):
+    if computer in WIN_COMBOS[user]:
         winner = "user"
-    elif ((computer == "rock" and (user in {"scissors", "lizard"})) or
-        (computer == "paper" and (user in {"rock", "spock"})) or
-        (computer == "scissors" and (user in {"paper", "lizard"})) or
-        (computer == "lizard" and (user in {"spock", "paper"})) or
-        (computer == "spock" and (user in {"scissors", "rock"}))):
+    elif user in WIN_COMBOS[computer]:
         winner = "computer"
 
     return winner
@@ -61,7 +61,7 @@ def display_match_winner():
     if user_record.count('win') > user_record.count('loss'):
         prompt("You win the match!\n")
     elif user_record.count('loss') > user_record.count('win'):
-        prompt("The Computer won the match!\n")
+        prompt("The Computer wins the match!\n")
     else:
         prompt("5 rounds were played and "
                "there were too many ties. Nobody won!\n")
