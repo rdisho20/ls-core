@@ -67,7 +67,7 @@ def display_match_winner():
                "there were too many ties. Nobody won!\n")
 
 def display_next_round():
-    if round_total < 5:
+    if round_total <= 5:
         prompt(f"Beginning Round #{round_total}")
 
 # ---- KEEPING TRACK OF GAME FLOW STARTS HERE ----
