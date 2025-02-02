@@ -1,15 +1,49 @@
-# X Given a string, return string w/ non-alphanums replaced with ' '
-# X if more than one non-alphanums in a row, replace w/ ' '
-# define function, taking 1 parameter 'string'
-# - iterate through characters in string
-# - for every non-alphanum substring that is at least 1 character in length
-# --- get substrings <- everytime reach alphanum char, store previous chars
-# --- in list as substr element, begin new substr element for all alpha-num,
-# --- begin new substr element for all non-alphanum, repeat
+# defin function 'clean_up'
+# - set a variable name 'result' = ''
+# - if string[0] is NOT alnum concat ' ' to result
+# - while len(result) > 0
+# -- if string[i] not alnum and result[-1] is not alnum
+# --- continue
+# -- if string[i] is not alnum and result[-1] is alnum
+# -- concat ' ' to result
+# -- if string[i] is alnum
+# --- concat string[i] to result
+# -- if i == len(string)
+# --- break
 
-# - for every element in new list
-# -- replace each non-alphanum substring w/ 1 whitespace character (' ')
-# -- return list joined making new string
+def clean_up(string):
+    result = ''
+
+    for char in string:
+        if not char.isalnum() and not result:
+            result += ' '
+        elif not char.isalnum() and not result[-1].isalnum():
+            continue
+        elif not char.isalnum() and result[-1].isalnum():
+            result += ' '
+        elif char.isalnum():
+            result += char
+    
+    return result
+
+print(clean_up("---what's my +*& line?"))
+print(clean_up("---what's my +*& line?") == " what s my line ")
+
+#LS Solution
+'''
+def clean_up(text):
+    clean_text = ''
+
+    for idx, char in enumerate(text):
+        if char.isalpha():
+            clean_text += char
+        elif idx == 0 or clean_text[-1] != ' ':
+            clean_text += ' '
+
+    return clean_text
+'''
+
+'''My first solution
 def clean_up(string):
     init_result = ''
     final_result = ''
@@ -34,18 +68,4 @@ def clean_up(string):
 
 print(clean_up("---what's my +*& line?"))
 print(clean_up("---what's my +*& line?") == " what s my line ")
-# True
-
-#LS Solution
-"""
-def clean_up(text):
-    clean_text = ''
-
-    for idx, char in enumerate(text):
-        if char.isalpha():
-            clean_text += char
-        elif idx == 0 or clean_text[-1] != ' ':
-            clean_text += ' '
-
-    return clean_text
-"""
+'''
