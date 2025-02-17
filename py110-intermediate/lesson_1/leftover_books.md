@@ -1,5 +1,7 @@
 # Given int `avail_cubes`, return left over blocks
+
 ## Task 4
+
 - based on `avail_cubes` get appropriate square -> work w/ **new problem**
     - if `avail_cubes` % `square` == `avail_cubes`
         - then `avail_cubes` % `prev_square` == return `remainder_result`
@@ -7,9 +9,9 @@
         - then return `0`
 
 ### New Problem
-**Understanding**
-input: `avail_cubes`
-output: `square`, `prev_square`
+**Understanding**  
+input: `avail_cubes`  
+output: `square`, `prev_square`  
 
 explicit:
 - must be a square: 2, 4, 9, 16, 25 etc.
@@ -17,8 +19,8 @@ explicit:
 implicit:
 - checking each available square within range 1 - `avail_cubes` to get outputs
 
-**Data Structure**
-For Loop
+**Data Structure**  
+For Loop  
 `for i in range(1, avail_cubes, i**2)`
 
 **Algorithm**
