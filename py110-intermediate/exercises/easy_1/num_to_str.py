@@ -1,31 +1,45 @@
 def integer_to_string(number):
     DIGITS = {
-        '0': 0,
-        '1': 1,
-        '2': 2,
-        '3': 3,
-        '4': 4,
-        '5': 5,
-        '6': 6,
-        '7': 7,
-        '8': 8,
-        '9': 9,
+        0: '0',
+        1: '1',
+        2: '2',
+        3: '3',
+        4: '4',
+        5: '5',
+        6: '6',
+        7: '7',
+        8: '8',
+        9: '9',
     }
 
-    number_list = []
+    number_string = ''
+    result = (1, 1)
 
-    while number > 0:
-        for key, value in DIGITS.items(): # not gunna werk...
-            if number in value:
-                result = divmod(number, 10)
-                number_list.insert(result[1])
-                number = result[0]
+    while result[0] > 0:
+        result = divmod(number, 10)
+        number_string += DIGITS[result[1]]
+        number = result[0]
+    
+    return number_string[::-1]
     
 
-#print(integer_to_string(4321) == "4321")              # True
-#print(integer_to_string(0) == "0")                    # True
-print(integer_to_string(5000))# == "5000")              # True
-print(integer_to_string(1234567890))# == "1234567890")  # True
+print(integer_to_string(4321) == "4321")              # True
+print(integer_to_string(0) == "0")                    # True
+print(integer_to_string(5000) == "5000")              # True
+print(integer_to_string(1234567890) == "1234567890")  # True
+
+'''LS Solution
+DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+def integer_to_string(number):
+    result = ''
+
+    while number > 0:
+        number, remainder = divmod(number, 10)          # tuple unpacking
+        result = DIGITS[remainder] + result
+
+    return result or '0'
+'''
 
 '''Old code
 MASTER_DICT = {
@@ -45,7 +59,7 @@ MASTER_DICT = {
 def integer_to_string(number):
     number_string = ''
     count = 0
-    while number:
+    while number > 0:
         for key, value in MASTER_DICT.items():
             if number in key:
                 try:
