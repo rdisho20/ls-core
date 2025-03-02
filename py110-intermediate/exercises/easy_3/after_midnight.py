@@ -2,7 +2,7 @@ def before_midnight(number):
     hours, minutes = divmod(number, 60)
 
     if hours < -24:
-        hours, extra = divmod(hours, 24)
+        hours, _ = divmod(hours, 24)
 
         return f"{24 + hours:02d}:{minutes:02d}"
 
@@ -12,7 +12,7 @@ def after_midnight(number):
     hours, minutes = divmod(number, 60)
 
     if hours > 24:
-        hours, extra = divmod(hours, 24)
+        hours, _ = divmod(hours, 24)
 
         return f"{hours:02d}:{minutes:02d}"
 
@@ -36,9 +36,9 @@ print(time_of_day(800) == "13:20")      # True
 print(time_of_day(-4231))# == "01:29")    # True
 
 '''
-# I should try this exercise again...
-# try to solve it my way... my code just needs some refinement
-# should use 'minutes in a day' more as part of my calculation
+# chose to not refactor my code
+# modulo operators help -> give remainders -> working within RANGE (ie. 0-1440)
+# ie. minutes p/ day = 1440, minutes p/ hr == 60 etc
 
 ----------------
 #LS solution:
