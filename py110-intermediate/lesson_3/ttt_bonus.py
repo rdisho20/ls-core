@@ -86,26 +86,9 @@ def join_or(valid_choices, delim=', ', and_or='or'):
     return ''.join(result_list)
 
 
-def find_winning_move(board, line):
-    occupied = set()
-
-    for square in line:
-        if board[square] == COMPUTER_MARKER:
-            occupied.add(square)
-
-            if len(occupied) == 2:
-                difference = set(line) - occupied
-                select_square = list(difference)
-
-                if board[select_square[0]] == INITIAL_MARKER:
-                    return select_square.pop()
-    
-    return None
-
-
-def find_at_risk_square(board, line):
+def find_the_right_square(board, line, player_marker):
     ''' 
-    check if the squares in 'line' == player choice ('X')
+    check if the squares in 'line' == player_choice ('X' or 'O')
     If so then add that square to the set 'occupied' and 
     check the 'difference' between sets 'line' & 'occupied'
     if 'select_square' (difference) is marked ' '
@@ -115,7 +98,7 @@ def find_at_risk_square(board, line):
     occupied = set()
 
     for square in line:
-        if board[square] == HOOMAN_MARKER:
+        if board[square] == player_marker:
             occupied.add(square)
 
             if len(occupied) == 2:
@@ -129,11 +112,18 @@ def find_at_risk_square(board, line):
 
 
 def choose_square(board, current_player):
-    pass
+    if current_player == PLAYER:
+        player_chooses_square(board)
+    else:
+        computer_chooses_square(board)
+        display_board(board)
 
 
 def alternate_player(current_player):
-    pass
+    if current_player == PLAYER:
+        return COMPUTER
+    
+    return PLAYER
 
 
 def player_chooses_square(board):
@@ -154,16 +144,17 @@ def computer_chooses_square(board):
         return # If gaurd clause
 
     square = None
-    # offense first
+    
+    # Offense first
     for line in WINNING_LINES:
-        square = find_winning_move(board, line)
+        square = find_the_right_square(board, line, COMPUTER_MARKER)
         if square:
             break
-
+    
+    # Defense last
     if not square:
-        # defense last
         for line in WINNING_LINES:
-            square = find_at_risk_square(board, line)
+            square = find_the_right_square(board, line, HOOMAN_MARKER)
             if square:
                 break
         ''' 
@@ -233,9 +224,9 @@ def reset_game_scores(player_win_count, computer_win_count):
 
 
 def play_again():
+    prompt("Play again? (y or n)")
     while True:
-        prompt("Play again? (y or n)")
-        answer = input().strip().lower() #reponded w/ number and exited game... (try again)
+        answer = input().strip().lower()
 
         match answer:
             case 'y':
@@ -243,7 +234,7 @@ def play_again():
             case 'n':
                 return False
             case _:
-                prompt("Please try either 'y' or 'n':") # infinite loop
+                prompt("Please try either 'y' or 'n':")
 
 
 def play_tic_tac_toe():
@@ -262,6 +253,7 @@ def play_tic_tac_toe():
     while True:
         board = initialize_board()
 
+        # Who's first?
         while True:
             prompt(f"Who should play first?\n"
                    f"Type 'player', 'computer' or 'choose':")
@@ -273,33 +265,14 @@ def play_tic_tac_toe():
 
             prompt("Please type 'player', 'computer' or 'choose:")
 
+        # Gameplay
         while True:
-            if current_player == PLAYER:
-                display_board(board)
+            display_board(board)
+            choose_square(board, current_player)
+            current_player = alternate_player(current_player)
 
-                '''
-                choose_square(board, current_player)
-                current_player = alternate_player(current_player)
-                '''
-
-                player_chooses_square(board)
-                if someone_won(board) or board_full(board):
-                    break
-
-                computer_chooses_square(board)
-                if someone_won(board) or board_full(board):
-                    break
-            
-            elif current_player == COMPUTER:
-                computer_chooses_square(board)
-                if someone_won(board) or board_full(board):
-                    break
-
-                display_board(board)
-
-                player_chooses_square(board)
-                if someone_won(board) or board_full(board):
-                    break
+            if someone_won(board) or board_full(board):
+                break
                 
         display_board(board)
         
