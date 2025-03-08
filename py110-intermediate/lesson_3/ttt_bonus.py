@@ -36,8 +36,15 @@ def determine_starting_player(first_player_choice):
     return None
 
 
+def terminal_clear():
+    if os.name == 'posix':
+        os.system('clear')
+    else:
+        os.system('cls')
+
+
 def display_board(board):
-    os.system('clear')
+    terminal_clear()
 
     prompt(f"You are {HOOMAN_MARKER}. Computer is {COMPUTER_MARKER}.")
     print('')
@@ -179,7 +186,7 @@ def someone_won(board):
 
 
 def detect_winner(board):
-    for line in WINNING_LINES:              # to check board state for specific line
+    for line in WINNING_LINES:  # to check board state for specific line
         sq1, sq2, sq3 = line
         if (board[sq1] == HOOMAN_MARKER
                 and board[sq2] == HOOMAN_MARKER
