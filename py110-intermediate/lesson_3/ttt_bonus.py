@@ -1,5 +1,4 @@
 import os
-import pdb
 import random
 
 
@@ -30,9 +29,8 @@ def determine_starting_player(first_player_choice):
         return PLAYER
 
     elif first_player_choice == 'choose':
-        RANDOM_PLAYER = (PLAYER, COMPUTER)
-        return random.choice(RANDOM_PLAYER)
-    
+        return random.choice([PLAYER, COMPUTER])
+
     return None
 
 
@@ -74,15 +72,15 @@ def valid_choices(board):
     return [str(num) for num in empty_squares(board)]
 
 
-def join_or(valid_choices, delim=', ', and_or='or'):
+def join_or(choice_list, delim=', ', and_or='or'):
     result_list = []
 
-    for idx, square in enumerate(valid_choices):
-        if idx == len(valid_choices) - 2:
+    for idx, square in enumerate(choice_list):
+        if idx == len(choice_list) - 2:
             result_list.append(str(square))
             result_list.append(f" {and_or} ")
 
-        elif idx == len(valid_choices) - 1:
+        elif idx == len(choice_list) - 1:
             result_list.append(str(square))
             break
 
@@ -129,7 +127,7 @@ def choose_square(board, current_player):
 def alternate_player(current_player):
     if current_player == PLAYER:
         return COMPUTER
-    
+
     return PLAYER
 
 
@@ -142,7 +140,7 @@ def player_chooses_square(board):
             break
 
         prompt("Sorry, that's not a valid choice.")
-    
+
     board[int(square)] = HOOMAN_MARKER
 
 
@@ -151,24 +149,23 @@ def computer_chooses_square(board):
         return # If gaurd clause
 
     square = None
-    
+
     # Offense first
     for line in WINNING_LINES:
         square = find_the_right_square(board, line, COMPUTER_MARKER)
         if square:
             break
-    
+
     # Defense last
     if not square:
         for line in WINNING_LINES:
             square = find_the_right_square(board, line, HOOMAN_MARKER)
             if square:
                 break
-        ''' 
-        set board[5] to computer marker if available
+        '''set board[5] to computer marker if available
         and if there is no 'at risk' or 'winning' square
         '''
-        if not square and board[5] == INITIAL_MARKER:
+        if board[5] == INITIAL_MARKER:
             board[5] = COMPUTER_MARKER
             return
         elif not square:
@@ -224,8 +221,7 @@ def display_win_records(player_win_count, computer_win_count):
 
 
 def reset_game_scores(player_win_count, computer_win_count):
-    if (player_win_count['game'] == WINS_NEEDED or
-        computer_win_count['game'] == WINS_NEEDED):
+    if WINS_NEEDED in (player_win_count['game'], computer_win_count['game']):
         player_win_count['game'] = 0
         computer_win_count['game'] = 0
 
@@ -262,8 +258,8 @@ def play_tic_tac_toe():
 
         # Who's first?
         while True:
-            prompt(f"Who should play first?\n"
-                   f"Type 'player', 'computer' or 'choose':")
+            prompt("Who should play first?\n"
+                   "Type 'player', 'computer' or 'choose':")
             first_player_choice = input().strip().lower()
             current_player = determine_starting_player(first_player_choice)
 
@@ -280,14 +276,14 @@ def play_tic_tac_toe():
 
             if someone_won(board) or board_full(board):
                 break
-                
+
         display_board(board)
-        
+
         if someone_won(board):
             prompt(f"{detect_winner(board)} won!")
         else:
             prompt("It's a tie, my guy!")
-        
+
         increment_wins(board, player_win_count, computer_win_count)
 
         display_win_records(player_win_count, computer_win_count)
@@ -296,7 +292,7 @@ def play_tic_tac_toe():
 
         if not play_again():
             break
-    
+
     prompt("Thanks for playing Tic Tac Toe!")
 
 
