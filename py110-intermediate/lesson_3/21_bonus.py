@@ -4,22 +4,6 @@ import os
 
 PLAYER = 'Player'
 DEALER = 'Dealer'
-'''
-DECK = [
-        ['S', '2'], ['S', '3'], ['S', '4'], ['S', '5'], ['S', '6'],
-        ['S', '7'], ['S', '8'], ['S', '9'], ['S', '10'], ['S', 'J'],
-        ['S', 'Q'], ['S', 'K'], ['S', 'A'],
-        ['H', '2'], ['H', '3'], ['H', '4'], ['H', '5'], ['H', '6'],
-        ['H', '7'], ['H', '8'], ['H', '9'], ['H', '10'], ['H', 'J'],
-        ['H', 'Q'], ['H', 'K'], ['H', 'A'],
-        ['C', '2'], ['C', '3'], ['C', '4'], ['C', '5'], ['C', '6'],
-        ['C', '7'], ['C', '8'], ['C', '9'], ['C', '10'], ['C', 'J'],
-        ['C', 'Q'], ['C', 'K'], ['C', 'A'],
-        ['D', '2'], ['D', '3'], ['D', '4'], ['D', '5'], ['D', '6'],
-        ['D', '7'], ['D', '8'], ['D', '9'], ['D', '10'], ['D', 'J'],
-        ['D', 'Q'], ['D', 'K'], ['D', 'A'],
-    ]
-'''
 SUITS = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
 VALUES = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
 
@@ -39,7 +23,7 @@ def prompt(message):
 
 def deal_cards():
     hand = [random.choice(DECK)]
-    
+
     # deal 2nd card, re-deal if same as 1st
     while True:
         dealt = random.choice(DECK)
@@ -52,8 +36,8 @@ def deal_cards():
 
 def display_initial_hands(player_hand, dealer_hand):
     prompt(f"Dealer's hand: {' of '.join(dealer_hand[0])} and ?")
-    prompt(f"Player's hand: {' of '.join(player_hand[0])} and {' of '.join(player_hand[1])}")
-    print()
+    prompt(f"Player's hand: {' of '.join(player_hand[0])}"
+           f"and {' of '.join(player_hand[1])}\n")
 
 
 def display_current_hands(cards_in_hand):
@@ -68,7 +52,7 @@ def hit(hand):
             hand.append(dealt)
 
             return
-        
+
 
 def dealer_stays(dealer_hand):
     card_total = total(dealer_hand)
@@ -82,7 +66,7 @@ def busted(cards_in_hand):
 
     if current_total > 21:
         return True
-    
+
     return False
 
 
@@ -102,7 +86,7 @@ def player_turn(player_hand):
             prompt(f"PLAYER'S hand: {display_current_hands(player_hand)}")
         else:
             prompt("Try again you silly goose!")
-    
+
     if busted(player_hand):
         prompt(f"You BUSTED! Card total: {total(player_hand)}\n")
     else:
@@ -158,7 +142,7 @@ def compare_cards(player_hand, dealer_hand):
         return PLAYER
     elif player_total < dealer_total:
         return DEALER
-    
+
     return None
 
 
