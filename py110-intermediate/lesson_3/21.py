@@ -97,16 +97,16 @@ def player_turn(player_hand):
             prompt("Try again you silly goose!")
     
     if busted(player_hand):
-        prompt("You BUSTED!\n")
+        prompt(f"You BUSTED! Card total: {total(player_hand)}\n")
     else:
-        prompt("You chose to stay!\n")
+        prompt(f"You chose to stay! Card total: {total(player_hand)}\n")
 
 
 def dealer_turn(dealer_hand):
-    dealer_total = total(dealer_hand)
-    print(f"dealer hand:\n{dealer_hand}")
-
     while True:
+        dealer_total = total(dealer_hand)
+        print(f"dealer hand:\n{dealer_hand}")
+
         if busted(dealer_hand):
             prompt(f"DEALER BUSTED!  Card total = {dealer_total}\n")
             break
@@ -115,11 +115,10 @@ def dealer_turn(dealer_hand):
             break
 
         hit(dealer_hand)
-        print(f"dealer hand:\n{dealer_hand}")
 
 
-def total(cards):
-    values = [card[1] for card in cards]
+def total(cards_in_hand):
+    values = [card[1] for card in cards_in_hand]
 
     sum_val = 0
     for value in values:
@@ -138,14 +137,19 @@ def total(cards):
 
     return sum_val
 
-# Not working properly, tie results in not displaying tie...
-# print statements printing each player's hands twice
+
 def compare_cards(player_hand, dealer_hand):
-    print(f"Print 'player_hand' {player_hand}")
-    print(f"Print 'dealer_hand' {dealer_hand}")
-    if player_hand > dealer_hand and total(player_hand) <= 21:
+    player_total = total(player_hand)
+    dealer_total = total(dealer_hand)
+
+    if not busted(player_hand) and busted(dealer_hand):
         return PLAYER
-    elif player_hand < dealer_hand and total(dealer_hand) <= 21:
+    elif busted(player_hand) and not busted(dealer_hand):
+        return DEALER
+    # neither busted? compare card totals
+    elif player_total > dealer_total:
+        return PLAYER
+    elif player_total < dealer_total:
         return DEALER
     
     return None
