@@ -1,5 +1,6 @@
 import os
 import random
+import pdb
 
 
 INITIAL_MARKER = ' '
@@ -22,16 +23,44 @@ def prompt(msg):
 
 
 def determine_starting_player(first_player_choice):
-    if first_player_choice == 'computer':
+    if first_player_choice == 'c':
         return COMPUTER
 
-    elif first_player_choice == 'player':
+    elif first_player_choice == 'p':
         return PLAYER
 
-    elif first_player_choice == 'choose':
+    elif first_player_choice == 'r':
         return random.choice([PLAYER, COMPUTER])
 
     return None
+
+
+def alternate_player(current_player):
+    if current_player == PLAYER:
+        return COMPUTER
+
+    return PLAYER
+
+
+def display_match_starting_player(match_starting_player):
+    print(f"Match starting player: {match_starting_player}")
+
+
+def alt_match_start_player(match_starting_player, player_win_count,
+                           computer_win_count, match_games_played, board):
+    match_count = player_win_count['match'] + computer_win_count['match']
+
+    if (all(square == INITIAL_MARKER for square in board.values())):
+        if match_count == 0 and match_games_played == 0:
+            return match_starting_player
+
+        elif match_count % 2 == 1 and match_games_played == 0:
+            return alternate_player(match_starting_player)
+
+        elif match_count % 2 == 0 and match_games_played == 0:
+            return alternate_player(match_starting_player)
+        
+        return match_starting_player
 
 
 def terminal_clear():
@@ -92,14 +121,14 @@ def join_or(choice_list, delim=', ', and_or='or'):
 
 
 def find_the_right_square(board, line, player_marker):
-    ''' 
-    check if the squares in 'line' == player_choice ('X' or 'O')
-    If so then add that square to the set 'occupied' and 
-    check the 'difference' between sets 'line' & 'occupied'
-    if 'select_square' (difference) is marked ' '
-    return popped 'select_square[0]'
-    Otherwise: return None
-    '''
+
+    # check if the squares in 'line' == player_choice ('X' or 'O')
+    # If so then add that square to the set 'occupied' and 
+    # check the 'difference' between sets 'line' & 'occupied'
+    # if 'select_square' (difference) is marked ' '
+    # return popped 'select_square[0]'
+    # Otherwise: return None
+
     occupied = set()
 
     for square in line:
@@ -122,13 +151,6 @@ def choose_square(board, current_player):
     else:
         computer_chooses_square(board)
         display_board(board)
-
-
-def alternate_player(current_player):
-    if current_player == PLAYER:
-        return COMPUTER
-
-    return PLAYER
 
 
 def player_chooses_square(board):
@@ -200,22 +222,29 @@ def detect_winner(board):
 def increment_wins(board, player_win_count, computer_win_count):
     if detect_winner(board) == 'Player':
         player_win_count['game'] += 1
+        player_win_count['total_game_wins'] += 1
 
         if player_win_count['game'] == WINS_NEEDED:
             player_win_count['match'] += 1
 
     elif detect_winner(board) == 'Computer':
         computer_win_count['game'] += 1
+        computer_win_count['total_game_wins'] += 1
 
         if computer_win_count['game'] == WINS_NEEDED:
             computer_win_count['match'] += 1
 
 
 def display_win_records(player_win_count, computer_win_count):
-    print(f"Player wins: {player_win_count['game']}\n"
-          f"Computer wins: {computer_win_count['game']}\n"
+    print(f"--Player wins--\n"
+          f"GAMES: {player_win_count['game']}\n"
+          f"TOTAL GAMES: {player_win_count['total_game_wins']}\n"
           f"\n"
-          f"Matches Won:\n"
+          f"--Computer wins--\n"
+          f"GAMES: {computer_win_count['game']}\n"
+          f"TOTAL GAMES: {computer_win_count['total_game_wins']}\n"
+          f"\n"
+          f"--MATCHES WON--\n"
           f"Player: {player_win_count['match']}\n"
           f"Computer: {computer_win_count['match']}\n")
 
@@ -225,6 +254,17 @@ def reset_game_scores(player_win_count, computer_win_count):
         player_win_count['game'] = 0
         computer_win_count['game'] = 0
 
+
+def modify_match_games_played(player_win_count,
+                              computer_win_count,
+                              match_games_played):
+    total_games = player_win_count['game'] + computer_win_count['game']
+
+    if total_games == 0:
+        return 0
+    else:
+        return match_games_played + 1
+        
 
 def play_again():
     prompt("Play again? (y or n)")
@@ -244,33 +284,47 @@ def play_tic_tac_toe():
     player_win_count = {
         'game': 0,
         'match': 0,
+        'total_game_wins': 0
     }
 
     computer_win_count = {
         'game': 0,
         'match': 0,
+        'total_game_wins': 0,
     }
 
+    match_games_played = 0
+
     current_player = None
+
+    # Who's first?
+    prompt("Who should play first?\n"
+            "Type 'p' for player, 'c' for computer or 'r' for random:")
+    while True:
+        first_player_choice = input().strip().lower()
+        match_starting_player = determine_starting_player(first_player_choice)
+        current_player = match_starting_player
+
+        if match_starting_player:
+            break
+
+        prompt("Please type 'p', 'c' or 'r':")
 
     while True:
         board = initialize_board()
 
-        # Who's first?
-        while True:
-            prompt("Who should play first?\n"
-                   "Type 'player', 'computer' or 'choose':")
-            first_player_choice = input().strip().lower()
-            current_player = determine_starting_player(first_player_choice)
+        match_starting_player = alt_match_start_player(match_starting_player,
+                                                       player_win_count,
+                                                       computer_win_count,
+                                                       match_games_played, board)
 
-            if current_player:
-                break
-
-            prompt("Please type 'player', 'computer' or 'choose:")
+        if current_player != match_starting_player:
+            current_player = match_starting_player
 
         # Gameplay
         while True:
             display_board(board)
+            display_match_starting_player(match_starting_player)
             choose_square(board, current_player)
             current_player = alternate_player(current_player)
 
@@ -289,6 +343,10 @@ def play_tic_tac_toe():
         display_win_records(player_win_count, computer_win_count)
 
         reset_game_scores(player_win_count, computer_win_count)
+
+        match_games_played = modify_match_games_played(player_win_count,
+                                                       computer_win_count,
+                                                       match_games_played)
 
         if not play_again():
             break
