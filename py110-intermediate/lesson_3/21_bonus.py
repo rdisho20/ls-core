@@ -6,7 +6,6 @@ PLAYER = 'Player'
 DEALER = 'Dealer'
 SUITS = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
 VALUES = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
-
 DECK = [[value, suit] for value in VALUES for suit in SUITS]
 
 
@@ -55,57 +54,55 @@ def hit(hand):
 
 
 def dealer_stays(dealer_hand):
-    card_total = total(dealer_hand)
-
-    if card_total >= 17:
-        return True
+    return total(dealer_hand) >= 17
 
 
 def busted(cards_in_hand):
-    current_total = total(cards_in_hand)
-
-    if current_total > 21:
-        return True
-
-    return False
+    return total(cards_in_hand) > 21
 
 
-def player_turn(player_hand):
+def player_turn(player_hand, dealer_hand):
     while True:
+        player_total = total(player_hand)
         if busted(player_hand):
             break
 
-        prompt(f"TOTAL: {total(player_hand)}")
+        prompt(f"PLAYER'S TOTAL: {player_total}")
         prompt("hit (h) or stay (s)?")
         answer = input().lower()
 
         if answer == 's':
             break
-        elif answer == 'h':
+        if answer == 'h':
             hit(player_hand)
             prompt(f"PLAYER'S hand: {display_current_hands(player_hand)}")
         else:
             prompt("Try again you silly goose!")
 
     if busted(player_hand):
-        prompt(f"You BUSTED! Card total: {total(player_hand)}\n")
+        prompt(f"You BUSTED! Card total: {player_total}\n")
+        display_winner(player_hand, dealer_hand)
+        # DISPLAY THE WINNER, END GAME HERE, ask play_again()
     else:
-        prompt(f"You chose to stay! Card total: {total(player_hand)}\n")
+        prompt(f"You chose to stay! Card total: {player_total}\n")
 
 
 def dealer_turn(dealer_hand):
     while True:
         dealer_total = total(dealer_hand)
         prompt(f"DEALER'S hand: {display_current_hands(dealer_hand)}")
-        prompt(f"TOTAL: {dealer_total}")
+        prompt(f"DEALER'S TOTAL: {dealer_total}")
 
         if busted(dealer_hand):
-            prompt(f"DEALER BUSTED!  Card total: {dealer_total}\n")
+            prompt(f"DEALER BUSTED! Card total: {dealer_total}\n")
+            # DISPLAY THE WINNER, END GAME HERE, ask play_again()
             break
-        elif dealer_stays(dealer_hand):
-            prompt(f"DEALER stays.  Card total: {dealer_total}\n")
+        if dealer_stays(dealer_hand):
+            prompt(f"Dealer STAYS. Card total: {dealer_total}\n")
             break
 
+        print()
+        prompt("Dealer HITS!")
         hit(dealer_hand)
 
 
@@ -136,11 +133,11 @@ def compare_cards(player_hand, dealer_hand):
 
     if not busted(player_hand) and busted(dealer_hand):
         return PLAYER
-    elif busted(player_hand) and not busted(dealer_hand):
+    if busted(player_hand) and not busted(dealer_hand):
         return DEALER
-    elif player_total > dealer_total:
+    if player_total > dealer_total:
         return PLAYER
-    elif player_total < dealer_total:
+    if player_total < dealer_total:
         return DEALER
 
     return None
@@ -154,9 +151,9 @@ def display_winner(player_hand, dealer_hand):
         print("ROUND RESULT: TIE!")
         print("===================\n")
     elif winner:
-        print("====================================")
+        print("=================================")
         print(f"The winner of this round: {winner}")
-        print("====================================\n")
+        print("=================================\n")
 
 
 def play_again():
