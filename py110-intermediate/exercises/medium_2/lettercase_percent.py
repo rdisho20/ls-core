@@ -1,5 +1,7 @@
-def letter_percentages(str):
-    str_length = len(str)
+import pprint
+
+def letter_percentages(string):
+    str_length = len(string)
     counts_to_percent = [0, 0, 0]
     result_dict = {
         'lowercase': 1,
@@ -8,7 +10,7 @@ def letter_percentages(str):
     }
     result_keys = list(result_dict.keys())
 
-    for char in str:
+    for char in string:
         if char.islower() and char.isalpha():
             counts_to_percent[0] += 1
         elif char.isupper() and char.isalpha():
@@ -17,17 +19,14 @@ def letter_percentages(str):
             counts_to_percent[2] += 1
     
     for idx in range(len(counts_to_percent)):
-        counts_to_percent[idx] /= str_length
-        counts_to_percent[idx] *= 100
-        result_dict[result_keys[idx]] *= counts_to_percent[idx]
+        counts_to_percent[idx] =  (counts_to_percent[idx] / str_length) * 100
+        result_dict[result_keys[idx]] = f"{counts_to_percent[idx]:.2f}"
     
-    print(counts_to_percent)
-    print(result_dict)
+    return result_dict
 
-print(letter_percentages('abCdef 123'))
-print(letter_percentages('AbCd +Ef'))
-print(letter_percentages('123'))
-
+pprint.pprint(letter_percentages('abCdef 123'))
+pprint.pprint(letter_percentages('AbCd +Ef'))
+pprint.pprint(letter_percentages('123'))
 
 '''
 expected_result = {
