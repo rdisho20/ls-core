@@ -36,7 +36,7 @@ def deal_cards():
 def display_initial_hands(player_hand, dealer_hand):
     prompt(f"Dealer's hand: {' of '.join(dealer_hand[0])} and ?")
     prompt(f"Player's hand: {' of '.join(player_hand[0])}"
-           f"and {' of '.join(player_hand[1])}\n")
+           f" and {' of '.join(player_hand[1])}\n")
 
 
 def display_current_hands(cards_in_hand):
@@ -61,7 +61,11 @@ def busted(cards_in_hand):
     return total(cards_in_hand) > 21
 
 
-def player_turn(player_hand, dealer_hand):
+def end_round(player_hand):
+    return busted(player_hand)
+
+
+def player_turn(player_hand):
     while True:
         player_total = total(player_hand)
         if busted(player_hand):
@@ -81,8 +85,6 @@ def player_turn(player_hand, dealer_hand):
 
     if busted(player_hand):
         prompt(f"You BUSTED! Card total: {player_total}\n")
-        display_winner(player_hand, dealer_hand)
-        # DISPLAY THE WINNER, END GAME HERE, ask play_again()
     else:
         prompt(f"You chose to stay! Card total: {player_total}\n")
 
@@ -92,10 +94,12 @@ def dealer_turn(dealer_hand):
         dealer_total = total(dealer_hand)
         prompt(f"DEALER'S hand: {display_current_hands(dealer_hand)}")
         prompt(f"DEALER'S TOTAL: {dealer_total}")
-
+        
+        if dealer_total == 21:
+            prompt("DEALER has 21!\n")
+            return
         if busted(dealer_hand):
             prompt(f"DEALER BUSTED! Card total: {dealer_total}\n")
-            # DISPLAY THE WINNER, END GAME HERE, ask play_again()
             break
         if dealer_stays(dealer_hand):
             prompt(f"Dealer STAYS. Card total: {dealer_total}\n")
@@ -143,6 +147,13 @@ def compare_cards(player_hand, dealer_hand):
     return None
 
 
+def display_final_hands(player_hand, dealer_hand):
+    prompt("FINAL HANDS:")
+    prompt(f"Player: {display_current_hands(player_hand)}")
+    prompt(f"Dealer: {display_current_hands(dealer_hand)}")
+    print()
+
+
 def display_winner(player_hand, dealer_hand):
     winner = compare_cards(player_hand, dealer_hand)
 
@@ -154,6 +165,12 @@ def display_winner(player_hand, dealer_hand):
         print("=================================")
         print(f"The winner of this round: {winner}")
         print("=================================\n")
+
+
+def end_of_round_output():
+    prompt("Onto the next round!")
+    print("-------------------------")
+    print()
 
 
 def play_again():
@@ -171,19 +188,37 @@ def play_again():
 
 
 def play_game():
+    rounds_played = 0
+
     while True:
         terminal_clear()
-        prompt("Welcom to Twenty-One!")
+        prompt("Welcome to Twenty-One!")
+        print()
 
-        player_hand = deal_cards()
-        dealer_hand = deal_cards()
+        while True:
+            rounds_played += 1
+            prompt(f"ROUND {rounds_played}, FIGHT!\n")
 
-        display_initial_hands(player_hand, dealer_hand)
+            player_hand = deal_cards()
+            dealer_hand = deal_cards()
 
-        player_turn(player_hand)
-        dealer_turn(dealer_hand)
-        compare_cards(player_hand, dealer_hand)
-        display_winner(player_hand, dealer_hand)
+            display_initial_hands(player_hand, dealer_hand)
+
+            player_turn(player_hand)
+            if not end_round(player_hand):
+                dealer_turn(dealer_hand)
+            
+            compare_cards(player_hand, dealer_hand)
+            display_final_hands(player_hand, dealer_hand)
+            display_winner(player_hand, dealer_hand)
+
+            end_of_round_output()
+
+            if rounds_played == 5:
+                break
+
+        display_match_totals()
+        display_match_winner()
 
         if not play_again():
             break
