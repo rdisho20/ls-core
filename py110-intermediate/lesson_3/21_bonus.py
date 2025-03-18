@@ -20,6 +20,20 @@ def prompt(message):
     print(f"===> {message}")
 
 
+def large_divider(message_length):
+    pass
+
+
+def small_divider(message_length):
+    pass
+
+
+def display_round(current_round):
+    print("---------------")
+    print(f"ROUND {current_round}, FIGHT!")
+    print("---------------")
+
+
 def deal_cards():
     hand = [random.choice(DECK)]
 
@@ -84,9 +98,9 @@ def player_turn(player_hand):
             prompt("Try again you silly goose!")
 
     if busted(player_hand):
-        prompt(f"You BUSTED! Card total: {player_total}\n")
+        prompt(f"You BUSTED!\n")
     else:
-        prompt(f"You chose to stay! Card total: {player_total}\n")
+        prompt(f"You chose to STAY!\n")
 
 
 def dealer_turn(dealer_hand):
@@ -99,14 +113,13 @@ def dealer_turn(dealer_hand):
             prompt("DEALER has 21!\n")
             return
         if busted(dealer_hand):
-            prompt(f"DEALER BUSTED! Card total: {dealer_total}\n")
+            prompt(f"DEALER BUSTED!\n")
             break
         if dealer_stays(dealer_hand):
-            prompt(f"Dealer STAYS. Card total: {dealer_total}\n")
+            prompt(f"Dealer STAYS.\n")
             break
 
-        print()
-        prompt("Dealer HITS!")
+        prompt("\nDealer HITS!")
         hit(dealer_hand)
 
 
@@ -131,6 +144,13 @@ def total(cards_in_hand):
     return sum_val
 
 
+def process_turns(player_hand, dealer_hand):
+    player_turn(player_hand)
+
+    if not end_round(player_hand):
+        dealer_turn(dealer_hand)
+
+
 def compare_cards(player_hand, dealer_hand):
     player_total = total(player_hand)
     dealer_total = total(dealer_hand)
@@ -147,11 +167,19 @@ def compare_cards(player_hand, dealer_hand):
     return None
 
 
-def display_final_hands(player_hand, dealer_hand):
-    prompt("FINAL HANDS:")
-    prompt(f"Player: {display_current_hands(player_hand)}")
-    prompt(f"Dealer: {display_current_hands(dealer_hand)}")
-    print()
+def display_final_total_and_hands(player_hand, dealer_hand):
+    player_total = total(player_hand)
+    dealer_total = total(dealer_hand)
+    player_cards = display_current_hands(player_hand)
+    dealer_cards = display_current_hands(dealer_hand)
+
+    print("ROUND TOTAL & HANDS:\n")
+    print(f"PLAYER:\n"
+           f"Total: {player_total}\n"
+           f"Cards: {player_cards}\n")
+    print(f"DEALER:\n"
+           f"Total: {dealer_total}\n"
+           f"Cards: {dealer_cards}\n")
 
 
 def display_winner(player_hand, dealer_hand):
@@ -160,17 +188,77 @@ def display_winner(player_hand, dealer_hand):
     if not winner:
         print("===================")
         print("ROUND RESULT: TIE!")
-        print("===================\n")
+        print("===================")
+        print()
     elif winner:
-        print("=================================")
-        print(f"The winner of this round: {winner}")
-        print("=================================\n")
+        print("================================")
+        print(f"ROUND WINNER: {winner}")
+        print("================================")
+        print()
 
 
-def end_of_round_output():
-    prompt("Onto the next round!")
-    print("-------------------------")
+def end_of_round_output(current_round, round_wins):
+    if not completed_match(current_round, round_wins):
+        print("Onto the next round!")
+        print("-------------------------")
+        print()
+
+
+def increment_round_wins(round_wins, player_hand, dealer_hand):
+    round_winner = compare_cards(player_hand, dealer_hand)
+
+    if round_winner == PLAYER:
+        round_wins[PLAYER] += 1
+    elif round_winner == DEALER:
+        round_wins[DEALER] += 1
+
+
+def completed_match(current_round, round_wins):
+    return current_round == 5 or (3 in round_wins.values())
+
+
+def detect_match_winner(round_wins):
+    player_round_wins = round_wins[PLAYER]
+    dealer_round_wins = round_wins[DEALER]
+
+    if player_round_wins > dealer_round_wins:
+        return PLAYER
+    if player_round_wins < dealer_round_wins:
+        return DEALER
+    
+    return None
+
+
+def increment_match_wins(round_wins, match_wins):
+    match_winner = detect_match_winner(round_wins)
+
+    if match_winner == PLAYER:
+        match_wins[PLAYER] += 1
+    elif match_winner == DEALER:
+        match_wins[DEALER] += 1
+
+
+def display_match_totals(matches_total):
+    prompt(f"MATCH TOTALS: {matches_total}")
+
+def display_match_wins(match_wins):
+    prompt(f"Player's Match Victories = {match_wins[PLAYER]}")
+    prompt(f"Dealer's Match Victories = {match_wins[DEALER]}")
     print()
+
+
+def display_match_winner(round_wins):
+    match_winner = detect_match_winner(round_wins)
+
+    if not match_winner:
+        print("===================")
+        print("MATCH RESULT: TIE!")
+        print("===================\n")
+    elif match_winner:
+        print("================================")
+        print(f"MATCH WINNER: {match_winner}")
+        print("================================")
+        print()
 
 
 def play_again():
@@ -188,37 +276,53 @@ def play_again():
 
 
 def play_game():
-    rounds_played = 0
+    matches_total = 0
+    match_wins = {
+        PLAYER: 0,
+        DEALER: 0,
+    }
 
     while True:
+        current_round = 0
+        round_wins = {
+            PLAYER: 0,
+            DEALER: 0,
+        }
+
         terminal_clear()
-        prompt("Welcome to Twenty-One!")
+        prompt("Welcome to TWENTY-ONE!")
         print()
 
         while True:
-            rounds_played += 1
-            prompt(f"ROUND {rounds_played}, FIGHT!\n")
+            current_round += 1
+            display_round(current_round)
 
             player_hand = deal_cards()
             dealer_hand = deal_cards()
 
             display_initial_hands(player_hand, dealer_hand)
 
-            player_turn(player_hand)
-            if not end_round(player_hand):
-                dealer_turn(dealer_hand)
+            process_turns(player_hand, dealer_hand)
             
             compare_cards(player_hand, dealer_hand)
-            display_final_hands(player_hand, dealer_hand)
+            display_final_total_and_hands(player_hand, dealer_hand)
             display_winner(player_hand, dealer_hand)
 
-            end_of_round_output()
+            end_of_round_output(current_round, round_wins)
 
-            if rounds_played == 5:
+            increment_round_wins(round_wins, player_hand, dealer_hand)
+
+            if completed_match(current_round, round_wins):
+                detect_match_winner(round_wins)
+                display_match_winner(round_wins)
+
+                increment_match_wins(round_wins, match_wins)
                 break
 
-        display_match_totals()
-        display_match_winner()
+        matches_total += 1
+
+        display_match_totals(matches_total)
+        display_match_wins(match_wins)
 
         if not play_again():
             break
