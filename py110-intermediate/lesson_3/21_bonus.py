@@ -7,6 +7,8 @@ DEALER = 'Dealer'
 SUITS = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
 VALUES = ('2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A')
 DECK = [[value, suit] for value in VALUES for suit in SUITS]
+BEST_SCORE = 21
+DEALER_MIN = 17
 
 
 def terminal_clear():
@@ -20,18 +22,19 @@ def prompt(message):
     print(f"===> {message}")
 
 
-def large_divider(message_length):
-    pass
+def large_divider(message):
+    print(''.join(['=' for _ in range(len(message))]))
 
 
-def small_divider(message_length):
-    pass
+def small_divider(message):
+    print(''.join(['-' for _ in range(len(message))]))
 
 
 def display_round(current_round):
-    print("---------------")
-    print(f"ROUND {current_round}, FIGHT!")
-    print("---------------")
+    round_msg = f"ROUND {current_round}, FIGHT!"
+    small_divider(round_msg)
+    print(round_msg)
+    small_divider(round_msg)
 
 
 def deal_cards():
@@ -68,11 +71,11 @@ def hit(hand):
 
 
 def dealer_stays(dealer_hand):
-    return total(dealer_hand) >= 17
+    return total(dealer_hand) >= DEALER_MIN
 
 
 def busted(cards_in_hand):
-    return total(cards_in_hand) > 21
+    return total(cards_in_hand) > BEST_SCORE
 
 
 def end_round(player_hand):
@@ -82,6 +85,7 @@ def end_round(player_hand):
 def player_turn(player_hand):
     while True:
         player_total = total(player_hand)
+
         if busted(player_hand):
             break
 
@@ -98,9 +102,10 @@ def player_turn(player_hand):
             prompt("Try again you silly goose!")
 
     if busted(player_hand):
-        prompt(f"You BUSTED!\n")
+        prompt(f"PLAYER'S TOTAL: {player_total}")
+        prompt("You BUSTED!\n")
     else:
-        prompt(f"You chose to STAY!\n")
+        prompt("You chose to STAY!\n")
 
 
 def dealer_turn(dealer_hand):
@@ -108,18 +113,19 @@ def dealer_turn(dealer_hand):
         dealer_total = total(dealer_hand)
         prompt(f"DEALER'S hand: {display_current_hands(dealer_hand)}")
         prompt(f"DEALER'S TOTAL: {dealer_total}")
-        
-        if dealer_total == 21:
+
+        if dealer_total == BEST_SCORE:
             prompt("DEALER has 21!\n")
             return
         if busted(dealer_hand):
-            prompt(f"DEALER BUSTED!\n")
+            prompt("DEALER BUSTED!\n")
             break
         if dealer_stays(dealer_hand):
-            prompt(f"Dealer STAYS.\n")
+            prompt("Dealer STAYS.\n")
             break
 
-        prompt("\nDealer HITS!")
+        prompt("Dealer HITS!")
+        print()
         hit(dealer_hand)
 
 
@@ -186,21 +192,24 @@ def display_winner(player_hand, dealer_hand):
     winner = compare_cards(player_hand, dealer_hand)
 
     if not winner:
-        print("===================")
-        print("ROUND RESULT: TIE!")
-        print("===================")
+        no_win_msg = "ROUND RESULT: TIE!"
+        large_divider(no_win_msg)
+        print(no_win_msg)
+        large_divider(no_win_msg)
         print()
     elif winner:
-        print("================================")
-        print(f"ROUND WINNER: {winner}")
-        print("================================")
+        win_msg = f"ROUND WINNER: {winner}"
+        large_divider(win_msg)
+        print(win_msg)
+        large_divider(win_msg)
         print()
 
 
 def end_of_round_output(current_round, round_wins):
     if not completed_match(current_round, round_wins):
-        print("Onto the next round!")
-        print("-------------------------")
+        next_round_msg = "Onto the next round!"
+        print(next_round_msg)
+        small_divider(next_round_msg)
         print()
 
 
@@ -225,7 +234,7 @@ def detect_match_winner(round_wins):
         return PLAYER
     if player_round_wins < dealer_round_wins:
         return DEALER
-    
+
     return None
 
 
@@ -251,13 +260,16 @@ def display_match_winner(round_wins):
     match_winner = detect_match_winner(round_wins)
 
     if not match_winner:
-        print("===================")
-        print("MATCH RESULT: TIE!")
-        print("===================\n")
+        no_match_win_msg = "MATCH RESULT: TIE!"
+        large_divider(no_match_win_msg)
+        print(no_match_win_msg)
+        large_divider(no_match_win_msg)
+        print()
     elif match_winner:
-        print("================================")
-        print(f"MATCH WINNER: {match_winner}")
-        print("================================")
+        match_win_msg = f"MATCH WINNER: {match_winner}"
+        large_divider(match_win_msg)
+        print(match_win_msg)
+        large_divider(match_win_msg)
         print()
 
 
@@ -290,7 +302,7 @@ def play_game():
         }
 
         terminal_clear()
-        prompt("Welcome to TWENTY-ONE!")
+        prompt("Welcome to WHATEVER-ONE! (21)")
         print()
 
         while True:
@@ -303,7 +315,7 @@ def play_game():
             display_initial_hands(player_hand, dealer_hand)
 
             process_turns(player_hand, dealer_hand)
-            
+
             compare_cards(player_hand, dealer_hand)
             display_final_total_and_hands(player_hand, dealer_hand)
             display_winner(player_hand, dealer_hand)
