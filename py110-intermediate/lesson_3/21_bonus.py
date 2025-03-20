@@ -30,6 +30,10 @@ def small_divider(message):
     print(''.join(['-' for _ in range(len(message))]))
 
 
+def page_break():
+    print("============================================================")
+
+
 def display_round(current_round):
     round_msg = f"ROUND {current_round}, FIGHT!"
     small_divider(round_msg)
@@ -211,6 +215,8 @@ def end_of_round_output(current_round, round_wins):
         print(next_round_msg)
         small_divider(next_round_msg)
         print()
+        page_break()
+        print()
 
 
 def increment_round_wins(round_wins, player_hand, dealer_hand):
@@ -247,8 +253,16 @@ def increment_match_wins(round_wins, match_wins):
         match_wins[DEALER] += 1
 
 
+def display_round_wins(round_wins):
+    print("Round Wins record:")
+    print(f"PLAYER: {round_wins[PLAYER]} wins")
+    print(f"DEALER: {round_wins[DEALER]} wins")
+    print()
+
+
 def display_match_totals(matches_total):
     prompt(f"MATCH TOTALS: {matches_total}")
+
 
 def display_match_wins(match_wins):
     prompt(f"Player's Match Victories = {match_wins[PLAYER]}")
@@ -319,10 +333,10 @@ def play_game():
             compare_cards(player_hand, dealer_hand)
             display_final_total_and_hands(player_hand, dealer_hand)
             display_winner(player_hand, dealer_hand)
+            increment_round_wins(round_wins, player_hand, dealer_hand)
+            display_round_wins(round_wins)
 
             end_of_round_output(current_round, round_wins)
-
-            increment_round_wins(round_wins, player_hand, dealer_hand)
 
             if completed_match(current_round, round_wins):
                 detect_match_winner(round_wins)

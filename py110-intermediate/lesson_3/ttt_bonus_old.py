@@ -22,9 +22,7 @@ def prompt(msg):
     print(f"===> {msg}")
 
 
-def determine_starting_player():
-    first_player_choice = input().strip().lower()
-
+def determine_starting_player(first_player_choice):
     if first_player_choice == 'c':
         return COMPUTER
 
@@ -49,17 +47,17 @@ def display_match_starting_player(match_starting_player):
 
 
 def alt_match_start_player(match_starting_player, player_win_count,
-                           computer_win_count, matches_played, board):
+                           computer_win_count, match_games_played, board):
     match_count = player_win_count['match'] + computer_win_count['match']
 
     if (all(square == INITIAL_MARKER for square in board.values())):
-        if match_count == 0 and matches_played == 0:
+        if match_count == 0 and match_games_played == 0:
             return match_starting_player
 
-        elif match_count % 2 == 1 and matches_played == 0:
+        elif match_count % 2 == 1 and match_games_played == 0:
             return alternate_player(match_starting_player)
 
-        elif match_count % 2 == 0 and matches_played == 0:
+        elif match_count % 2 == 0 and match_games_played == 0:
             return alternate_player(match_starting_player)
         
         return match_starting_player
@@ -212,26 +210,24 @@ def detect_winner(board):
         if (board[sq1] == HOOMAN_MARKER
                 and board[sq2] == HOOMAN_MARKER
                 and board[sq3] == HOOMAN_MARKER):
-            return PLAYER
+            return 'Player'
         elif (board[sq1] == COMPUTER_MARKER
                 and board[sq2] == COMPUTER_MARKER
                 and board[sq3] == COMPUTER_MARKER):
-            return COMPUTER
+            return 'Computer'
 
     return None
 
 
 def increment_wins(board, player_win_count, computer_win_count):
-    game_winner = detect_winner(board)
-
-    if game_winner == PLAYER:
+    if detect_winner(board) == 'Player':
         player_win_count['game'] += 1
         player_win_count['total_game_wins'] += 1
 
         if player_win_count['game'] == WINS_NEEDED:
             player_win_count['match'] += 1
 
-    elif game_winner == COMPUTER:
+    elif detect_winner(board) == 'Computer':
         computer_win_count['game'] += 1
         computer_win_count['total_game_wins'] += 1
 
@@ -259,52 +255,16 @@ def reset_game_scores(player_win_count, computer_win_count):
         computer_win_count['game'] = 0
 
 
-def modify_matches_played(player_win_count,
-                          computer_win_count,
-                          matches_played):
+def modify_match_games_played(player_win_count,
+                              computer_win_count,
+                              match_games_played):
     total_games = player_win_count['game'] + computer_win_count['game']
 
     if total_games == 0:
         return 0
     else:
-        return matches_played + 1
-
-
-def is_match_over(player_wins, computer_wins, games_played):
-    return (player_wins >= 3 or 
-            computer_wins >= 3 or 
-            games_played >= 5)
-
-
-def start_next_game(games_played):
-    print("DEBUG - START NEXT GAME?")
-    prompt(f"Ready for Game {games_played + 1}? (y or n)")
-    while True:
-        answer = input().strip().lower()
-
-        match answer:
-            case 'y':
-                return True
-            case 'n':
-                prompt("Whenever you are ready type 'y' or 'n':")
-            case _:
-                prompt("Please try either 'y' or 'n':")
-
-
-def start_next_match_or_quit(matches_played):
-    prompt(f"Want to play Match {matches_played + 1}, "
-           f"or would you like to quit? (y)es or (q)uit")
-    while True:
-        answer = input().strip().lower()
-
-        match answer:
-            case 'y':
-                return True
-            case 'q':
-                return False
-            case _:
-                prompt("Please try either 'y' or 'q':")
-
+        return match_games_played + 1
+        
 
 def play_again():
     prompt("Play again? (y or n)")
@@ -333,15 +293,16 @@ def play_tic_tac_toe():
         'total_game_wins': 0,
     }
 
-    matches_played = 0
+    match_games_played = 0
 
     current_player = None
 
-    # Who's first? EXTRACT ALL this to it's own function
+    # Who's first?
     prompt("Who should play first?\n"
-           "Type 'p' for player, 'c' for computer or 'r' for random:")
+            "Type 'p' for player, 'c' for computer or 'r' for random:")
     while True:
-        match_starting_player = determine_starting_player()
+        first_player_choice = input().strip().lower()
+        match_starting_player = determine_starting_player(first_player_choice)
         current_player = match_starting_player
 
         if match_starting_player:
@@ -349,69 +310,43 @@ def play_tic_tac_toe():
 
         prompt("Please type 'p', 'c' or 'r':")
 
-    # MATCH INITIALIZATION & MATCH PLAYER CHECK BEYOND FIRST MATCH
     while True:
         board = initialize_board()
 
-        games_played = 0
         match_starting_player = alt_match_start_player(match_starting_player,
                                                        player_win_count,
                                                        computer_win_count,
-                                                       matches_played,
-                                                       board)
-        # ensure current_player is match_starting_player
-        # when starting new match
+                                                       match_games_played, board)
+
         if current_player != match_starting_player:
             current_player = match_starting_player
 
+        # Gameplay
         while True:
-            board = initialize_board()
-
-            # ALTERNATE PLAYER EACH GAME IN MATCH
-            if (games_played % 2 == 1
-                and current_player == match_starting_player):
-                current_player = alternate_player(current_player)
-            else:
-                current_player = match_starting_player
-
-            # Gameplay
-            while True:
-                display_board(board)
-                display_match_starting_player(match_starting_player)
-                choose_square(board, current_player)
-                current_player = alternate_player(current_player)
-
-                if someone_won(board) or board_full(board):
-                    break
-
             display_board(board)
+            display_match_starting_player(match_starting_player)
+            choose_square(board, current_player)
+            current_player = alternate_player(current_player)
 
-            if someone_won(board):
-                prompt(f"{detect_winner(board)} won!")
-            else:
-                prompt("It's a tie, my guy!")
-            
-            increment_wins(board, player_win_count, computer_win_count)
-            display_win_records(player_win_count, computer_win_count)
+            if someone_won(board) or board_full(board):
+                break
 
-            games_played += 1
+        display_board(board)
 
-            if not is_match_over(computer_win_count['game'],
-                                 player_win_count['game'],
-                                 games_played):
-                if start_next_game(games_played):
-                    continue
+        if someone_won(board):
+            prompt(f"{detect_winner(board)} won!")
+        else:
+            prompt("It's a tie, my guy!")
 
-            if (computer_win_count['game'] == 3 or
-                player_win_count['game'] == 3 or
-                games_played == 5):
-                matches_played = modify_matches_played(player_win_count,
+        increment_wins(board, player_win_count, computer_win_count)
+
+        display_win_records(player_win_count, computer_win_count)
+
+        reset_game_scores(player_win_count, computer_win_count)
+
+        match_games_played = modify_match_games_played(player_win_count,
                                                        computer_win_count,
-                                                       matches_played)
-                # CHECK BELOW FUNCTION... MATCH LOOP NEEDS ADJUSTING
-                if start_next_match_or_quit(matches_played):
-                    reset_game_scores(player_win_count, computer_win_count)
-                    break
+                                                       match_games_played)
 
         if not play_again():
             break
