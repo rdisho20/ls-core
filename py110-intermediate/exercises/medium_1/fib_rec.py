@@ -1,5 +1,5 @@
 def fibonacci(n):
-    if n == 1 or n == 2:
+    if n <= 2:
         return 1
     # since returning a value each invocation (base case or recursive calls),
     # we return the sum of the previous two sums
