@@ -24,3 +24,16 @@ print(repeated_substring('xyxy') == ('xy', 2))
 print(repeated_substring('xyz') == ('xyz', 1))
 print(repeated_substring('aaaaaaaa') == ('a', 8))
 print(repeated_substring('superduper') == ('superduper', 1))
+
+
+''' Better, more systematic alternative - string slicing
+
+def repeated_substring(s):
+    n = len(s)
+    for i in range(1, n + 1):
+        substring = s[:i]
+        if len(substring) * (n // len(substring)) == n and substring * (n // len(substring)) == s:
+            return (substring, n // len(substring))
+    return (s, 1)
+
+'''
