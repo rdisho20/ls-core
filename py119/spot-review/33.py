@@ -7,11 +7,21 @@
 # array of numbers (can be nil or empty array if empty).
 
 def find_suspects(pockets, allowed):
-    suspects = {sus for sus, item in pockets.items()
-                for num in item
-                for elem in allowed 
-                if num not in allowed}
+    suspects = []
 
+    for name, pocket_list in pockets.items():
+        for number in pocket_list:
+            if number in allowed:
+                continue
+            elif number not in allowed:
+                if name in suspects:
+                    continue
+                suspects.append(name)
+    
+    if not suspects:
+        return None
+    
+    return suspects
 
 pockets = {
     'bob': [1],
