@@ -17,8 +17,6 @@ def triple_double(num1, num2):
                 counter += 2
             counter += 1
 
-            print(num1[idx], counter)
-
             if counter == 3:
                 counter = 0
                 break
@@ -28,26 +26,35 @@ def triple_double(num1, num2):
 
         else:
             counter = 0
-    
-    print("passed out first loop dilly dig")
 
     for idx in range(0, len(num2)):
         if idx == 0:
             continue
 
-        elif num2[idx] == num2[idx - 1]:
-            if idx == 1:
-                counter += 2
-            counter += 1
-
-            print(num2[idx], counter)
+        elif num2[idx] == num2[idx - 1] and num2[idx] != num2[idx + 1]:
+            counter += 2
 
             if counter == 2:
                 return 1
-    
-    print(counter) # ends at 1... hmm #########################
-
 
 
 print(triple_double(12345, 12345) == 0)
 print(triple_double(666789, 12345667) == 1)
+
+'''
+def triple_double(num1, num2):
+    num1_str = str(num1)
+    num2_str = str(num2)
+    
+    # First find any triple digits in num1
+    for digit in '0123456789':
+        # Check if digit appears three times consecutively in num1
+        if digit * 3 in num1_str:
+            # Then check if same digit appears twice consecutively in num2
+            if digit * 2 in num2_str:
+                return 1
+    
+    return 0
+
+This approach uses string multiplication and the in operator to elegantly check for consecutive occurrences without complex counter logic.
+'''
