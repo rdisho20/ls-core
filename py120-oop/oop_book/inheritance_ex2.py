@@ -44,16 +44,15 @@ boat2 = Boat()
 print(Boat.vehicles())
 
 
-#4 print MOR method resolution order
-print(Car.mro())
-print(Truck.mro())
-print(Boat.mro())
-print(type.__dict__)
-
-
-'''3
+# 3
 car1.signal_left()       # Signalling left
 truck1.signal_right()    # Signalling right
 car1.signal_off()        # Signal is now off
 truck1.signal_off()      # Signal is now off
-'''
+
+
+#4 print MRO method resolution order
+print(Car.mro())
+print(Truck.mro())
+print(Boat.mro())
+print(type.__dict__)
