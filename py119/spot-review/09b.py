@@ -3,35 +3,73 @@
 #2) characters between the first and last characters are sorted alphabetically
 #3) punctuation should remain at the same place as it started
 
-def scramble_words(string):
-    char_lst = list(string)
+def scramble_single_word(word):
+    char_lst = list(word)
 
     while True:
         swapped = False
 
-        for idx in range(2, len(char_lst) - 1):
-            if not char_lst[idx].isalpha():
-                continue
+        # if last character IS Alphabetical... handle differently than if it was punctuation
+        if char_lst[len(char_lst) - 1].isalpha():
+            for idx in range(2, len(char_lst) - 1):
+                if not char_lst[idx].isalpha():
+                    continue
 
-            if not char_lst[idx - 1].isalpha():
-                if char_lst[idx - 2] > char_lst[idx]:
-                    char_lst[idx - 2], char_lst[idx] = char_lst[idx], char_lst[idx - 2]
+                if not char_lst[idx - 1].isalpha():
+                    if char_lst[idx - 2] > char_lst[idx]:
+                        char_lst[idx - 2], char_lst[idx] = char_lst[idx], char_lst[idx - 2]
+                        swapped = True
+
+                elif char_lst[idx - 1] > char_lst[idx]:
+                    char_lst[idx - 1], char_lst[idx] = char_lst[idx], char_lst[idx - 1]
                     swapped = True
+                
+            if not swapped:
+                break
+        
+        elif not char_lst[len(char_lst) - 1].isalpha():
+            for idx in range(2, len(char_lst) - 2):
+                if not char_lst[idx].isalpha():
+                    continue
 
-            elif char_lst[idx - 1] > char_lst[idx]:
-                char_lst[idx - 1], char_lst[idx] = char_lst[idx], char_lst[idx - 1]
-                swapped = True
+                if not char_lst[idx - 1].isalpha():
+                    if char_lst[idx - 2] > char_lst[idx]:
+                        char_lst[idx - 2], char_lst[idx] = char_lst[idx], char_lst[idx - 2]
+                        swapped = True
+
+                elif char_lst[idx - 1] > char_lst[idx]:
+                    char_lst[idx - 1], char_lst[idx] = char_lst[idx], char_lst[idx - 1]
+                    swapped = True
+                
+            if not swapped:
+                break
             
-        if not swapped:
-            break
-    
+
     return ''.join(char_lst)
+
+
+def scramble_words(string):
+    word_list = string.split()
+    result = []
+
+    for word in word_list:
+        result.append(scramble_single_word(word))
+    
+    return ' '.join(result) if len(result) > 1 else ''.join(result)
+
 
 print(scramble_words('professionals')) # should return 'paefilnoorsss'
 print(scramble_words("you'll")) 
 print(scramble_words("watching,")) 
 print(scramble_words("there's")) 
 print(scramble_words("you've")) 
+
+print(scramble_words("you've gotta dance like there's nobody watching, "
+               "love like you'll never be hurt, sing like there's "
+               "nobody listening, and live like it's heaven on earth."))
+# should return "you've gotta dacne like teehr's nbdooy wachintg, 
+# love like ylo'ul neevr be hrut, sing like teehr's nbdooy leiinnstg, 
+# and live like it's haeevn on earth."
 
 
 '''
@@ -40,17 +78,8 @@ u - ou
 ' - u'
 v - 'v - uv
 
-
-
 '''
 
-'''
-print(scramble_words("you've gotta dance like there's nobody watching, "
-               "love like you'll never be hurt, sing like there's "
-               "nobody listening, and live like it's heaven on earth."))
-# should return "you've gotta dacne like teehr's nbdooy wachintg, 
-# love like ylo'ul neevr be hrut, sing like teehr's nbdooy leiinnstg, 
-# and live like it's haeevn on earth."'''
 
 '''
 input: string
@@ -87,7 +116,7 @@ Step 1 - move to own function 'sort_word':
 -- swapped = False
 
 -- for each 'idx' in range(1, len(char_lst) - 2) (only checking characters between first and last)
---- `````````````````````````````````````^^^^accounting for bubble sort, last char
+--- ```````````````````````````````````````^^^^accounting for bubble sort, last char
 --- IF 'char_lst[idx]' is not alphabetical: continue to next iteration
 --- IF 'char_lst[idx + 1]' is not alphabetical: SKIP OVER PUNCTUATION
 ---- if char_lst[idx] >= char_lst[idx + 2]:
