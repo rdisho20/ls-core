@@ -1,13 +1,13 @@
 class Cat:
     def __init__(self, name):
         self._name = name
-
+    
     @property
     def name(self):
         return self._name
     
-    def personal_greeting(self):
-        print(f'Hello! my name is {self.name}')
+    def __str__(self):
+        return f"I'm {self.name}!"
 
 kitty = Cat('Sophie')
-kitty.personal_greeting()     # Hello! My name is Sophie!
+print(kitty)
