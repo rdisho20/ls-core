@@ -26,14 +26,14 @@ def anagram_difference(str1, str2):
         return abs(no_match_count - match_count - difference)
 
 
-#print(anagram_difference('', '') == 0)
-#print(anagram_difference('a', '') == 1)
-#print(anagram_difference('', 'a') == 1)
-#print(anagram_difference('ab', 'a') == 1)
-#print(anagram_difference('ab', 'ba') == 0)
+print(anagram_difference('', '') == 0)
+print(anagram_difference('a', '') == 1)
+print(anagram_difference('', 'a') == 1)
+print(anagram_difference('ab', 'a') == 1)
+print(anagram_difference('ab', 'ba') == 0)
 print(anagram_difference('ab', 'cd') == 4)
-#print(anagram_difference('aab', 'a') == 2)
-#print(anagram_difference('a', 'aab') == 2)
+print(anagram_difference('aab', 'a') == 2)
+print(anagram_difference('a', 'aab') == 2)
 
 
 '''
