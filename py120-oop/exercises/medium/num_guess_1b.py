@@ -1,13 +1,11 @@
 import random
 
-class InitGame:
-    pass
 
 class GuessingGame:
     def __init__(self):
-        self._number = random.randint(0, 101)
+        self._number = random.randint(1, 100)
         self._guesses_remaining = 7
-    
+
     def get_guess(self):
         while True:
             user_input = input("Enter a number between 1 and 100: ")
@@ -22,69 +20,78 @@ class GuessingGame:
 
             except ValueError:
                 print("Invalid guess.")
-    
+
     def check_guess(self, guess):
         if guess != self._number:
             return False
 
-        else:
-            return True
-    
+        return True
+
+    def display_guess_high_low(self, guess):
+        if guess < self._number:
+            print("Your guess is too low.\n")
+        elif guess > self._number:
+            print("Your guess is too high.\n")
+
     def decrement_remaining_guesses(self, guess_result):
         if not guess_result:
             self._guesses_remaining -= 1
-    
+
     def display_guesses_remaining(self):
-        print(f"You have guesses {self._guesses_remaining} remaining.")
-    
+        print(f"You have {self._guesses_remaining} guesses remaining.")
+
     def get_results(self, results):
-        if results:
-            return True
-        elif not results:
+        if not results:
             return False
-    
+
+        return True
+
     def process_results(self, result):
         remaining = self._guesses_remaining
 
-        if result == False and remaining == 0:
+        if result is False and remaining == 0:
             return False
 
-        elif result == True:
+        if result is True:
             return True
-    
+
+        return None
+
     def display_results(self, results):
         win = self.get_results(results)
 
         if win:
             print("That's the number! \n\nYou won!\n")
-        if not win:
-            print("You have no more guesses. You lost!")
+        elif not win:
+            print("You have no more guesses. You lost!\n")
 
-    def process_play(self):
+    def start_gameplay(self):
         while self._guesses_remaining > 0:
             self.display_guesses_remaining()
 
             guess = self.get_guess()
             guess_result = self.check_guess(guess)
 
+            self.display_guess_high_low(guess)
             self.decrement_remaining_guesses(guess_result)
 
             results = self.process_results(guess_result)
 
-            print(self._number)
-
-            if results == True or results == False:
+            if results in (True, False):
                 self.display_results(results)
                 break
 
     def play(self):
-        self.process_play()
+        self.start_gameplay()
+        self.__init__()
 
 
 game = GuessingGame()
 game.play()
 
-# NEED RESET GUESSES REMAINING
+game.play()
+
+
 
 '''
 - generate random number (initialized)
@@ -106,4 +113,3 @@ rnd 1
 
 
 '''
-
