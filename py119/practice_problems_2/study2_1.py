@@ -26,6 +26,25 @@ print(word_indices("") == {})
 print(word_indices("python python python") == {'python': [0, 7, 14]})
 
 '''
+
+def word_indices(string):
+    word_locations = {}
+
+    words = string.split()
+    for word in words:
+        if word not in word_locations:
+            word_locations[word] = []
+        
+            for idx, char in enumerate(string):
+                if char == word[0]:
+                    word_len = len(word)
+                    if string[idx:idx + word_len] == word:
+                        word_locations[word].append(idx)
+
+    return word_locations
+
+
+
 w/ set default:
 
 def word_indices(string):

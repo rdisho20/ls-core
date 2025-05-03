@@ -63,14 +63,14 @@ def run_length_encode(string):
             result += char
             continue
 
-        if char == string[idx - 1]:
+        elif char == string[idx - 1]:
             count += 1
 
             if idx == len(string) - 1:
                 result += str(count)
                 return result
         
-        if char != string[idx - 1]:
+        elif char != string[idx - 1]:
             if count != 1:
                 result += str(count)
             
@@ -84,3 +84,64 @@ print(run_length_encode("aabcccccaaa"))# == "a2bc5a3")
 print(run_length_encode("abcdef"))# == "abcdef")
 print(run_length_encode("") == "")
 print(run_length_encode("aaaaaaaaaa"))# == "a10")
+
+'''
+J's algo
+
+P-
+input: string
+output: new string with chars followed their number of consecutive occurrences. 
+
+empty strings return empty strings
+if no duplicate occurrences, just the string as is
+if there are more than one run of the same char, include all runs of that char seperately
+
+D-
+counter variable
+result string variable
+
+A-
+set counter variable to 1
+set an empty string
+
+iterate over the string start at index 1
+check if current char is equal to previous character
+if it is increment counter variable
+if it is not
+add the previous character 
+and if current count is greater than 1
+    add that count to the result string variable as well
+    and reset the counter to 1
+
+"aabcccccaaa"
+----
+
+def run_length_encode(string):
+    counter = 1
+    result_str = ''
+
+    for idx in range(1, len(string)):
+        char = string[idx]
+
+        if char == string[idx - 1]:
+            counter += 1
+
+            if idx == len(string) - 1:
+                result_str += string[idx - 1]
+
+                if counter > 1:
+                    result_str += str(counter)
+                    counter = 1
+
+        elif char != string[idx - 1]:
+            result_str += string[idx - 1]
+
+            if counter > 1:
+                result_str += str(counter)
+                counter = 1
+
+            if idx == len(string) - 1:
+                result_str += string[idx]
+
+    return result_str
+'''
