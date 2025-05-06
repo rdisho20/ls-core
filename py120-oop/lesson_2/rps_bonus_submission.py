@@ -125,7 +125,7 @@ class Human(Player):
         while True:
             print("Please type one from the following: ", end="")
 
-            for idx, move in moves:
+            for idx, move in enumerate(moves):
                 if idx == len(moves) - 1:
                     print(move)
                     break
@@ -188,7 +188,8 @@ class RPSGame:
                             in Player.all_moves_history['Computer'].items()]
 
         print(f"Human moves: {', '.join(human_history)}")
-        print(f"Computer moves: {', '.join(computer_history)}\n")
+        print(f"{self._get_computer_name()} moves: "
+              f"{', '.join(computer_history)}\n")
 
     def _human_wins(self):
         human_move = self._human.move
