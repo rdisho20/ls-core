@@ -4,6 +4,12 @@
 # only once, just include the character without a count.
 
 '''
+MESSAGE TO JOEL
+Thanks for your PEDAC and your thoughts on this.  I just remembered I had something on a reminder card that my interviewer told me, as well, which I think drives your insight home which helped me understand what they said better.
+> Look at the essential pattern/constraint defining the problem, then build the algorithm around that insight.
+Our struggles with this problem is a good example to reference, I think.  Like you mentioned, you start building your output when your current character doesn't equal the next.  That's the thing.
+
+
 input: string
 output: string; each sequence of identical characters
 - followed by count of consecutive occurrences

@@ -70,7 +70,7 @@ class RPSGame:
             print("It's a tie.")
 
     def _play_again(self):
-        answer = input('Would you like to play again? (y/n)')
+        answer = input('Would you like to play again? (y/n) ')
         return answer.strip().lower().startswith('y')
 
     def play(self):
