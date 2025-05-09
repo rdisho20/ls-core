@@ -1,4 +1,5 @@
 import random
+import os
 
 class Move:
     def __init__(self, name, defeats):
@@ -100,11 +101,11 @@ class Human(Player):
         super().__init__(name='Human')
 
     def choose_opponent(self):
-        OPTIONS = Player.COMPUTER_OPTIONS
+        options = Player.COMPUTER_OPTIONS
 
         print("Choose your opponent from the following: ", end="")
-        for idx, opponent in enumerate(OPTIONS):
-            if idx == len(OPTIONS) - 1:
+        for idx, opponent in enumerate(options):
+            if idx == len(options) - 1:
                 print(opponent)
                 break
 
@@ -113,7 +114,7 @@ class Human(Player):
         while True:
             choice = input().strip().lower()
 
-            for name in OPTIONS:
+            for name in options:
                 if choice in name.lower():
                     return name
 
@@ -154,6 +155,13 @@ class RPSGame:
             'HAL': HAL(),
             'Daneel': Daneel(),
         }
+
+    @staticmethod
+    def _terminal_clear():
+        if os.name == 'posix':
+            os.system('clear')
+        else:
+            os.system('cls')
 
     def _display_welcome_message(self):
         print("Welcome to Rock Paper Scissors!\n")
@@ -261,9 +269,18 @@ class RPSGame:
 
         while True:
             self._set_chosen_opponent()
-            print(f"Your opponent: {self._get_computer_name()}")
 
             while True:
+                self.__class__._terminal_clear()
+
+                '''will have to implement match count for correcting terminal clear
+                if self._human.score == 0 and self._computer.score == 0:
+                    self._display_winner()
+                    self._display_score()
+                '''
+
+                print(f"Your opponent: {self._get_computer_name()}")
+
                 self._display_move_history()
 
                 self._human.choose()
@@ -282,9 +299,8 @@ class RPSGame:
 
             self._human.reset_score()
             self._computer.reset_score()
-            self._human.reset_move_history()
-            self._computer.reset_move_history()
-            Player.reset_all_moves_history()
+
+            self._reset_move_history()
 
             if not self._play_again():
                 break
