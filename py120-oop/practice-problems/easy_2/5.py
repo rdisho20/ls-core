@@ -3,13 +3,17 @@ class Greeting:
         print(message)
 
 class Hello(Greeting):
+    def hi(self):
+        self.greet('Hello')
+    
     @classmethod
     def hi(cls):
-        greeting = Greeting() # construct an instance, because 'greet' isn't class method
-        greeting.greet('Hi')
+        greeting = Greeting()
+        greeting.greet("Hi")
 
 class Goodbye(Greeting):
     def bye(self):
         self.greet('Goodbye')
+
 
 Hello.hi()
