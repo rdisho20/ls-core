@@ -4,18 +4,18 @@ A marker for each player is designated by an 'O' or 'X'.  A player wins when the
 horizontally, vertically, or diagonally.
 
 ## Nouns
-Game
-Players
-Turns
-Marker
-Win/Loss
+- Game
+- Players
+- Turns
+- Marker
+- Win/Loss
 
 ## Verbs
-Take (turns)
-Select (square)
-Designate (marker)
-(player) Wins
-Determine (a Win/Loss)
+- Take (turns)
+- Select (square)
+- Designate (marker)
+- (player) Wins
+- Determine (a Win/Loss)
 
 ## Organize Nouns and Verbs
 - Players
