@@ -91,8 +91,6 @@ can tally and display the score as the game master.
         - print winner and loser
 - `match_won()`
     - if match has been won, someone's score must be == 3...
-<<<<<<< HEAD
-=======
 
 ## Swap Players
 ### Description
@@ -110,4 +108,3 @@ The game master can keep track of whos turn it is, but a player can declare its 
     - *ie* `self.human.takes_turn == True`
 - `activate_turn()` & `deactivate_turn()`
     - @ `Player` class
->>>>>>> feature/switch_player

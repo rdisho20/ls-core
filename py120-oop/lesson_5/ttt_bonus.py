@@ -32,7 +32,7 @@ class Square:
 class Board:
     def __init__(self):
         self.reset()
-    
+
     def reset(self):
         self.squares = {key: Square() for key in range(1, 10)}
 
@@ -81,6 +81,7 @@ class Player:
     def __init__(self, marker, is_playing_first=False):
         self.marker = marker
         self.score = 0
+        self.is_playing_first = is_playing_first
 
     @property
     def marker(self):
@@ -98,8 +99,25 @@ class Player:
     def score(self, score):
         self._score = score
 
+    @property
+    def is_playing_first(self):
+        return self._is_playing_first
+
+    @is_playing_first.setter
+    def is_playing_first(self, is_playing_first):
+        self._is_playing_first = is_playing_first
+
+    def __str__(self):
+        return self.__class__.__name__
+
     def increment_score(self):
         self.score += 1
+
+    def activate_turn_state(self):
+        self.is_playing_first = True
+
+    def deactivate_turn_state(self):
+        self.is_playing_first = False
 
 class Human(Player):
     def __init__(self):
@@ -161,13 +179,13 @@ class TTTGame:
 
         clear_screen()
         return user_input == 'y'
-    
+
     def play_one_game(self):
         self.board.reset()
         self.board.display()
 
         while True:
-            self.display_first_player()
+            self.display_initial_first_player()
             self.process_first_turn()
             if self.is_game_over():
                 self.update_score()
@@ -175,18 +193,18 @@ class TTTGame:
 
             self.board.display_with_clear()
 
-            self.display_second_player()
+            self.display_initial_second_player()
             self.process_second_turn()
             if self.is_game_over():
                 self.update_score()
                 break
 
             self.board.display_with_clear()
-        
+
         self.board.display_with_clear()
         self.display_score()
         self.display_results()
-    
+
     def play_match(self):
         print("Win 3 games to win the MATCH!")
         while True:
@@ -231,13 +249,47 @@ class TTTGame:
 
     def display_match_results(self):
         if self.match_winner(self.human):
-            print(f"----------------\n"
-                  f"HUMAN WINS MATCH\n"
-                  f"----------------")
+            print("----------------\n"
+                  "HUMAN WINS MATCH\n"
+                  "----------------")
         elif self.match_winner(self.computer):
-            print(f"-------------------\n"
-                  f"COMPUTER WINS MATCH\n"
-                  f"-------------------")
+            print("-------------------\n"
+                  "COMPUTER WINS MATCH\n"
+                  "-------------------")
+
+    def display_initial_first_player(self):
+        print(f"** Starting Player: {self.first_player} **")
+
+    def display_initial_second_player(self):
+        print(f"** Starting Player: {self.second_player} **")
+
+    def alternate_game_starting_player(self):
+        if self.human.is_playing_first:
+            self.computer.activate_turn_state()
+            self.human.deactivate_turn_state()
+
+        elif self.computer.is_playing_first:
+            self.human.activate_turn_state()
+            self.computer.deactivate_turn_state()
+
+        self.first_player = (self.computer
+                             if self.computer.is_playing_first
+                             else self.human)
+        self.second_player = (self.human
+                              if self.human.is_playing_first
+                              else self.computer)
+
+    def process_first_turn(self):
+        if self.human.is_playing_first:
+            self.human_moves()
+        else:
+            self.computer_moves()
+
+    def process_second_turn(self):
+        if self.first_player == self.human:
+            self.computer_moves()
+        elif self.first_player == self.computer:
+            self.human_moves()
 
     def human_moves(self):
         valid_choices = self.board.unused_squares()
@@ -293,7 +345,7 @@ class TTTGame:
 
             if choice:
                 return choice
-        
+
         return None
 
     def pick_center_square(self):
@@ -327,8 +379,7 @@ class TTTGame:
             self.computer.increment_score()
 
     def match_won(self):
-        return (self.human.score == TTTGame.MATCH_GOAL or
-                self.computer.score == TTTGame.MATCH_GOAL)
+        return TTTGame.MATCH_GOAL in {self.human.score, self.computer.score}
 
     def match_winner(self, player):
         return player.score == TTTGame.MATCH_GOAL
