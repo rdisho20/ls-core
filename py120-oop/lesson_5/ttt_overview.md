@@ -91,3 +91,23 @@ can tally and display the score as the game master.
         - print winner and loser
 - `match_won()`
     - if match has been won, someone's score must be == 3...
+<<<<<<< HEAD
+=======
+
+## Swap Players
+### Description
+The human player plays first during the first game, then the computer plays first the following game.
+The game master can keep track of whos turn it is, but a player can declare its own state!
+
+### Variables & Methods
+- `playing_first`
+    - *ie* `self.human.playing_first == True`
+- `alternate_game_starting_player()`
+    - `TTTGame` can check after game is over who was `playing_first`
+
+
+- `is_taking_turn`
+    - *ie* `self.human.takes_turn == True`
+- `activate_turn()` & `deactivate_turn()`
+    - @ `Player` class
+>>>>>>> feature/switch_player

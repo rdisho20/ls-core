@@ -78,7 +78,7 @@ class Board:
         self.display()
 
 class Player:
-    def __init__(self, marker):
+    def __init__(self, marker, is_playing_first=False):
         self.marker = marker
         self.score = 0
 
@@ -103,7 +103,7 @@ class Player:
 
 class Human(Player):
     def __init__(self):
-        super().__init__(Square.HUMAN_MARKER)
+        super().__init__(Square.HUMAN_MARKER, True)
 
 class Computer(Player):
     def __init__(self):
@@ -126,6 +126,8 @@ class TTTGame:
         self.board = Board()
         self.human = Human()
         self.computer = Computer()
+        self.first_player = self.human
+        self.second_player = self.computer
 
     @staticmethod # doesn't require any information from the class or others
     def _join_or(choices_list, seperator=', ', conjunction='or'):
@@ -165,12 +167,16 @@ class TTTGame:
         self.board.display()
 
         while True:
-            self.human_moves()
+            self.display_first_player()
+            self.process_first_turn()
             if self.is_game_over():
                 self.update_score()
                 break
 
-            self.computer_moves()
+            self.board.display_with_clear()
+
+            self.display_second_player()
+            self.process_second_turn()
             if self.is_game_over():
                 self.update_score()
                 break
@@ -188,6 +194,7 @@ class TTTGame:
             if self.match_won() or not TTTGame._play_again():
                 break
 
+            self.alternate_game_starting_player()
             print("Let's play again!")
             print()
 
