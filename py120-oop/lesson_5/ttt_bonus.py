@@ -185,7 +185,7 @@ class TTTGame:
         self.board.display()
 
         while True:
-            self.display_first_player()
+            self.display_initial_first_player()
             self.process_first_turn()
             if self.is_game_over():
                 self.update_score()
@@ -193,7 +193,7 @@ class TTTGame:
 
             self.board.display_with_clear()
 
-            self.display_second_player()
+            self.display_initial_second_player()
             self.process_second_turn()
             if self.is_game_over():
                 self.update_score()
@@ -257,11 +257,11 @@ class TTTGame:
                   f"COMPUTER WINS MATCH\n"
                   f"-------------------")
     
-    def display_first_player(self):
-        print(f"{self.first_player}'s Turn")
+    def display_initial_first_player(self):
+        print(f"** Starting Player: {self.first_player} **")
 
-    def display_second_player(self):
-        print(f"{self.second_player}'s Turn")
+    def display_initial_second_player(self):
+        print(f"** Starting Player: {self.second_player} **")
 
     def alternate_game_starting_player(self):
         if self.human.is_playing_first:
