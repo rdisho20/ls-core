@@ -216,9 +216,6 @@ class TTTGame:
         self.board.mark_square_at(choice, self.human.marker)
 
     def computer_moves(self):
-        choice = self.offensive_computer_move()
-        if not choice:
-            choice = self.defensive_computer_move()
         choice = self.computer_critical_move()
         
         if not choice:
@@ -244,31 +241,17 @@ class TTTGame:
 
         return None
 
-    def offensive_computer_move(self):
-        for row in TTTGame.POSSIBLE_WINNING_ROWS:
-            choice = self.find_the_right_square(row, self.computer.marker)
-            if choice:
-                return choice
-
-        return None
-
-    def defensive_computer_move(self):
-        for row in TTTGame.POSSIBLE_WINNING_ROWS:
-            choice = self.find_the_right_square(row, self.human.marker)
-            if choice:
-                return choice
-
-        return None
-    '''
     def computer_critical_move(self):
         for row in TTTGame.POSSIBLE_WINNING_ROWS:
-            choice = (self.find_the_right_square(row, self.computer.marker) or
-                      self.find_the_right_square(row, self.human.marker))
+            aggressive = self.find_the_right_square(row, self.computer.marker)
+            defensive = self.find_the_right_square(row, self.human.marker)
+            choice = aggressive or defensive
+
             if choice:
                 return choice
         
         return None
-    '''
+
     def pick_center_square(self):
         return 5 if self.board.squares[5].is_unused() else None
 
