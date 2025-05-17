@@ -60,3 +60,51 @@ horizontally, vertically, or diagonally.
 3. Display the final state of the board.
 4. Display the final result.
 5. Display a goodbye message.
+
+***
+
+# Bonus Features
+## Keeping Score
+Rule: First player to reach 3 wins is the match winner
+- report current score after each game
+- make it clear when a player wins the match
+- end program after 1 full match
+
+### Description:
+A player wins a match when he/she has 3 wins. A player can keep their own score  
+or they can depend on the board to tally and display the score or the game engine  
+can tally and display the score as the game master.
+
+### Variables & Methods
+- `player_score`
+    - a player has a score
+    - @ class
+- `MAX_WINS`
+    - a player has a cap on the amount of wins they can have
+    - who checks their wins?
+- `update_score()`
+    - a player can update their own score
+    - the game master (`TTTGame` class) updates and keeps track of score (probably more logical)
+- `display_match_winner()`
+    - the game master displays the match winner
+    - if a player has won the match...
+        - print winner and loser
+- `match_won()`
+    - if match has been won, someone's score must be == 3...
+
+## Swap Players
+### Description
+The human player plays first during the first game, then the computer plays first the following game.
+The game master can keep track of whos turn it is, but a player can declare its own state!
+
+### Variables & Methods
+- `playing_first`
+    - *ie* `self.human.playing_first == True`
+- `alternate_game_starting_player()`
+    - `TTTGame` can check after game is over who was `playing_first`
+
+
+- `is_taking_turn`
+    - *ie* `self.human.takes_turn == True`
+- `activate_turn()` & `deactivate_turn()`
+    - @ `Player` class
