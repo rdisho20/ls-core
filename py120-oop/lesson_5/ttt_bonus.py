@@ -2,7 +2,10 @@ import random
 import os
 
 def clear_screen():
-    os.system('clear')
+    if os.name == 'posix':
+        os.system('clear')
+    else:
+        os.system('cls')
 
 class Square:
     INITIAL_MARKER = " "
@@ -28,6 +31,9 @@ class Square:
 
 class Board:
     def __init__(self):
+        self.reset()
+    
+    def reset(self):
         self.squares = {key: Square() for key in range(1, 10)}
 
     def display(self):
@@ -50,10 +56,6 @@ class Board:
               f"  {self.squares[9]}")
         print("     |     |")
         print()
-
-    def reset_board(self):
-        # STUB
-        pass
 
     def mark_square_at(self, key, marker):
         self.squares[key].marker = marker
@@ -97,7 +99,7 @@ class Computer(Player):
         super().__init__(Square.COMPUTER_MARKER)
 
 class TTTGame:
-    POSSIBLE_WINNING_ROWS = (
+    POSSIBLE_WINNING_ROWS = {
         (1, 2, 3),  # top row of board
         (4, 5, 6),  # center row of board
         (7, 8, 9),  # bottom row of board
@@ -106,7 +108,7 @@ class TTTGame:
         (3, 6, 9),  # right column of board
         (1, 5, 9),  # diagonal: top-left to bottom-right
         (3, 5, 7),  # diagonal: top-right to bottom-left
-    )
+    }
 
     def __init__(self):
         self.board = Board()
@@ -143,33 +145,37 @@ class TTTGame:
 
             print("Please enter a valid choice: (y/n)")
 
+        clear_screen()
         return user_input == 'y'
-
-    def play(self):
-        self.display_welcome_message()
+    
+    def play_one_game(self):
+        self.board.reset()
         self.board.display()
 
         while True:
+            self.human_moves()
+            if self.is_game_over():
+                break
 
-            while True:
-                self.human_moves()
-                if self.is_game_over():
-                    break
-
-                self.computer_moves()
-                if self.is_game_over():
-                    break
-
-                self.board.display_with_clear()
+            self.computer_moves()
+            if self.is_game_over():
+                break
 
             self.board.display_with_clear()
-            self.display_results()
+        
+        self.board.display_with_clear()
+        self.display_results()
 
+    def play(self):
+        self.display_welcome_message()
+
+        while True:
+            self.play_one_game()
             if not TTTGame._play_again():
                 break
-            
-            self.board.__init__()
-            self.board.display_with_clear()
+
+            print("Let's play again!")
+            print()
 
         self.display_goodbye_message()
 
@@ -210,9 +216,65 @@ class TTTGame:
         self.board.mark_square_at(choice, self.human.marker)
 
     def computer_moves(self):
-        valid_choices = self.board.unused_squares()
-        choice = random.choice(valid_choices)
+        choice = self.offensive_computer_move()
+        if not choice:
+            choice = self.defensive_computer_move()
+        choice = self.computer_critical_move()
+        
+        if not choice:
+            choice = self.pick_center_square()
+        if not choice:
+            choice = self.pick_random_square()
+
         self.board.mark_square_at(choice, self.computer.marker)
+
+    def find_the_right_square(self, row, player_marker):
+        occupied = set()
+
+        for square in row:
+            if self.board.squares[square].marker == player_marker:
+                occupied.add(square)
+
+                if len(occupied) == 2:
+                    difference = set(row) - occupied
+                    select_square = list(difference)
+
+                    if self.board.squares[select_square[0]].is_unused():
+                        return select_square.pop()
+
+        return None
+
+    def offensive_computer_move(self):
+        for row in TTTGame.POSSIBLE_WINNING_ROWS:
+            choice = self.find_the_right_square(row, self.computer.marker)
+            if choice:
+                return choice
+
+        return None
+
+    def defensive_computer_move(self):
+        for row in TTTGame.POSSIBLE_WINNING_ROWS:
+            choice = self.find_the_right_square(row, self.human.marker)
+            if choice:
+                return choice
+
+        return None
+    '''
+    def computer_critical_move(self):
+        for row in TTTGame.POSSIBLE_WINNING_ROWS:
+            choice = (self.find_the_right_square(row, self.computer.marker) or
+                      self.find_the_right_square(row, self.human.marker))
+            if choice:
+                return choice
+        
+        return None
+    '''
+    def pick_center_square(self):
+        return 5 if self.board.squares[5].is_unused() else None
+
+    def pick_random_square(self):
+        valid_choices = self.board.unused_squares()
+        return random.choice(valid_choices)
 
     def is_game_over(self):
         return self.board.is_full() or self.someone_won()
