@@ -69,7 +69,6 @@ class Board:
         return len(self.unused_squares()) == 0
 
     def count_markers_for(self, player, keys):
-        # getting a list to count the number of markers
         markers = [self.squares[key].marker for key in keys]
         return markers.count(player.marker)
 
@@ -81,6 +80,7 @@ class Board:
 class Player:
     def __init__(self, marker):
         self.marker = marker
+        self.score = 0
 
     @property
     def marker(self):
@@ -89,6 +89,17 @@ class Player:
     @marker.setter
     def marker(self, value):
         self._marker = value
+
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, score):
+        self._score = score
+
+    def increment_score(self):
+        self.score += 1
 
 class Human(Player):
     def __init__(self):
@@ -99,6 +110,7 @@ class Computer(Player):
         super().__init__(Square.COMPUTER_MARKER)
 
 class TTTGame:
+    MATCH_GOAL = 3
     POSSIBLE_WINNING_ROWS = {
         (1, 2, 3),  # top row of board
         (4, 5, 6),  # center row of board
@@ -155,28 +167,35 @@ class TTTGame:
         while True:
             self.human_moves()
             if self.is_game_over():
+                self.update_score()
                 break
 
             self.computer_moves()
             if self.is_game_over():
+                self.update_score()
                 break
 
             self.board.display_with_clear()
         
         self.board.display_with_clear()
+        self.display_score()
         self.display_results()
-
-    def play(self):
-        self.display_welcome_message()
-
+    
+    def play_match(self):
+        print("Win 3 games to win the MATCH!")
         while True:
             self.play_one_game()
-            if not TTTGame._play_again():
+            if self.match_won() or not TTTGame._play_again():
                 break
 
             print("Let's play again!")
             print()
 
+        self.display_match_results()
+
+    def play(self):
+        self.display_welcome_message()
+        self.play_match()
         self.display_goodbye_message()
 
     def display_welcome_message(self):
@@ -194,6 +213,24 @@ class TTTGame:
             print("The Computer won! You lose!")
         else:
             print("The game is a tie!")
+
+    def display_score(self):
+        print("---------------\n"
+              "** GAMES WON **\n"
+              "---------------")
+        print(f"Human:    {self.human.score}")
+        print(f"Computer: {self.computer.score}")
+        print()
+
+    def display_match_results(self):
+        if self.match_winner(self.human):
+            print(f"----------------\n"
+                  f"HUMAN WINS MATCH\n"
+                  f"----------------")
+        elif self.match_winner(self.computer):
+            print(f"-------------------\n"
+                  f"COMPUTER WINS MATCH\n"
+                  f"-------------------")
 
     def human_moves(self):
         valid_choices = self.board.unused_squares()
@@ -217,7 +254,7 @@ class TTTGame:
 
     def computer_moves(self):
         choice = self.computer_critical_move()
-        
+
         if not choice:
             choice = self.pick_center_square()
         if not choice:
@@ -275,6 +312,19 @@ class TTTGame:
                 return True
 
         return False
+
+    def update_score(self):
+        if self.is_winner(self.human):
+            self.human.increment_score()
+        elif self.is_winner(self.computer):
+            self.computer.increment_score()
+
+    def match_won(self):
+        return (self.human.score == TTTGame.MATCH_GOAL or
+                self.computer.score == TTTGame.MATCH_GOAL)
+
+    def match_winner(self, player):
+        return player.score == TTTGame.MATCH_GOAL
 
 game = TTTGame()
 game.play()
