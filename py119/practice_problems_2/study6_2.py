@@ -86,3 +86,44 @@ print(find_common_characters(["cool", "lock", "cook"]) == {"c", "o"})
 print(find_common_characters(["hello", "world"]) == {"o", "l"})
 print(find_common_characters([]) == set())
 print(find_common_characters(["aaa", "bbb", "ccc"]) == set())
+
+'''
+Areas for improvement:
+
+1. Simplified AlgorithmThe current implementation uses a circular checking 
+approach that's unnecessarily complex. We can simplify this by using Python's 
+set intersection functionality:
+
+def find_common_characters(lst):
+    if not lst:
+        return set()
+    
+    # Use the first string's characters as our starting set
+    result = set(lst[0])
+    
+    # Intersect with each remaining string
+    for word in lst[1:]:
+        result &= set(word)  # Same as result = result & set(word)
+    
+    return result
+
+This approach is more straightforward - start with all characters from the first 
+string, then reduce to only those that appear in all subsequent strings.
+
+2. Avoiding Circular LogicYour implementation uses circular logic 
+(checking the last element against the first), which isn't necessary for this problem:
+
+def find_common_characters(lst):
+    if not lst:
+        return set()
+        
+    char_sets = [set(word) for word in lst]  # Use list comprehension for cleaner code
+    
+    # Start with first set and find intersection with all others
+    result = char_sets[0]
+    for char_set in char_sets[1:]:
+        result &= char_set
+        
+    return result
+
+'''
