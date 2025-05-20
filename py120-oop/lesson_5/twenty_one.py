@@ -7,6 +7,18 @@ def clear_screen():
     else:
         os.system('cls')
 
+def prompt(message):
+    print(f"===> {message}")
+
+def large_divider(message):
+    print(''.join(['=' for _ in range(len(message))]))
+
+def small_divider(message):
+    print(''.join(['-' for _ in range(len(message))]))
+
+def page_break():
+    print("============================================================")
+
 class Deck:
     SUITS = ('Hearts', 'Diamonds', 'Spades', 'Clubs')
     VALUES = ('2', '3', '4', '5', '6', '7', '8', '9', '10',
@@ -67,7 +79,6 @@ class Hand:
 class Participant:
     def __init__(self):
         self.hand = Hand()
-        self.active_state = True
 
     def initialize(self):
         self.__init__()
@@ -105,19 +116,12 @@ class Dealer(Participant):
     def __init__(self):
         super().__init__()
 
-    def hide_card(self):
-        # STUB
-        pass
-
-    def reveal_hidden_card(self):
-        # STUB
-        pass
-
 class TwentyOneGame:
-    MAX_POINTS = 21
+    PLAYER = 'Player'
+    DEALER = 'Dealer'
+    BEST_SCORE = 21
     DEALER_MIN = 17
-    # program quits when player is broke (0 dollars)
-    # program quits when player is rich (>= 10 dollars)
+
     def __init__(self):
         self.deck = Deck()
         self.player = Player()
@@ -125,19 +129,28 @@ class TwentyOneGame:
 
     def start(self):
         self.display_welcome_message()
-        self.deal_initial_hands()
 
-        #### TODO ####
-        self.player_turn()
-        self.dealer_turn()
+        while True:
+            #### TODO: implement betting dollars ####
+            # program quits when player is broke (0 dollars)
+            # program quits when player is rich (>= 10 dollars)
 
-        self.display_game_results()
+            self.deal_initial_hands()
+            self.display_initial_hands()
 
-        if self.player.is_poor() or self.player.is_rich():
-            self.end_game()
-        
-        self.initialize_participants()
-        self.play_again()
+            self.process_turns()
+
+            self.compare_totals()
+            self.display_final_total_and_hands()
+            self.display_winner()
+
+            if self.player.is_poor() or self.player.is_rich():
+                self.end_game()
+            
+            self.initialize_participants()
+            if not self.play_again():
+                break
+
         self.display_goodbye_message()
     
     def deal_initial_hands(self):
@@ -151,40 +164,127 @@ class TwentyOneGame:
         card = self.deck.cards.pop()
         participant.hand.cards.append(card)
         participant.hand.update_value_total()
+    
+    def display_initial_hands(self):
+        print()
+        prompt(f"Dealer's hand: {self.dealer.hand.cards[0]} and ?")
+        prompt(f"Your Hand: {self.player.hand}")
+        print()
 
-    def display_hands(self):
-        print(f"Your Hand: {self.player.hand}")
-        print(f"Dealer Hand: {self.dealer.hand}")
+    def get_current_hand(self, participant):
+        return participant.hand
 
     def player_turn(self):
-        pass
+        while True:
+            player_total = self.get_hand_total(self.player)
+
+            if self.busted(self.player):
+                break
+
+            prompt(f"PLAYER'S TOTAL: {player_total}")
+            prompt("hit (h) or stay (s)?")
+            answer = input().lower()
+
+            if answer == 's':
+                break
+            if answer == 'h':
+                self.hit(self.player)
+                prompt(f"PLAYER'S hand: {self.player.hand}")
+            else:
+                prompt("Try again you silly goose!")
+
+        if self.busted(self.player):
+            prompt(f"PLAYER'S TOTAL: {player_total}")
+            prompt("You BUSTED!\n")
+        else:
+            prompt("You chose to STAY!\n")
 
     def dealer_turn(self):
-        # Player doesn't play at all if player busts
-        # display dealer hand, revealing hidden card
-        # display dealer card value total
-        # Re-display and and point total after each hit
-        # display results when dealer stays
-        pass
+        while True:
+            dealer_total = self.get_hand_total(self.dealer)
+            prompt(f"DEALER'S hand: {self.dealer.hand}")
+            prompt(f"DEALER'S TOTAL: {dealer_total}")
 
-    def participant_busts(self):
-        # STUB
-        # checks totals each time after Participant chooses
-        # to hit
-        pass
-    def get_totals(self):
-        # STUB
-        pass
+            if dealer_total == TwentyOneGame.BEST_SCORE:
+                prompt("DEALER has 21!\n")
+                return
+            if self.busted(self.dealer):
+                prompt("DEALER BUSTED!\n")
+                break
+            if self.dealer_stays():
+                prompt("Dealer STAYS.\n")
+                break
+
+            prompt("Dealer HITS!")
+            print()
+            self.hit(self.dealer)
+
+    def hit(self, participant):
+        self.deal_card_to(participant)
+
+    def busted(self, participant):
+        return participant.hand.value_total > TwentyOneGame.BEST_SCORE
+    
+    def dealer_stays(self):
+        return self.dealer.hand.value_total >= TwentyOneGame.DEALER_MIN
+    
+    def process_turns(self):
+        self.player_turn()
+
+        if not self.end_round():
+            self.dealer_turn()
+    
+    def end_round(self):
+        return self.busted(self.player)
+    
     def compare_totals(self):
-        # STUB
-        # COMPARES total values returning highest value
-        pass
-    def determine_winner(self):
-        # STUB
-        pass
-    def display_game_results(self):
-        # STUB
-        pass
+        player_total = self.get_hand_total(self.player)
+        dealer_total = self.get_hand_total(self.dealer)
+
+        if not self.busted(self.player) and self.busted(self.dealer):
+            return TwentyOneGame.PLAYER
+        if self.busted(self.player) and not self.busted(self.dealer):
+            return TwentyOneGame.DEALER
+        if player_total > dealer_total:
+            return TwentyOneGame.PLAYER
+        if player_total < dealer_total:
+            return TwentyOneGame.DEALER
+
+        return None
+
+    def get_hand_total(self, participant):
+        return participant.hand.value_total
+    
+    def display_final_total_and_hands(self):
+        player_total = self.get_hand_total(self.player)
+        dealer_total = self.get_hand_total(self.dealer)
+        player_cards = self.get_current_hand(self.player)
+        dealer_cards = self.get_current_hand(self.dealer)
+
+        print("ROUND TOTAL & HANDS:\n")
+        print(f"PLAYER:\n"
+            f"Total: {player_total}\n"
+            f"Cards: {player_cards}\n")
+        print(f"DEALER:\n"
+            f"Total: {dealer_total}\n"
+            f"Cards: {dealer_cards}\n")
+    
+    def display_winner(self):
+        winner = self.compare_totals()
+
+        if not winner:
+            no_win_msg = "ROUND RESULT: TIE!"
+            large_divider(no_win_msg)
+            print(no_win_msg)
+            large_divider(no_win_msg)
+            print()
+        elif winner:
+            win_msg = f"ROUND WINNER: {winner}"
+            large_divider(win_msg)
+            print(win_msg)
+            large_divider(win_msg)
+            print()
+
     def display_remaining_player_dollars(self):
         # STUB
         pass
@@ -193,12 +293,23 @@ class TwentyOneGame:
         self.player.initialize()
         self.dealer.initialize()
 
-    def play_again(self):
-        # start new game if yes,  otherwise end game
-        pass
+    def play_again():
+        prompt("Want to play again? Please type (y or n):")
+        while True:
+            answer = input().strip().lower()
+
+            match answer:
+                case 'y':
+                    return True
+                case 'n':
+                    return False
+                case _:
+                    prompt("Please try either 'y' or 'n':")
+
     def end_game(self):
         # checks if player is poor or rich
         pass
+
     def display_welcome_message(self):
         print("Welcome to Twenty-One!")
     def display_goodbye_message(self):
