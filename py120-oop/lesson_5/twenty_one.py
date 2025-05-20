@@ -18,11 +18,8 @@ class Deck:
                      for suit in Deck.SUITS]
         random.shuffle(self.cards)
 
-    def __str__(self):
-        return f"{self.cards}"
-
     def initialize(self):
-        self.__class__.__init__()
+        self.__init__()
 
 class Card:
     def __init__(self, value, suit):
@@ -35,20 +32,45 @@ class Card:
 class Hand:
     def __init__(self):
         self.cards = []
-        self.value_total = 0
+    
+    def __str__(self):
+        cards = [str(card) for card in self.cards]
+        return ", ".join(cards)
+    
+    def update_value_total(self):
+        values = [card.value for card in self.cards]
 
-    def reset(self):
-        self.cards.clear()
+        total = 0
+        for value in values:
+            if value == "Ace":
+                total += 11
+            elif value in ["Jack", "Queen", "King"]:
+                total += 10
+            else:
+                total += int(value)
+
+        aces = values.count("Ace")
+        while total > 21 and aces:
+            total -= 10
+            aces -= 1
+        
+        self.value_total = total
+    
+    @property
+    def value_total(self):
+        return self._value_total
+    
+    @value_total.setter
+    def value_total(self, value_total):
+        self._value_total = value_total
 
 class Participant:
-    # Each participant starts w/ empty hand
-    # dealt 2 cards
-    # initial dealing done in engine
-    # avoiding additional parameters/arguements in classes
-    #### ACTUALLY MAYBE NOT ####
-    # Each participant can be dealt additional cards
     def __init__(self):
         self.hand = Hand()
+        self.active_state = True
+
+    def initialize(self):
+        self.__init__()
 
     # Don't know how to implement YET
     def take_turn(self):
@@ -83,16 +105,6 @@ class Dealer(Participant):
     def __init__(self):
         super().__init__()
 
-    # Dealer collabs w/ Game Engine
-    # Hand and Deck collabs w/ Dealer
-    def deals_hand(self, hand, deck):
-        for _ in range(0, 2):
-            self.deal_card(hand, deck)
-        
-    def deal_card(self, hand, deck):
-        card = deck.pop()
-        hand.cards.append(card)
-
     def hide_card(self):
         # STUB
         pass
@@ -113,7 +125,9 @@ class TwentyOneGame:
 
     def start(self):
         self.display_welcome_message()
+        self.deal_initial_hands()
 
+        #### TODO ####
         self.player_turn()
         self.dealer_turn()
 
@@ -122,18 +136,29 @@ class TwentyOneGame:
         if self.player.is_poor() or self.player.is_rich():
             self.end_game()
         
+        self.initialize_participants()
         self.play_again()
         self.display_goodbye_message()
     
-    def process_dealing_hands(self):
-        self.dealer.deals_hand(self.player.hand, self.deck)
-        self.dealer.deals_hand(self.dealer.hand, self.deck)
+    def deal_initial_hands(self):
+        """Deal two cards to each participant."""
+        for _ in range(2):
+            self.deal_card_to(self.player)
+            self.deal_card_to(self.dealer)
+        # Hide dealer's first card if needed
+    
+    def deal_card_to(self, participant):
+        card = self.deck.cards.pop()
+        participant.hand.cards.append(card)
+        participant.hand.update_value_total()
+
+    def display_hands(self):
+        print(f"Your Hand: {self.player.hand}")
+        print(f"Dealer Hand: {self.dealer.hand}")
 
     def player_turn(self):
-        # each time player can hit or stay
-        # display computer's hand; 1 card hidden
-        # display player's hand and card value total
         pass
+
     def dealer_turn(self):
         # Player doesn't play at all if player busts
         # display dealer hand, revealing hidden card
@@ -141,6 +166,7 @@ class TwentyOneGame:
         # Re-display and and point total after each hit
         # display results when dealer stays
         pass
+
     def participant_busts(self):
         # STUB
         # checks totals each time after Participant chooses
@@ -162,6 +188,11 @@ class TwentyOneGame:
     def display_remaining_player_dollars(self):
         # STUB
         pass
+
+    def initialize_participants(self):
+        self.player.initialize()
+        self.dealer.initialize()
+
     def play_again(self):
         # start new game if yes,  otherwise end game
         pass
