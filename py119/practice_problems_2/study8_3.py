@@ -69,3 +69,16 @@ print(can_form_target(["ab", "cd", "ef"], "aceg") == False)
 print(can_form_target(["hello", "world"], "helloworld") == True)
 print(can_form_target(["hello", "world"], "helloworldz") == False)
 print(can_form_target(["abc", "def", "ghi"], "adg") == True)
+
+'''LSBot
+from collections import Counter # counter just creating dictionary map of characters and counts
+
+def can_form_target(string_list, target):
+    combined_chars = ''.join(string_list)
+    combined_counter = Counter(combined_chars)
+    target_counter = Counter(target)
+    
+    # Check if all target characters can be formed from available characters
+    return all(target_counter[char] <= combined_counter[char] for char in target_counter) # good use of all()
+
+'''
