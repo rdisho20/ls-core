@@ -30,25 +30,22 @@ class Deck:
                      for suit in Deck.SUITS]
         random.shuffle(self.cards)
 
-    def initialize(self):
-        self.__init__()
-
 class Card:
     def __init__(self, value, suit):
         self.value = value
         self.suit = suit
-    
+
     def __str__(self):
         return f"{self.value} of {self.suit}"
 
 class Hand:
     def __init__(self):
         self.cards = []
-    
+
     def __str__(self):
         cards = [str(card) for card in self.cards]
         return ", ".join(cards)
-    
+
     def update_value_total(self):
         values = [card.value for card in self.cards]
 
@@ -65,40 +62,21 @@ class Hand:
         while total > 21 and aces:
             total -= 10
             aces -= 1
-        
+
         self.value_total = total
-    
-    @property
-    def value_total(self):
-        return self._value_total
-    
-    @value_total.setter
-    def value_total(self, value_total):
-        self._value_total = value_total
 
 class Participant:
     def __init__(self):
         self.hand = Hand()
 
-    def initialize(self):
-        self.__init__()
-
-    # Don't know how to implement YET
-    def take_turn(self):
-        # STUB
-        pass
-    def stay(self):
-        # STUB
-        pass
-    def hit(self):
-        # STUB
-        pass
+    def reset_hand(self):
+        self.hand = Hand()
 
 class Player(Participant):
     def __init__(self):
         super().__init__()
         self.betting_dollars = 5
-    
+
     def add_dollar(self):
         self.betting_dollars += 1
 
@@ -106,19 +84,18 @@ class Player(Participant):
         self.betting_dollars -= 1
 
     def is_rich(self):
-        # STUB
-        pass
+        return self.betting_dollars >= 10
+
     def is_poor(self):
-        # STUB
-        pass
+        return self.betting_dollars == 0
 
 class Dealer(Participant):
     def __init__(self):
         super().__init__()
 
 class TwentyOneGame:
-    PLAYER = 'Player'
-    DEALER = 'Dealer'
+    PLAYER = Player.__name__
+    DEALER = Dealer.__name__
     BEST_SCORE = 21
     DEALER_MIN = 17
 
@@ -128,13 +105,12 @@ class TwentyOneGame:
         self.dealer = Dealer()
 
     def start(self):
+        clear_screen()
         self.display_welcome_message()
+        self.display_betting_dollars_purpose()
 
         while True:
-            #### TODO: implement betting dollars ####
-            # program quits when player is broke (0 dollars)
-            # program quits when player is rich (>= 10 dollars)
-
+            self.display_remaining_player_dollars()
             self.deal_initial_hands()
             self.display_initial_hands()
 
@@ -143,28 +119,36 @@ class TwentyOneGame:
             self.compare_totals()
             self.display_final_total_and_hands()
             self.display_winner()
+            self.update_player_dollars()
 
-            if self.player.is_poor() or self.player.is_rich():
-                self.end_game()
-            
-            self.initialize_participants()
+            if self.end_game():
+                self.display_end_game_message()
+                break
+
+            self.reset_participants_hands()
             if not self.play_again():
                 break
 
         self.display_goodbye_message()
-    
+
     def deal_initial_hands(self):
-        """Deal two cards to each participant."""
         for _ in range(2):
             self.deal_card_to(self.player)
             self.deal_card_to(self.dealer)
-        # Hide dealer's first card if needed
-    
+
     def deal_card_to(self, participant):
+        '''
+        Check if any cards left in deck, initialize deck if not
+        Deal cards to each players
+        '''
+        cards_left = len(self.deck.cards)
+        if not cards_left:
+            self.deck = Deck()
+
         card = self.deck.cards.pop()
         participant.hand.cards.append(card)
         participant.hand.update_value_total()
-    
+
     def display_initial_hands(self):
         print()
         prompt(f"Dealer's hand: {self.dealer.hand.cards[0]} and ?")
@@ -224,19 +208,19 @@ class TwentyOneGame:
 
     def busted(self, participant):
         return participant.hand.value_total > TwentyOneGame.BEST_SCORE
-    
+
     def dealer_stays(self):
         return self.dealer.hand.value_total >= TwentyOneGame.DEALER_MIN
-    
+
     def process_turns(self):
         self.player_turn()
 
         if not self.end_round():
             self.dealer_turn()
-    
+
     def end_round(self):
         return self.busted(self.player)
-    
+
     def compare_totals(self):
         player_total = self.get_hand_total(self.player)
         dealer_total = self.get_hand_total(self.dealer)
@@ -252,25 +236,33 @@ class TwentyOneGame:
 
         return None
 
+    def get_winner(self):
+        return self.compare_totals()
+
     def get_hand_total(self, participant):
         return participant.hand.value_total
-    
-    def display_final_total_and_hands(self):
-        player_total = self.get_hand_total(self.player)
-        dealer_total = self.get_hand_total(self.dealer)
-        player_cards = self.get_current_hand(self.player)
-        dealer_cards = self.get_current_hand(self.dealer)
 
+    def update_player_dollars(self):
+        winner = self.get_winner()
+
+        if not winner:
+            return
+        if winner in TwentyOneGame.PLAYER:
+            self.player.add_dollar()
+        else:
+            self.player.subtract_dollar()
+
+    def display_final_total_and_hands(self):
         print("ROUND TOTAL & HANDS:\n")
         print(f"PLAYER:\n"
-            f"Total: {player_total}\n"
-            f"Cards: {player_cards}\n")
+              f"Total: {self.get_hand_total(self.player)}\n"
+              f"Cards: {self.get_current_hand(self.player)}\n")
         print(f"DEALER:\n"
-            f"Total: {dealer_total}\n"
-            f"Cards: {dealer_cards}\n")
-    
+              f"Total: {self.get_hand_total(self.dealer)}\n"
+              f"Cards: {self.get_current_hand(self.dealer)}\n")
+
     def display_winner(self):
-        winner = self.compare_totals()
+        winner = self.get_winner()
 
         if not winner:
             no_win_msg = "ROUND RESULT: TIE!"
@@ -285,21 +277,26 @@ class TwentyOneGame:
             large_divider(win_msg)
             print()
 
+    def display_betting_dollars_purpose(self):
+        print("If you finish with more than $10, you are RICH! (Game ends)")
+        print("If you lose all of your betting dollars, "
+              "you are POOR! (Game ends)")
+
     def display_remaining_player_dollars(self):
-        # STUB
-        pass
+        print(f"Remaing BETTING DOLLARS: ${self.player.betting_dollars}")
 
-    def initialize_participants(self):
-        self.player.initialize()
-        self.dealer.initialize()
+    def reset_participants_hands(self):
+        self.player.reset_hand()
+        self.dealer.reset_hand()
 
-    def play_again():
+    def play_again(self):
         prompt("Want to play again? Please type (y or n):")
         while True:
             answer = input().strip().lower()
 
             match answer:
                 case 'y':
+                    clear_screen()
                     return True
                 case 'n':
                     return False
@@ -307,11 +304,22 @@ class TwentyOneGame:
                     prompt("Please try either 'y' or 'n':")
 
     def end_game(self):
-        # checks if player is poor or rich
-        pass
+        if self.player.is_poor() or self.player.is_rich():
+            return True
+
+        return False
+
+    def display_end_game_message(self):
+        if self.player.is_poor():
+            print("You are POOR! Game Over!")
+
+        if self.player.is_rich():
+            print("You are RICH! Game Over!")
 
     def display_welcome_message(self):
         print("Welcome to Twenty-One!")
+        print()
+
     def display_goodbye_message(self):
         print("Thank you for playing Twenty-One. Goodbye!")
 
