@@ -8,6 +8,16 @@ of applying the operation to the numbers.
 Test Cases:
 '''
 
+operations = {
+    'add': lambda x, y: x + y,
+    'subtract': lambda x, y: x - y,
+    'multiply': lambda x, y: x * y,
+    'divide': lambda x, y: x / y,
+}
+
+def calculate(x, y, op_type):
+    return operations[op_type](x, y)
+
 # Expected outputs:
 print(calculate(10, 5, 'add'))        # 15
 print(calculate(10, 5, 'subtract'))   # 5
