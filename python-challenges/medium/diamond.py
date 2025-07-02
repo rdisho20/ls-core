@@ -17,10 +17,21 @@ I-rules:
 No lowercase letter inputs allowed
 
 D-
-given letters position in alphabet string, use number to
-handle calculations for spacing of width @ widest point
-    could use dictionary to help making a list to handle
-    each print line building outwards top and bottom <- center
+utilize vertical & horizontal symmetry
+    given position of widest point letter (input)
+    in alphabet, subtract 1 from index position,
+    == top & bottom height
+    widest point == (index position * 2) - 3
+    ie F idx posit == 6, len = 11 - 2 cuz 2 Fs (9 spaces)
+
+use dictionary -> map spaces values -> get lines -> printing
+OR append to list, then when printing lines get index position (.index())
+    for each letter
+
+#### STILL NEED -> GET LEFT SPACES
+for every line built from the middle (2 lines, top & bottom)
+    increment 'total_spaces_from_left' by 1
+    append 'total_spaces_from_left' to line's final string
 
 NOUNS & VERBS
 N-
@@ -30,76 +41,114 @@ A-
 If 'letter' is "A" print "A"
     (OR maybe append to 'diamond_list'?)
 Otherwise
-    For each letter (exluding "A") up to and including the input letter
-        get 'current_line_width' by subtracting 'spaces_count' from the 'widest_length'
-            divide 'current_line_width' by 2 for left and right spaces
-        append the string f"{left}{letter}{spaces}{letter}{right}" to 'diamond_list'
+    append A -> 'diamond_first_half'
+    for each letter starting w/ B idx position up to input letters index position + 1
+        get spaces by (index position * 2) - 3
+        append f"{letter}{" " * ((idx * 2) - 3)}{letter}"
+    
+    copy the list popped then reverse assigned to 'diamond_second_half'
 
-join the list for both top and bottom with a new line (\n)
-    top is 'diamond_list' and bottom is 'diamond_list'[::-1]
-    strip the last new line .strip(\n) or .rstrip(\n)?
+    get index position of input letter assigned to "input_letter_position"
+    THEN, for each line in 'diamond_first_half'
+        subtract current letter's index position from "input_letter_position"
+        print the line with that many spaces inserted in front
+    
+    FINALLY, for each line in 'diamond_second_half' reversed
+        subtract current letter's index position from "input_letter_position"
+        print the line with that many spaces inserted in front
 
-print the joined list
 
 A (get widest point)-
 Given an input letter, find its index in ALPHABET
 
+     A
+    B B
+   C   C
+  D     D
+ E       E
+F         F
+ E       E
+  D     D
+   C   C
+    B B
+     A
+
+(center spaces)
+B - posit = 2 => 4 - 3 = 1 space
+C - posit = 3 => 6 - 3 = 3 space
+D - posit = 4 => 8 - 3 = 5 space
+E - posit = 5 => 10 - 3 = 7 space
+F - posit = 6 => 12 - 3 = 9 space
+
 '''
 
 class Diamond:
-    ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    spaces = {letter: space_count
-                  for space_count, letter in enumerate(ALPHABET)}
+    ALPHABET = "_ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     
     @classmethod
-    def display(cls, input_letter):
+    def make_diamond(cls, input_letter):
         if input_letter == "A":
-            print(input_letter)
-
+            return input_letter
         else:
-            diamond_list = []
+            input_letter_idx = cls.get_input_letter_idx(input_letter)
+            
+            diamond_first_half = cls.get_first_half(input_letter)
+            
+            diamond_second_half = cls.get_second_half(diamond_first_half)
+            
+            final_first = []
+            for idx, line in enumerate(diamond_first_half):
+                left_spaces = (input_letter_idx - 1) - idx
+                final_first.append(f"{left_spaces * ' '}{line}")
+            
+            final_second = []
+            for line in diamond_second_half:
+                line_letter_posit = cls.ALPHABET.index(line[0])
+                left_spaces = (input_letter_idx - 1) - line_letter_posit + 1
+                final_second.append(f"{left_spaces * ' '}{line}")
+            
+            return '\n'.join(final_first + final_second)
 
-            widest_length = cls.get_widest_length(input_letter)
-            spaces_between = cls.get_spaces_between(input_letter)
-            print(widest_length)
-            print(spaces_between)
-            for spaces, letter in enumerate(cls.ALPHABET[1:widest_length + 1]):
-                current_line_width = abs(spaces - widest_length)
+    @classmethod
+    def get_first_half(cls, input_letter):
+        diamond_first_half = ['A']
+        input_letter_idx = cls.get_input_letter_idx(input_letter)
 
-                if current_line_width % 2 == 0:
-                    l_r_spaces = current_line_width // 2
-                if current_line_width % 2 == 1:
-                    l_r_spaces = (current_line_width // 2)
-                
-                diamond_list.append(f"{" " * l_r_spaces}{letter}{" " * spaces}{letter}"
-                                    f"{" " * l_r_spaces}")
-                print(diamond_list)
+        for idx in range(2, input_letter_idx + 1):
+            middle_spaces = (idx * 2) - 3
+            line = cls.get_line(cls.ALPHABET[idx], middle_spaces)
+            diamond_first_half.append(line)
+        
+        return diamond_first_half
     
     @classmethod
-    def get_diamond_list(cls, letter):
-        pass
+    def get_second_half(cls, first_half):
+        return first_half[-2::-1]
     
     @classmethod
-    def get_widest_length(cls, letter):
-        spaces_between = cls.get_spaces_between(letter)
-        return spaces_between + 2
+    def get_input_letter_idx(cls, letter):
+        return cls.ALPHABET.index(letter)
     
     @classmethod
-    def get_spaces_between(cls, letter):
-        if letter == "B":
-            return 1
-        if letter == "C":
-            return 3
-        return cls.spaces[letter] + 1
+    def get_line(cls, letter, spaces_count):
+        return f"{letter}{' ' * spaces_count}{letter}"
 
-
+'''
 diamond = Diamond()
 
-# diamond.display("A")
-# print()
-# diamond.display("B")
-# print()
-diamond.display("C")
+diamond.make_diamond("A")
 print()
-diamond.display("E")
+diamond.make_diamond("B")
 print()
+diamond.make_diamond("C")
+print()
+diamond.make_diamond("E")
+print()
+diamond.make_diamond("P")
+print()
+diamond.make_diamond("Z")
+print()
+'''
+
+diamond = Diamond()
+print(diamond.make_diamond("Z"))
