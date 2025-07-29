@@ -21,20 +21,8 @@ def users():
 
 @app.route('/users/<name>')
 def get_info(name):
-    email = ''
-    interests = ''
-
-    for person in g.data.keys():
-        if person == name:
-            for info, value in g.data[person].items():
-                if info == "email":
-                    email = value
-                else:
-                    for idx, item in enumerate(value):
-                        if idx == len(value) - 1:
-                            interests = interests + item
-                        else:
-                            interests = interests + f"{item}, "
+    email = g.data[name]['email']
+    interests = ', '.join(g.data[name]['interests'])
 
     return render_template("display_info.html",
                            users=g.data,
