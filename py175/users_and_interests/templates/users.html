@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>Users</h1>
+{% for name in users.keys() %}
+<p><a href="{{ url_for('get_info', name=name) }}">{{ name.capitalize() }}</a></p>
+{% endfor %}
+{% endblock %}

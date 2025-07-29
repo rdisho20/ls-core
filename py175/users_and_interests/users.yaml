@@ -1,0 +1,21 @@
+jamy:
+  email: jamy.rustenburg@gmail.com
+  interests:
+    - woodworking
+    - cooking
+    - reading
+nora:
+  email: nora.alnes@yahoo.com
+  interests:
+    - cycling
+    - basketball
+    - economics
+hiroko:
+  email: hiroko.ohara@hotmail.com
+  interests: []
+boba:
+  email: boba.mobroda@billionsofdollars.com
+  interests:
+    - making money
+    - making more money
+    - making even more money

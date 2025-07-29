@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users & Interests</title>
+  </head>
+
+  <body>
+    <div class="content">
+        {% block content %}{% endblock %}        
+    </div>
+    <footer>
+        There are {{ users_total }} users with a total of {{ interests_total }} interests
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>{{ name }}</h1>
+<h2>Email: {{ email }}</h2>
+
+<strong>Interests: </strong>
+{% if not interests %}
+    No interests to display
+{% else %}
+    {{ interests }}
+{% endif %}
+
+<h3>
+{% for person in users.keys() %}
+    {% if person.casefold() != name.casefold() %}
+        <a href="{{ url_for('get_info', name=person) }}">{{ person.capitalize() }}</a>
+    {% endif %}
+{% endfor %}
+</h3>
+
+{% endblock %}
