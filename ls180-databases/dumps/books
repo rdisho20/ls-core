@@ -1,0 +1,1462 @@
+\q
+\q
+\conninfo
+\q
+\q
+\q
+SELECT * FROM orders;
+\dt
+\q
+SELECT * FROM orders;
+SELECT side FROM orders;
+SELECT id FROM orders
+;
+SELECT burger FROM orders;
+SELECT drinks, side, id FROM orders;
+SELECT drink, side, id FROM orders;
+SELECT * FROM orders WHERE id = 1;
+SELECT * FROM orders WHERE id=1;
+SELECT * FROM orders WHERE id = 6;
+SELECT customer_name FROM orders WHERE side = "Onion Rings";
+SELECT customer_name FROM orders WHERE side = 'Onion Rings';
+SELECT Joyce Silva FROM orders;
+SELECT burger, side, drink FROM orders WHERE id = 2;
+SELECT customer_name FROM orders WHERE side = 'Onion Rings';
+\q
+\list
+CREATE DATABASE another_database
+CREATE DATABASE yet_another_database
+\list
+\q
+CREATE DATABASE another_database;
+CREATE DATABASE yet_another_database;
+\list
+\q
+\c another_database
+\connect yet_another_database
+DROP DATABASE another_database;
+\q
+\list
+\q
+\e
+\q
+CREATE DATABASE database_two;
+\connect database_two
+\list
+\c database_one
+DROP DATABASE database_two;
+\q
+CREATE TABLE users (
+id serial UNIQUE NOT NULL,
+username char(25),
+enabled boolean DEFAULT TRUE
+);
+SELECT * FROM users;
+\dt
+\d users
+\q
+CREATE TABLE countries (
+id serial,
+name varchar(50),
+captial varchar(50),
+population integer);
+DROP DATABASE encyclopedia
+\q
+CREATE TABLE countries (
+id serial,
+name varchar(50) UNIQUE NOT NULL,
+capital varchar(50) NOT NULL,
+population integer);
+CREATE TABLE famous_people (
+id serial,
+name varchar(100) NOT NULL,
+occupation varchar(150),
+date_of_birth date,
+deceased boolean DEFAULT FALSE);
+DROP TABLE famous_people;
+\dt
+\d countries
+CREATE TABLE famous_people (
+  id serial,
+  name varchar(100) NOT NULL,
+  occupation varchar(150),
+  date_of_birth varchar(50),
+  deceased boolean DEFAULT false
+);
+CREATE TABLE animals (
+id serial,
+name varchar(100) NOT NULL,
+binomial_name varchar(100) NOT NULL,
+max_weight decimal(8,3) CHECK (max_weight < 40,000) CHECK (max_weight > 0.001),
+conservation_status text CHECK (LENGTH(conservation_status) = 2));
+Check Constraints 
+A check constraint is the most generic constraint type. It allows you to specify that the value in a certain column must satisfy a Boolean (truth-value) expression. For instance, to require positive product prices, you could use:
+CREATE TABLE products (
+    product_no integer,
+    name text,
+    price numeric CHECK (price > 0)
+);
+As you see, the constraint definition comes after the data type, just like default value definitions. Default values and constraints can be listed in any order. A check constraint consists of the key word CHECK followed by an expression in paren\q
+\d countries
+\dt famous_people
+\d famous_people
+\dt
+CREATE TABLE animals (
+  id serial,
+  name varchar(100) NOT NULL,
+  binomial_name varchar(100) NOT NULL,
+  max_weight_kg decimal(8,3),
+  max_age_years integer,
+  conservation_status char(2)
+);
+\dt
+\d animals
+CREATE DATABASE ls_burger;
+\connect ls_burger
+CREATE TABLE orders (
+id serial,
+customer_name varchar(100) NOT NULL,
+burger varchar(50),
+side varchar(50),
+drink varchar(50),
+order_total decimal(5,2) NOT NULL);
+\dt
+\d orders
+DROP TABLE orders;
+CREATE TABLE orders (
+  id serial,
+  customer_name varchar(100) NOT NULL,
+  burger varchar(50),
+  side varchar(50),
+  drink varchar(50),
+  order_total decimal(4,2) NOT NULL
+);
+\d orders
+\c sql_book
+\d users
+ALTER TABLE users
+RENAME TO all_users;
+\d users
+\dt
+\d all_users
+ALTER TABLE all_users
+RENAME COLUMN username TO full_name;
+\d all_users
+ALTER TABLE all_users
+ALTER COLUMN full_name TYPE varchar(25);
+\d all_users
+ALTER TABLE all_users
+ALTER COLUMN full_name
+set not null;
+\d all_users
+ALTER TABLE all_users
+ADD COLUMN last_login timestamp
+NOT NULL
+DEFAULT NOW();
+\d all_users
+\connect encyclopedia
+ALTER TABLE encyclopedia
+RENAME COLUMN famous_people TO celebrities;
+\dt
+ALTER TABLE famous_people RENAME TO celebrities;
+\dt
+ALTER TABLE celebrities
+RENAME COLUMN name TO first_name
+ALTER COLUMN name TYPE varchar(80);
+\d celebrities
+ALTER TABLE celebrities
+rename column name to first_name;
+\d celebrities
+alter table celebrities
+alter column first_name type varchar(80)
+;
+\d celebrities
+ALTER TABLE celebrities
+ADD COLUMN last_name varchar(100)
+NOT NULL;
+\d celebrities
+ALTER TABLE celebrities
+ALTER COLUMN date_of_birth TYPE date NOT NULL;
+ALTER TABLE celebrities
+;
+ALTER TABLE celebrities
+ALTER COLUMN date_of_birth
+TYPE date
+USING date_of_birth::date
+NOT NULL;
+ALTER TABLE celebrities
+ALTER COLUMN date_of_birth
+TYPE date
+USING date_of_birth::date
+SET NOT NULL;
+ALTER TABLE celebrities
+ALTER COLUMN date_of_birth
+TYPE date
+USING date_of_birth::date;
+ALTER TABLE celebrities
+ALTER COLUMN date_of_birth
+SET NOT NULL;
+\d celebrities
+ALTER TABLE animals
+;
+\d animals
+ALTER TABLE animals
+ALTER COLUMN max_weight_kg
+ADD CONSTRAINT weight_range CHECK (max_weight_kg < 200000)
+ADD CONSTRAINT wieght_range_low CHECK (max_weight_kg > 0.0001);
+ALTER TABLE animals
+ALTER COLUMN max_weight_kg
+TYPE decimal(10,4);
+\d animals
+ALTER TABLE animals
+ALTER COLUMN binomial_name
+ADD CONSTRAINT unique_name UNIQUE;
+alter table animals
+add constraint unique (binomial_name);
+alter table animals
+add unique (binomial_name);
+\c ls_burger
+\dt
+alter table orders
+ADD COLUMN customer_email varchar(50),
+ADD COLUMN customer_loyalty_points integer DEFAULT 0;
+alter table orders
+add column burger_cost decimal(4,2) default 0,
+add column side_cost decimal(4,2) default 0,
+add column drink_cost decimal(4,2) default 0;
+\d orders
+alter table orders
+drop column order_total;
+\d orders
+\c sql_book
+\d users
+\dt
+\d all_users
+DROP TABLE all_users;
+\dt
+CREATE TABLE users (
+    id serial UNIQUE NOT NULL,
+    full_name character varying(25) NOT NULL,
+    enabled boolean DEFAULT true,
+    last_login timestamp without time zone DEFAULT now()
+);
+SELECT * FROM users;
+\d users
+INSERT INTO users VALUES ('John Smith', false);
+INSERT INTO users (full_name, enabled) VALUES ('John Smith', false);
+select * from users;
+INSERT INTO users (full_name) VALUES ('Jane Smith'), ('Harry Potter');
+select * from users;
+\d users
+ALTER TABLE users ADD CHECK (full_name <> '');
+INSERT INTO users (id, full_name) VALUES (4, '');
+\d users
+\c encyclopedia
+ALTER TABLE countries
+;
+\d countries
+alter table countries (name, capital, population)
+;
+INSERT INTO countries (name, capital, population)
+values ('France', 'Paris', 67158000);
+select * from countries
+SELECT * FROM users
+SELECT * FROM countries
+;
+select * from countries;
+INSERT INTO countries (name, capital, population)
+VALUES ('USA', 'Washington D.C.', 325365189),
+('Germany', 'Berlin', 82349400),
+('Japan', 'Tokyo', 126672000);
+select * from countries;
+\d celebrities
+insert into celebrities (first_name, occupation, data_of_birth, deceased, last_name)
+values ('Bruce', 'Singer', Sep-23-1949, , 'Springsteen');
+INSERT INTO celebrities (first_name, last_name, occupation, date_of_birth, deceased)
+              VALUES ('Bruce', 'Springsteen', 'Singer, Songwriter', '1949-09-23', false);
+insert into celebrities (first_name, last_name, occupation, date_of_birth, deceased)
+values ('Scarlett', 'Johansson', 'Actress', '1984-11-22');
+INSERT INTO celebrities (first_name, last_name, occupation, date_of_birth)
+                 VALUES ('Scarlett', 'Johansson', 'Actress', '1984-11-22');
+insert into celebrities (first_name, last_name, occupation, date_of_birth)
+values ('Frank', 'Sinatra', 'Singer, Actor', '1915-12-12', true),
+('Tom', 'Cruise', 'Actor', '1962-07-03', DEFAULT);
+INSERT INTO celebrities (first_name, last_name, occupation, date_of_birth, deceased)
+                VALUES ('Frank', 'Sinatra', 'Singer, Actor', '1915-12-12', true),
+                       ('Tom', 'Cruise', 'Actor', '1962-07-03', DEFAULT);
+select * from celebrities
+;
+\d celebrities
+alter table celebrities
+alter column last_name
+drop NOT NULL;
+insert into celebrities (first_name, occupation, date_of_birth, deceased)
+values ('Madonna', 'Singer, Actress', '1958-08-16', false),
+('Prince', 'Singer, Songwriter, Musician, Actor', '1958-06-07', true);
+select * from celebrities
+;
+\d celebrities
+INSERT INTO celebrities (first_name, last_name, occupation, date_of_birth, deceased)
+                VALUES ('Frank', 'Sinatra', 'Singer, Actor', '1915-12-12', true),
+                       ('Tom', 'Cruise', 'Actor', '1962-07-03', DEFAULT);
+select * from celebrities;
+delete from celebrities where id = 7;
+delete from celebrities where id = 8;
+INSERT INTO celebrities (first_name, last_name, occupation, date_of_birth, deceased)
+                VALUES ('Frank', 'Sinatra', 'Singer, Actor', '1915-12-12', true),
+\c sql-book
+INSERT INTO celebrities (first_name, last_name, occupation, date_of_birth, deceased)
+                 VALUES ('Elvis', 'Presley', 'Singer, Musician, Actor', '1935-08-01', NULL);
+INSERT INTO celebrities (first_name, last_name, occupation, date_of_birth, deceased)
+                 VALUES ('Elvis', 'Presley', 'Singer, Musician, Actor', '1935-08-01', NULL);
+select * from celebrities
+;
+\d animals
+alter table animals
+drop constraint 'animals_binomial_name_key' UNIQUE (binomial_name);
+alter table animals
+drop constraint animals_binomial_name_key unique (binomial_name);
+alter table animals
+drop constraint animals_binomial_name_key;
+\d animals
+insert into animals
+(name, binomial_name, max_weight_kg, max_age_years, conservation_status)
+values ('Dove', 'Columbidae Columbiformes', 2, 15, 'LC'),
+('Golden Eagle', 'Aquila Chrysaetos', 6.35, 24, 'LC'),
+('Peregrine Falcon', 'Falco Peregrinus', 1.5, 15, 'LC'),
+('Pigeon', 'Columbidae Columbiformes', 2, 15, 'LC'),
+('Kakapo', 'Strigops habroptila', 4, 60, 'CR');
+select * from animals
+;
+\q
+\c ls_burger
+\d orders
+INSERT INTO orders (customer_name, customer_email, customer_loyalty_points, burger, side, drink, burger_cost, side_cost, drink_cost)\q
+INSERT INTO orders (customer_name, customer_email, customer_loyalty_points, burger, side, drink, burger_cost, side_cost, drink_cost)
+            VALUES ('James Bergman', 'james1998@email.com', 28, 'LS Chicken Burger', 'Fries', 'Cola', 4.50, 0.99, 1.50),
+                   ('Natasha O''Shea', 'natasha@osheafamily.com', 18, 'LS Cheeseburger', 'Fries', NULL, 3.50, 0.99, DEFAULT),
+                   ('Natasha O''Shea', 'natasha@osheafamily.com', 42, 'LS Double Deluxe Burger', 'Onion Rings', 'Chocolate Shake', 6.00, 1.50, 2.00),
+                   ('Aaron Muller', NULL, 10, 'LS Burger', NULL, NULL, 3.00, DEFAULT, DEFAULT);
+select * from orders
+;
+\d orders
+\c sql_book
+select enabled, full_name from users where id < 2;
+select * from users;
+SELECT full_name, enabled FROM users
+ORDER BY enabled;
+SELECT full_name, enabled FROM users
+ORDER BY enabled DESC;
+SELECT id, full_name, enabled FROM users
+ORDER BY enabled DESC, id DESC;
+SELECT full_name, enabled, last_login
+FROM users
+WHERE id >= 2;
+SELECT * FROM my_table WHERE my_column IS NULL;
+SELECT * from users where full_name = 'Harry Potter' or enabled = 'false';
+select * from users where full_name = 'Harry Potter' and enabled = 'false';
+\c encyclopedia
+\dt
+select population from countries where country = 'USA';
+\d countries
+SELECT population FROM countries WHERE name = 'USA';
+SELECT population, capital FROM countries;
+SELECT name FROM countries WHERE ASC;
+SELECT name FROM countries WHERE name ASC;
+select name from countries order by name;
+SELECT name, capital FROM countries ORDER BY population;
+SELECT name, capital FROM countries ORDER BY population DESC;
+select * from animals;
+SELECT name, bionomial_name, max_weight_kg, max_age_years FROM animals ORDER BY max_age_years;
+SELECT name, binomial_name, max_weight_kg, max_age_years FROM animals
+ORDER BY max_age_years, max_weight_kg, name DESC;
+select * from countries;
+SELECT name FROM countries WHERE population > 70000000;
+SELECT name FROM countries WHERE population > 70000000 AND population < 200000000;
+select * from celebrities;
+SELECT first_name, last_name FROM celebrities WHERE deceased <> true;
+SELECT first_name, last_name FROM countries WHERE LIKE '%Singer';
+SELECT first_name, last_name FROM countries WHERE occupation LIKE '%Singer';
+SELECT first_name, last_name FROM celebrities WHERE occupation LIKE '%Singer';
+SELECT DISTINCT occupation FROM celebrities;
+SELECT first_name, last_name
+FROM celebrities
+WHERE occupation LIKE '%Singer%';
+SELECT first_name, last_name
+FROM celebrities
+WHERE occupation LIKE '%Singer';
+SELECT first_name, last_name FROM celebrities WHERE occupation LIKE '%Act%';
+SELECT first_name, last_name FROM celebrities WHERE occupation LIKE '%Act%'
+AND WHERE occupation LIKE '%Sing%';
+SELECT first_name, last_name FROM celebrities WHERE occupation LIKE '%Act%' AND occupation LIKE '%Singer%';
+SELECT first_name, last_name
+FROM celebrities
+WHERE (occupation LIKE '%Actor%' OR occupation LIKE '%Actress%')
+AND occupation LIKE '%Singer%';
+\c ls_burger
+\d orders
+select * from orders;
+SELECT burger FROM orders WHERE burger_cost < 5;
+SELECT burger FROM orders WHERE burger_cost < 5 ORDER BY burger_cost;
+SELECT customer_name, customer_email, customer_loyalty_points FROM orders
+WHERE customer_loyalty_points >= 20
+ORDER BY customer_loyalty_points DESC;
+SELECT burger FROM orders WHERE customer_name = 'Natasha O''Shea';
+SELECT customer_name FROM orders WHERE drink IS NULL;
+SELECT burger, side, drink FROM orders WHERE side <> 'Fries';
+SELECT burger, side, drink FROM orders
+WHERE side <> 'Fries 
+' OR side IS NULL;
+SELECT burger, side, drink
+FROM orders
+WHERE side != 'Fries'
+OR side IS NULL;
+SELECT burger, side, drink FROM orders WHERE (side, drink) IS NOT NULL;
+\c sql_book
+\dt
+\d users
+select * from users;
+SELECT * FROM users LIMIT 1;
+SELECT * FROM users LIMIT 2;
+SELECT * FROM users LIMIT 1 OFFSET 1;
+SELECT * FROM users LIMIT 1 OFFSET 2;
+INSERT INTO users (id, full_name) VALUES (4, 'Harry Potter');
+INSERT INTO users (id, full_name) VALUES (5, 'Jane Smith');
+select full_name from users;
+SELECT DISTINCT full_name FROM users;
+SELECT count(DISTINCT full_name) FROM USERS;
+SELECT count(full_name) FROM users;
+\q
+select * from users;
+select full_name, date_part('year', last_login) from users;
+select full_name, age(last_login) from users;
+select count(enabled) from users;
+select full_name from users where count(enabled = true);
+select count(full_nae) from users where enabled = true;
+select count(full_name) from users where enabled = true;
+select full_name, count(full_name) from users where enabled = true;
+select count(full_name) from users group by full_name;
+select count(full_name) from users where enabled = true group by full_name;
+select full_name from users where enabled = true group by full_name;
+select full_name from users where enabled = true;
+select full_name, count(id) from users group by full_name;
+select full_name, count(id) from users where enabled = true;
+select full_name, count(enabled) from users group by enabled;
+select full_name, enabled, count(id) from users where enabled = true group by enabled;
+select enabled, full_name, count(id) from users;
+select enabled, full_name, count(id) from users group by enabled, fulle_name;
+select enabled, full_name, count(id) from users group by enabled, full_name;
+select full_name, count(id) from users where enabled = true group by full_name;
+select full_name, count(full_name) from users;
+select full_name, count(full_name) from users group by full_name;
+select full_name from users group by id;
+select * from users;
+select full_name from users group by id, full_name;
+\d users
+\c encyclopedia
+select * from countries limit 1;
+SELECT name, max(population) FROM countries GROUP BY name;
+SELECT max(population) FROM countries GROUP BY name;
+SELECT max(population) FROM countries GROUP BY name LIMIT 1;
+SELECT name, MAX(population) FROM countries GROUP BY name LIMIT 1;
+select max(population) from countries;
+select name, max(population) from countries;
+SELECT name FROM countries HAVING max(population);
+SELECT name FROM countries HAVING population = MAX(population);
+SELECT name FROM countries HAVING population = MAX(population) GROUP BY name;
+select name from countries group by name having population = max(population);
+select name from (select max(population) from countries);
+select * from countries;
+SELECT name FROM countries WHERE population = (SELECT max(popuplation) FROM countries);
+SELECT name FROM countries WHERE population = (SELECT max(population) FROM countries);
+SELECT name FROM countries ORDER BY population DESC LIMIT 1;
+SELECT name FROM countries ORDER BY population DESC LIMIT 1 OFFSET 1;
+FROM DISTINCT binomial_name FROM animals;
+SELECT DISTINCT binomial_name FROM animals;
+SELECT binomial_name FROM animals ORDER BY LENGTH(binomial_name) DESC LIMIT 1;
+select * from celebrities;
+SELECT first_name FROM celebrities WHERE date_part('year', date_of_birth) = 1958;
+SELECT age FROM animals ORDER BY age DESC LIMIT 1;
+SELECT * FROM ANIMALS;
+SELECT max_age_years FROM animals ORDER BY max_age_years DESC LIMIT 1;
+select max(max_age_years) from animals;
+select avg(max_weight_kg) from animals;
+select sum(name) from countries;
+select count(name) from countries;
+SELECT sum(population) FROM countries;
+select * from animals;
+SELECT conservation_status, sum(id) FROM animals GROUP BY conservation_status;
+SELECT conservation_status, count(id) FROM animals GROUP BY conservation_status;
+\c ls_burger
+SELECT avg(burger_cost) FROM orders WHERE side = 'Fries';
+SELECT min(side_cost) FROM orders;
+SELECT min(side_cost) FROM orders WHERE side IS NOT NULL;
+SELECT count(id) FROM orders WHERE side = 'Fries' AND side = 'Onion Rings' GROUP BY side;
+SELECT count(id) FROM orders WHERE side = 'Fries' AND side = 'Onion Rings';
+SELECT count(id) FROM orders WHERE side = 'Fries' OR side = 'Onion Rings' GROUP BY side;
+SELECT side, count(id)
+FROM orders
+WHERE side = 'Fries'
+OR side = 'Onion Rings'
+GROUP BY side;
+\q
+UPDATE users SET enabled = false;
+select * from users;
+UPDATE users SET enabled = true
+WHERE full_name = 'Harry Potter'
+OR full_name = 'Jane Smith';
+select * from users;
+UPDATE users SET full_name = 'Alice Walker' WHERE id = 2;
+select full_name from users where id = 2;
+select * from users;
+select * from users ORDER BY id;
+DELETE FROM users WHERE full_name = Harry Potter AND id > 3;
+DELETE FROM users WHERE full_name = 'Harry Potter' AND id > 3;
+\c encyclopedia
+ALTER TABLE animals ADD COLUMN class varchar(100);
+\d animals;
+UPDATE animals SET class = 'Aves';
+select * from animals;
+ALTER TABLE animals ADD COLUMN phylum varchar(100), ADD COLUMN kingdom varchar(100);
+\d animals;
+UPDATE animals SET phylum = 'Chordata', kingdom = 'Animalia';
+select * from animals;
+ALTER TABLE countries ADD COLUMN continent varchar(50);
+select * from countries;
+UPDATE countries SET continent = 'Europe'
+WHERE name = 'France' OR name = 'Germany';
+select * from countries;
+UPDATE countries SET continent = 'Asia'
+WHERE name = 'Japan';
+UPDATE countries SET continent = 'North America'
+WHERE name = 'USA';
+select * from countries;
+UPDATE celebrities SET deceased = true
+WHERE first_name = 'Elvis'
+;
+select * from celebrities;
+\d celebrities
+ALTER TABLE celebrities ALTER COLUMN deceased DROP IS NOT NULL;
+ALTER TABLE celebrities ALTER COLUMN deceased DROP NOT NULL;
+\d celebrities
+ALTER TABLE celebrities ALTER COLUMN deceased SET NOT NULL;
+\d celebrities
+select * from celebrities;
+DELETE FROM celebrities WHERE first_name = 'Tom';
+select * from celebrities;
+ALTER TABLE celebrities
+RENAME TO singers;
+select * from singers;
+DELETE FROM singers
+WHERE occupation != '%Singer%';
+INSERT INTO singers (id, first_name, occupation, date_of_birth, deceased, last_name) VALUES
+(1, 'Bruce', 'Singer, Songwriter', '1949-09-23', 'f', 'Springsteen');
+INSERT INTO singers (id, first_name, occupation, date_of_birth, deceased, last_name) VALUES
+(2, 'Scarlett', 'Actress', '1984-11-22', 'f', 'Johansson');
+INSERT INTO singers (id, first_name, occupation, date_of_birth, deceased, last_name) VALUES
+(3, 'Frank', 'Singer, Actor', '1915-12-12', 't', 'Sinatra');
+INSERT INTO singers (id, first_name, occupation, date_of_birth, deceased, last_name) VALUES
+(5, 'Madonna', 'Singer, Actress', '1958-08-16', 'f', '');
+INSERT INTO singers (id, first_name, occupation, date_of_birth, deceased, last_name) VALUES
+(6, 'Prince', 'Singer, Songwriter, Musician, Actor', '1958-06-07', 't', '');
+INSERT INTO singers (id, first_name, occupation, date_of_birth, deceased, last_name) VALUES
+(9, 'Elvis', 'Singer, Musician, Actor', '1935-08-01', 't', 'Presley');
+select * from singers;
+DELETE FROM singers WHERE occupation NOT LIKE '%Singer%';
+select * from singers;
+select * from countries;
+DELETE FROM countries;
+\c ls_burger
+select * from orders;
+UPDATE orders SET drink = 'Lemonade' WHERE customer_name = 'James Bergman';
+UPDATE orders SET side = 'Fries' WHERE id = 4;
+UPDATE orders SET customer_loyalty_points = 13 WHERE id = 4;
+UPDATE orders SET side_cost = 0.99 WHERE id =ET side_cost = 0.99 WHERE id = 4;
+UPDATE orders SET side_cost = 0.99 WHERE id = 4;
+select * from orders;
+UPDATE orders SET side_cost = 1.2 WHERE side = 'Fries';
+select * from orders;
+\c sql_book
+ALTER TABLE users ADD PRIMARY KEY (id);
+CREATE TABLE addresses (
+user_id int,
+street varchar(30) NOT NULL,
+city varchar(30) NOT NULL,
+state varchar(30) NOT NULL,
+PRIMARY KEY (user_id),
+FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE);
+INSERT INTO addresses (user_id, street, city, state)
+VALUES (1, '1 Market Street', 'San Francisco', 'CA'),
+(2, '2 Elm Street', 'San Francisco', 'CA'),
+(3, '3 Main Street', 'Boston', 'MA');
+select * from addresses;
+CREATE TABLE books (
+id serial,
+title varchar(100) NOT NULL,
+author varchar(100) NOT NULL,
+published_date timestamp NOT NULL,
+isbn char(12),
+PRIMARY KEY (id),
+UNIQUE (isbn));
+CREATE TABLE reviews (
+id serial,
+book_id integer NOT NULL,
+reviewer_name varchar(255),
+content varchar(255),
+published_date timestamp DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY (id),
+FOREIGN KEY (book_id) REFERENCES books (id) ON DELETE CASCADE);
+INSERT INTO books
+  (id, title, author, published_date, isbn)
+  VALUES
+      (1, 'My First SQL Book', 'Mary Parker',
+          '2012-02-22 12:08:17.320053-03',
+          '981483029127'),
+      (2, 'My Second SQL Book', 'John Mayer',
+          '1972-07-03 09:22:45.050088-07',
+          '857300923713'),
+      (3, 'My Third SQL Book', 'Cary Flint',
+          '2015-10-18 14:05:44.547516-07',
+          '523120967812');
+INSERT INTO reviews
+  (id, book_id, reviewer_name, content, rating,
+       published_date)
+  VALUES
+      (1, 1, 'John Smith', 'My first review', 4,
+          '2017-12-10 05:50:11.127281-02'),
+      (2, 2, 'John Smith', 'My second review', 5,
+          '2017-10-13 15:05:12.673382-05'),
+      (3, 2, 'Alice Walker', 'Another review', 1,
+          '2017-10-22 23:47:10.407569-07');
+ALTER TABLE reviews ADD COLUMN rating integer;
+\d reviews
+INSERT INTO reviews
+  (id, book_id, reviewer_name, content, rating,
+       published_date)
+  VALUES
+      (1, 1, 'John Smith', 'My first review', 4,
+          '2017-12-10 05:50:11.127281-02'),
+      (2, 2, 'John Smith', 'My second review', 5,
+          '2017-10-13 15:05:12.673382-05'),
+      (3, 2, 'Alice Walker', 'Another review', 1,
+          '2017-10-22 23:47:10.407569-07');
+select * from books;
+select * from addresses;
+select * from reviews;
+CREATE TABLE checkouts (
+id serial,
+user_id int NOT NULL,
+book_id int NOT NULL,
+checkout_date timestamp,
+return_date timestamp,
+PRIMARY KEY (id),
+FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+FOREIGN KEY (book_id) REFERENCES books (id) ON DELETE CASCADE);
+INSERT INTO checkouts (id, user_id, book_id, checkout_date, return_date)
+VALUES
+    (1, 1, 1, '2017-10-15 14:43:18.095143-07',
+              NULL),
+    (2, 1, 2, '2017-10-05 16:22:44.593188-07',
+              '2017-10-13 13:0:12.673382-05'),
+    (3, 2, 2, '2017-10-15 11:11:24.994973-07',
+              '2017-10-22 17:47:10.407569-07'),
+    (4, 5, 3, '2017-10-15 09:27:07.215217-07',
+              NULL);
+select * from checkouts;
+\c encyclopedia
+CREATE TABLE continents (
+id serial,
+continent_name\q
+\d countries
+CREATE TABLE continents (
+id serial,
+continent_name varchar(50),
+PRIMARY KEY (id));
+\d continents
+\d countries
+ALTER TABLE countries DROP COLUMN continent;
+\d countries
+\d continents
+ALTER TABLE countries
+ADD COLUMN continent_id integer;
+\d countries
+ALTER TABLE countries
+FOREIGN KEY continent_id
+REFERENCES ;
+ALTER TABLE countries
+FOREIGN KEY (continent_id)
+REFERENCES continents (id)
+ON DELETE CASCADE;
+ALTER TABLE countries
+ADD FOREIGN KEY continent_id
+REFERENCES continents (id);
+ALTER TABLE countries
+ADD FOREIGN KEY (continent_id)
+REFERENCES continents (id);
+select * from continents;
+select * from countries;
+\d continents
+INSERT INTO continents (continent_name)
+VALUES ('Europe'), ('North America'), ('Asia'), ('Africa'), ('South America');
+select * from continents
+;
+\d countries
+INSERT INTO countries (name, capital, population, continent_id)
+VALUES ('France', 'Paris', 67158000, 1),
+('USA', 'Washington D.C.', 325365189, 2),
+('Germany', 'Berlin', 82349400, 1),
+('Japan', 'Tokyo', 126672000, 3),
+('Egypt', 'Cairo', 96308900, 4),
+('Brazil', 'Brasilia', 208385000, 5);
+DELETE FROM countries;
+DELETE FROM continents;
+INSERT INTO continents (continent_name)
+VALUES 
+  ('Africa'),
+  ('Asia'),
+  ('Europe'),
+  ('North America'),
+  ('South America');
+INSERT INTO countries (name, capital, population, continent_id)
+VALUES
+  ('Brazil', 'Brasilia', 208385000, 5),
+  ('Egypt', 'Cairo', 96308900, 1),
+  ('France', 'Paris', 67158000, 3),
+  ('Germany', 'Berlin', 82349400, 3),
+  ('Japan', 'Tokyo', 126672000, 2),
+  ('USA', 'Washington D.C.', 325365189, 4);
+\d continents
+\d countries
+select * from continents;
+DELETE FROM countries;
+DELETE FROM continents;
+ALTER SEQUENCE continents_id_seq RESTART WITH 1;
+ALTER SEQUENCE countries_id_seq RESTART WITH 1;
+INSERT INTO continents (continent_name)
+VALUES 
+  ('Africa'),
+  ('Asia'),
+  ('Europe'),
+  ('North America'),
+  ('South America');
+select * from continents;
+INSERT INTO countries (name, capital, population, continent_id)
+VALUES
+  ('Brazil', 'Brasilia', 208385000, 5),
+  ('Egypt', 'Cairo', 96308900, 1),
+  ('France', 'Paris', 67158000, 3),
+  ('Germany', 'Berlin', 82349400, 3),
+  ('Japan', 'Tokyo', 126672000, 2),
+  ('USA', 'Washington D.C.', 325365189, 4);
+CREATE TABLE albums (
+album_name varchar(100),
+released date,
+genre varchar(100),
+label varchar(100),
+singer_id integer);
+select * from singers
+;
+INSERT INTO albums
+;
+ALTER TABLE albums
+ADD COLUMN id serial;
+\d albums
+ALTER TABLE albums
+ADD PRIMARY KEY (id);
+ALTER TABLE albums
+ADD FOREIGN KEY (singer_id)
+REFERENCES singers (id);
+ALTER TABLE singers
+ADD PRIMARY KEY (id);
+ALTER TABLE albums
+ADD FOREIGN KEY (singer_id)
+REFERENCES singers (id);
+select * from singers;
+select * from singers;
+select * from albums;
+ALTER TABLE albums
+ADD CONSTRAINT UNIQUE (singer_id);
+ALTER TABLE albums
+ADD CONSTRAINT unique_id UNIQUE (singer_id);
+\d albums;
+ALTER TABLE albums
+DROP CONSTRAINT unique_id;
+\d albums
+ALTER TABLE singers
+ADD CONSTRAINT unique_singer_id UNIQUE (id);
+\d singers;
+INSERT INTO albums (album_name, released, genre, label, singer_id)
+VALUES ('Born to Run', '1975-08-25', 'Rock and roll', 'Columbia', 1),
+('Purple Rain', '1984-06-25', 'Pop, R&B, Rock', 'Warner Bros', 6),
+('Born in the USA', '1984-06-04', 'Rock and roll, pop', 'Columbia', 1),
+('Madonna', '1983-07-27', 'Dance-pop, post-disco', 'Warner Bros', 5),
+('True Blue', '1986-06-30', 'Dance-pop, Pop', 'Warner Bros', 5),
+('Elvis', '1956-10-19', 'Rock and roll, Rhythm and Blues', 'RCA Victor', 7),
+('Sign o'' the Times', '1987-03-30', 'Pop, R&B, Rock, Funk', 'Paisley Park, Warner Bros', 6),
+('G.I. Blues', '1960-10-01', 'Rock and roll, Pop', 'RCA Victor', 7);
+select * from singers;
+INSERT INTO albums (album_name, released, genre, label, singer_id)
+VALUES ('Born to Run', '1975-08-25', 'Rock and roll', 'Columbia', 1),
+('Purple Rain', '1984-06-25', 'Pop, R&B, Rock', 'Warner Bros', 6),
+('Born in the USA', '1984-06-04', 'Rock and roll, pop', 'Columbia', 1),
+('Madonna', '1983-07-27', 'Dance-pop, post-disco', 'Warner Bros', 5),
+('True Blue', '1986-06-30', 'Dance-pop, Pop', 'Warner Bros', 5),
+('Elvis', '1956-10-19', 'Rock and roll, Rhythm and Blues', 'RCA Victor', 9),
+('Sign o'' the Times', '1987-03-30', 'Pop, R&B, Rock, Funk', 'Paisley Park, Warner Bros', 6),
+('G.I. Blues', '1960-10-01', 'Rock and roll, Pop', 'RCA Victor', 9);
+select * from albums;
+DELETE FROM albums;
+ALTER SEQUENCE albums_id_seq RESTART WITH 1;
+INSERT INTO albums (album_name, released, genre, label, singer_id)
+VALUES ('Born to Run', '1975-08-25', 'Rock and roll', 'Columbia', 1),
+('Purple Rain', '1984-06-25', 'Pop, R&B, Rock', 'Warner Bros', 6),
+('Born in the USA', '1984-06-04', 'Rock and roll, pop', 'Columbia', 1),
+('Madonna', '1983-07-27', 'Dance-pop, post-disco', 'Warner Bros', 5),
+('True Blue', '1986-06-30', 'Dance-pop, Pop', 'Warner Bros', 5),
+('Elvis', '1956-10-19', 'Rock and roll, Rhythm and Blues', 'RCA Victor', 9),
+('Sign o'' the Times', '1987-03-30', 'Pop, R&B, Rock, Funk', 'Paisley Park, Warner Bros', 6),
+('G.I. Blues', '1960-10-01', 'Rock and roll, Pop', 'RCA Victor', 9);
+select * from albums;
+\c ls_burger
+\q
+select * from orders;
+CREATE TABLE customers (
+id serial,
+customer_name varchar(100),
+email_id integer
+);
+CREATE TABLE email_addresses (
+id serial,
+customer_email varchar(100),
+customer_id integer,
+PRIMARY KEY (id));
+ALTER TABLE customers
+ADD PRIMARY KEY (id);
+ALTER TABLE customers
+ADD FOREIGN KEY (email_id)
+;
+ALTER TABLE customers
+DROP COLUMN email_id;
+ALTER TABLE email_addresses
+ADD FOREIGN KEY (customer_id)
+REFERENCES customers (id);
+ALTER TABLE email_addresses
+ADD CONSTRAINT unique_customer_id UNIQUE (customer_id);
+select * from orders;
+INSERT INTO customers
+;
+INSERT INTO customers (customer_name)
+VALUES ('Natasha O'' Shea'), ('James Berman'), ('Aaron Muller');
+select * from customers;
+INSERT INTO email_addresses (customer_email, customer_id)
+VALUES ('natasha@osheafamily.com', 1), ('james1998@email.com', 2);
+ALTER TABLE email_addresses
+DROP COLUMN id;
+select * from email_addresses;
+ALTER TABLE email_addresses
+ADD PRIMARY KEY (customer_id);
+\d email_addresses
+\d customers
+UPDATE customers
+SET customer_name = 'Natasha O''Shea'
+WHERE customer_name = 'Natasha O'' Shea';
+select * from customers
+;
+ALTER TABLE email_addresses
+ADD CONSTRAINT delete_email ON DELETE CASCADE (customer_id);
+ALTER TABLE email_addresses
+DROP CONSTRAINT email_addresses_customer_id_fkey;
+\d email_addresses
+ALTER TABLE email_addresses
+ADD FOREIGN KEY customer_id
+REFERENCES customers (id)
+ON DELETE CASCADE;
+ALTER TABLE email_addresses
+ADD FOREIGN KEY (customer_id)
+REFERENCES customers (id)
+ON DELETE CASCADE;
+DELETE FROM email_addresses;
+DELETE FROM customers;
+ALTER SEQUENCE customers_id_seq RESTART WITH 1;
+\d customers
+INSERT INTO customers (id, customer_name)
+VALUES (1, 'James Bergman'),
+   (2, 'Natasha O''Shea'),
+   (3, 'Aaron Muller');
+select * from email_addresses;
+INSERT INTO email_addresses (customer_id, customer_email) VALUES (1, 'james1998@email.com'), (2, 'natasha@osheafamily.com');
+select * from email_addresses;
+\d orders
+CREATE TABLE products (
+id serial,
+product_name varchar(50),
+product_cost decimal(4,2),
+product_type varchar(20),
+product_loyalty_points integer,
+PRIMARY KEY (id));
+\d products
+ALTER TABLE products
+ALTER COLUMN product_cost
+SET DEFAULT 0;
+\d products
+INSERT INTO products (product_name, product_cost, product_type, product_loyalty_points)
+VALUES ('LS Burger', 3, 'Burger', 10),
+('LS Chesseburger', 3.5, 'Burger', 15),
+('LS Chicken Burger', 4.5, 'Burger', 20),
+('LS Double Deluxe Burger', 6, 'Burger', 30),
+('Fries', 1.2, 'Side', 3),
+('Onion Rings', 1.5, 'Side', 5),
+('Cola', 1.5, 'Drink', 5),
+('Lemonade', 1.5, 'Drink', 5),
+('Vanilla Shake', 2, 'Drink', 7),
+('Chocolate Shake', 2, 'Drink', 7),
+('Strawberry Shake', 2, 'Drink', 7);
+UPDATE products
+SET COLUMN product_name = 'LS Cheeseburger'
+WHERE product_name = 'LS Chesseburger';
+UPDATE products
+SET product_name = 'LS Cheeseburger'
+WHERE product_name = 'LS Chesseburger';
+select * from products
+;
+CREATE TABLE order_items (
+id serial,
+order_id integer,
+product_id integer,
+PRIMARY KEY (id),
+FOREIGN KEY (order_id)
+REFERENCES orders (id),
+FOREIGN KEY (product_id),
+REFERENCES products (id));
+CREATE TABLE order_items (
+id serial,
+order_id integer,
+product_id integer,
+PRIMARY KEY (id),
+FOREIGN KEY (order_id)
+REFERENCES orders (id),
+FOREIGN KEY (product_id)
+REFERENCES products (id));
+\d orders
+ALTER TABLE orders
+ADD PRIMARY KEY (id);
+CREATE TABLE order_items (
+id serial,
+order_id integer,
+product_id integer,
+PRIMARY KEY (id),
+FOREIGN KEY (order_id)
+REFERENCES orders (id),
+FOREIGN KEY (product_id)
+REFERENCES products (id));
+\d orders
+\d order_items
+select * from orders;
+select * from orders;
+\d customers
+select * from customers;
+select * from email_addresses;
+select * from products;
+\d order_items
+ALTER TABLE order_items
+DROP CONSTRAINT order_items_order_id_fkey,
+DROP CONSTRAINT order_items_product_id_fkey;
+\d order_items
+ALTER TABLE order_items
+ADD FOREIGN KEY (order_id)
+REFERENCES orders (id)
+ON DELETE CASCADE,
+ADD FOREIGN KEY (product_id)
+REFERENCES products (id)
+ON DELETE CASCADE;
+\D order_items
+\d order_items
+select * from orders;
+ALTER TABLE orders
+DROP COLUMN customer_name;
+ALTER TABLE orders
+DROP COLUMN burger,
+DROP COLUMN side,
+DROP COLUMN drink;
+ALTER TABLE orders
+DROP COLUMN customer_email,
+DROP COLUMN burger_cost,
+DROP COLUMN side_cost,
+DROP COLUMN drink_cost;
+ALTER TABLE orders
+ADD COLUMN customer_id integer,
+ADD COLUMN order_status varchar(20);
+\d orders
+select * from orders;
+UPDATE orders
+SET customer_id = 2
+WHERE id = 3 & id = 2;
+UPDATE orders
+SET customer_id = 2
+WHERE id = 3 AND id = 2;
+select * from orders;
+UPDATE orders
+SET customer_id = 2
+WHERE id = 3 OR id = 2;
+UPDATE orders
+SET customer_id = 1
+WHERE id = 1;
+UPDATE orders
+SET customer_id = 3
+WHERE id = 4;
+select * from orders;
+select * from products
+;
+select * from order_items;
+INSERT INTO order_items (order_id, product_id)
+VALUES (1, 3), (1, 5), (1, 6), (1, 8),
+(2, 2), (2, 5), (2, 7),
+(3, 4), (3, 2), (3, 5), (3, 5), (3, 6), (3, 10), (3, 9),
+(4, 1), (4, 5);
+select * from orders;
+UPDATE orders
+SET order_status = 'Placed'
+WHERE id = 4 OR id = 2;
+UPDATE orders
+SET order_status = 'Complete'
+WHERE id = 3;
+UPDATE orders
+SET order_status = 'In Progress'
+WHERE id = 1;
+ALTER TABLE orders
+DROP COLUMN customer_loyalty_points;
+select * from orders;
+\d orders
+ALTER TABLE orders
+ADD FOREIGN KEY (customer_id)
+REFERENCES customers (id)
+ON DELETE CASCADE;
+\d orders
+\d ls_burger
+\dt ls_burger
+select * from orders;
+\d orders
+select * from customers;
+\d customers
+select * from email_addresses
+;
+\d email_addresses
+select * from products
+;
+\d products
+select * from order_items
+;
+\d order_items
+select * from orders;
+ALTER TABLE orders
+ALTER COLUMN customer_id
+SET NOT NULL;
+select * from order_items;
+ALTER TABLE order_items
+ALTER COLUMN order_id
+SET NOT NULL,
+ALTER COLUMN product_id
+SET NOT NULL;
+\d order_items
+\d orders
+\c sql_book
+\d customers
+\d users
+\dt
+select * from users;
+select length(full_name) from users;
+select full_name, length(full_name) from users;
+\dt *.*
+select * from users;
+select * from books;
+select * from checkouts;
+SELECT users.*, addresses.*
+FROM users
+INNER JOIN addresses
+ON users.id = addresses.user_id;
+SELECT users.*, addresses.*
+FROM users
+LEFT JOIN addresses
+ON users.id = addresses.user_id;
+SELECT reviews.book_id, reviews.content, reviews.rating, reviews.published_date,
+books.id, books.title, books.author
+FROM reviews
+RIGHT JOIN books
+ON reviews.book_id = books.id;
+select * from users cross join addresses;
+SELECT users.full_name, books.title, checkouts.checkout_date
+FROM users
+INNER JOIN checkouts
+ON users.id = checkouts.user_id
+INNER JOIN books
+ON books.id = checkouts.book_id;
+select count(id) from checkouts;
+select count(id) as "Number of Books Checked Out mah dude" from checkouts;
+SELECT u.full_name, b.title, c.checkout_date
+FROM users AS u
+INNER JOIN checkouts AS c
+ON u.id = c.user_id
+INNER JOIN books AS b
+ON b.id = c.book_id;
+SELECT u.full_name FROM users u
+WHERE u.id NOT IN (
+SELECT c.user_id FROM checkouts c
+);
+\dt
+SELECT books.*, reviews.*
+FROM books
+FULL JOIN reviews;
+SELECT books.*, reviews.*
+FROM books
+FULL JOIN reviews
+ON books.id = reviews.book_id;
+select * from users;
+select * from addresses;
+select * from users CROSS JOIN reviews;
+\c encyclopedia
+\d
+select * from countries;
+select * from continents;
+SELECT countries.name, continents.continent_name
+FROM countries
+RIGHT JOIN continents
+ON countries.continent_id = continents.id;
+SELECT c.name, c.capital FROM countries c
+JOIN continents
+ON c.continent_id = 3;
+SELECT c.name, c.capital FROM countries c
+WHERE c.continent_id = 3;
+SELECT c.name, c.capital FROM countries c
+JOIN continents ON c.continent_id = continents.id
+WHERE continents.id = 3;
+select singers.*, albums.* from singers join albums;
+select * from singers;
+select * from albums;
+SELECT singers.first_name, albums.album_name
+FROM singers JOIN albums
+ON singers.id = albums.singer_id
+WHERE albums.label = 'Warner Bros';
+SELECT singers.first_name, albums.album_name
+FROM singers JOIN albums
+ON singers.id = albums.singer_id
+WHERE albums.label LIKE '%Warner Bros%';
+SELECT s.first_name, s.last_name, a.album_name, a.released
+FROM singers s JOIN albums a
+ON s.id = a.singer_id
+WHERE a.released LIKE '%198%' AND s.deceased = false
+ORDER BY s.date_of_birth DESC;
+select * from albums
+WHERE date_part('year', released) LIKE '%198%';
+SELECT * FROM albums
+WHERE date_part('year', released) > 1979 AND date_part('year', released) < 1990;
+SELECT s.first_name, s.last_name, a.album_name, a.released
+FROM singers s JOIN albums a
+ON s.id = a.singer_id
+WHERE date_part('year', a.released) > 1979 AND date_part('year', a.released) < 1990
+AND s.deceased = false
+ORDER BY s.date_of_birth DESC;
+select * from singers;
+select * from albums;
+SELECT s.first_name, s.last_name FROM singers
+;
+SELECT s.first_name, s.last_name FROM singers s
+JOIN albums ON s.id = albums.singer_id
+WHERE a.singer_id IS NULL;
+SELECT s.first_name, s.last_name FROM singers s
+JOIN albums a ON s.id = a.singer_id
+WHERE a.singer_id IS NULL;
+SELECT s.first_name, s.last_name FROM singers s
+JOIN albums a ON s.id = a.singer_id
+WHERE s.id IS NULL;
+SELECT s.first_name, s.last_name FROM singers s
+JOIN albums a ON s.id = a.singer_id
+WHERE a.id IS NULL;
+SELECT singers.first_name, singers.last_name
+FROM singers LEFT JOIN albums
+ON singers.id = albums.singer_id
+WHERE albums.id IS NULL;
+SELECT s.first_name, s.last_name FROM singers s
+LEFT JOIN albums a ON s.id = a.singer_id
+WHERE a.singer_id IS NULL;
+SELECT s.first_name, s.last_name FROM singers s
+LEFT JOIN albums a ON s.id = a.singer_id;
+SELECT s.first_name, s.last_name FROM singers s
+LEFT JOIN albums a ON s.id = a.singer_id
+WHERE a.id IS NULL;
+SELECT s.first_name, s.last_name FROM singers s
+WHERE (
+;
+);
+SELECT s.first_name, s.last_name FROM singers s
+WHERE s.id NOT IN (SELECT albums.singer_id FROM albums);
+SELECT s.first_name, s.last_name FROM singers s
+;
+\c ls_burger
+\dt
+select * from orders;
+select * from order_items;
+select * from products;
+SELECT order_items.order_id, products.product_name FROM order_items
+JOIN products ON order_items.product_id = products.id;
+SELECT orders.*, products.* FROM orders
+JOIN order_items
+ON orders.id = order_items.order_id
+JOIN products
+ON order_items.product_id = products.id;
+\dt
+select * from orders;
+select * from order_items;
+select * from products;
+SELECT o.id FROM orders o
+JOIN order_items oi
+ON o.id = oi.order_id
+WHERE oi.product_id = 5;
+SELECT o.* FROM orders o
+JOIN;
+SELECT o.*, p.* FROM orders o
+JOIN order_items oi
+ON o.id = oi.order_id
+JOIN products p
+ON oi.product_id = p.id
+WHERE p.product_name = 'Fries';
+SELECT o.id
+FROM orders AS o
+JOIN order_items AS oi ON o.id = oi.order_id
+JOIN products AS p ON oi.product_id = p.id
+WHERE p.product_name = 'Fries';
+select * from customers;
+SELECT DISTINCT c.customers_name AS 'Customers who like Fries' FROM customers c
+JOIN orders ON c.id = orders.customer_id
+JOIN order_items oi ON orders.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE p.product_name = 'Fries';
+SELECT DISTINCT c.customers_name AS "Customers who like Fries" FROM customers c
+JOIN order ON c.id = orders.customer_id
+JOIN order_items oi ON orders.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE p.product_name = 'Fries';
+SELECT DISTINCT c.customer_name AS "Customers who like Fries" FROM customers c
+JOIN orders ON c.id = orders.customer_id
+JOIN order_items oi ON orders.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE p.product_name = 'Fries';
+SELECT sum(p.product_cost) FROM orders o
+;
+SELECT sum(p.product_cost) FROM products p
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+JOIN customers c ON o.customer_id = c.id
+WHERE c.customer_name = 'Natasha O''Shea'
+GROUP BY p.product_cost;
+ls_burger=# SELECT sum(p.product_cost) FROM products p
+ls_burger-# JOIN order_items oi ON p.id = oi.product_id
+ls_burger-# JOIN orders o ON oi.order_id = o.id
+ls_burger-# JOIN customers c ON o.customer_id = c.id
+ls_burger-# WHERE c.customer_name = 'Natasha O''Shea';
+SELECT sum(p.product_cost) FROM products p
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+JOIN customers c ON o.customer_id = c.id
+WHERE c.customer_name = 'Natasha O''Shea';
+select * from products;
+SELECT 
+  o.id AS order_id,
+  o.order_date,
+  oi.id AS order_item_id,
+  p.product_name,
+  p.product_cost,
+  oi.quantity
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE c.customer_name = 'Natasha O''Shea'
+ORDER BY o.id, oi.id;
+SELECT 
+  o.id AS order_id,
+  oi.id AS order_item_id,
+  p.product_name,
+  p.product_cost,
+  oi.quantity
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE c.customer_name = 'Natasha O''Shea'
+ORDER BY o.id, oi.id;
+SELECT 
+  o.id AS order_id,
+  oi.id AS order_item_id,
+  p.product_name,
+  p.product_cost
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+WHERE c.customer_name = 'Natasha O''Shea'
+ORDER BY o.id, oi.id;
+SELECT 
+  o.id AS order_id,
+  o.order_date,
+  oi.id AS order_item_id,
+  p.product_name,
+  p.product_cost,
+  oi.quantity
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id;
+SELECT 
+  o.id AS order_id,
+  o.order_date,
+  oi.id AS order_item_id,
+  p.product_name,
+  p.product_cost,
+  oi.quantity
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+;
+SELECT 
+  o.id AS order_id,
+  o.order_date,
+  oi.id AS order_item_id,
+  p.product_name,
+  p.product_cost,
+  oi.quantity
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id;
+SELECT 
+  o.id AS order_id,
+  oi.id AS order_item_id,
+  p.product_name,
+  p.product_cost
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id;
+SELECT 
+  c.id AS customer_id,
+  c.customer_name,
+  o.id AS order_id,
+  o.order_status,
+  oi.id AS order_item_id,
+  p.id AS product_id,
+  p.product_name,
+  p.product_cost
+FROM customers c
+JOIN orders o ON c.id = o.customer_id
+JOIN order_items oi ON o.id = oi.order_id
+JOIN products p ON oi.product_id = p.id
+ORDER BY c.customer_name, o.id, oi.id;
+\dt
+SELECT DISTINCT p.product_name, count(p.product_name) AS "Amount ordered"
+FROM products p
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+ORDER BY p.product_name ASC;
+SELECT p.product_name, count(oi.product_id) AS "Amount ordered"
+FROM products p
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+GROUP BY p.product_name ORDER BY p.product_name ASC;
+SELECT DISTINCT p.product_name, count(oi.product_id) AS "Amount ordered"
+FROM products p
+JOIN order_items oi ON p.id = oi.product_id
+JOIN orders o ON oi.order_id = o.id
+GROUP BY p.product_name ORDER BY p.product_name ASC;
+\dt
+\q
+\h INSERT
+\d
+\dt
+\d checkouts_id_seq
+\?
+psql
+\q
+\q
+\l
+\d
+\dt
+\ddp
+\d
+CREATE DATABASE animals;
+\c animals
+CREATE TABLE (
+id serial PRIMARY KEY,
+name varchar(25),
+age integer,
+species varchar(15));
+CREATE TABLE birds (
+id serial PRIMARY KEY,
+name varchar(25),
+age integer,
+species varchar(15));
+ALTER TABLE birds
+;
+INSERT INTO birds (name, age, species)
+VALUES ('Charlie', 3, 'Finch'), ('Allie', 5, 'Owl'),
+('Jennifer', 3, 'Magpie'), ('Jamie', 4, 'Owl'), ('Roy', 8, 'Crow');
+select * from birds;
+SELECT * FROM birds WHERE age < 5;
+SELECT * FROM birds WHERE 5 > age;
+UPDATE birds
+SET species = 'Raven'
+WHERE species = 'Crow';
+select * from birds;
+UPDATE birds SET species = 'Hawk'
+WHERE species = 'Owl' AND name = 'Jamie';
+select * from birds;
+DELETE FROM birds
+WHERE id = 1;
+select * from birds;
+ALTER TABLE birds
+ADD CONSTRAINT bird_age_constraint CHECK (age > 0);
+\d birds;
+INSERT INTO birds (age, name, species) VALUES (-2, 'Alan', 'Blue Jay');
+DROP TABLE birds;
+\q
+SELECT 'canoe a long road weren't "No way!"';
+;
+'
+;
+select 2+2;
+SELECT canoe
+;
+SELECT 'canoe a long road weren't ""No Way!""';
+'
+;
+select 'foo' 'bar';
+select 'foo'
+'bar';
+select 'foo\nbar';
+select 'foo' e\n 'bar';
+select 'foo\bar';
+select 'foo\nbar';
+select 'fooe\nbar';
+select '""';
+select '"hello"';
+select 'canoe a long road weren''t "No way!"';
+'canoe'
+'a long road'
+'weren''t'
+'"No way!"';
+select 'foo' + 'bar';
+select 'foo' || 'bar';
+select lower('Hello World!');
+select 4 * 3.14 * (26.3^2);
+select int(4 * 3.14 * (26.3^2));
+select round(4 * pi() * (26.3^2));
+select round(4.5);
+SELECT rolname FROM pg_roles;
+SELECT rolname FROM pg_roles WHERE rolcanlogin;
+\d pg_roles
+\dt pg_roles
+\dt
+\d
+\du
+\ds books
+\s books
