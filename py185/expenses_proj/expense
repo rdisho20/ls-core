@@ -1,5 +1,197 @@
 #!/usr/bin/env python
 
 import psycopg2
+from psycopg2 import extras
+import sys
+from textwrap import dedent
+from datetime import date
+from contextlib import contextmanager
 
-print("Hello, World")
+class ExpenseData:
+    def __init__(self):
+        pass
+
+    @contextmanager
+    def _database_connect(self):
+        connection = psycopg2.connect(dbname='expenses')
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
+
+    def add_expense(self, amount, memo):
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                sql = dedent("""
+                    INSERT INTO expenses (amount, memo, created_on)
+                    VALUES (%s, %s, %s)
+                """)
+                # `date.today()` in same format as SQL's `now()`
+                cursor.execute(sql, (amount, memo, date.today()))
+
+    def list_expenses(self):
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                cursor.execute("""
+                    SELECT * FROM expenses
+                    ORDER BY created_on ASC
+                """)
+                results = cursor.fetchall()
+
+        self._display_expenses(results)
+    
+    def delete_expense(self, idnum):
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                cursor.execute("SELECT * FROM expenses WHERE id = %s", (idnum,))
+                result = cursor.fetchone()
+
+                if result:
+                    cursor.execute("DELETE FROM expenses WHERE id = %s", (idnum,))
+                    print(f"The following has been deleted:")
+                    self._display_expenses([result])
+                else:
+                    print(f"Expense with 'id' {idnum} does not exist.")
+
+    def search(self, query):
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                sql = "SELECT * FROM expenses WHERE memo ILIKE %s"
+                cursor.execute(sql, (f'%{query}%',))
+                results = cursor.fetchall()
+
+        self._display_expenses(results)
+    
+    def _display_expenses(self, results):
+        for expense in results:
+            columns = [
+                str(expense["id"]).rjust(3),
+                str(expense["created_on"]),
+                str(expense["amount"]).rjust(10),
+                str(expense["memo"])
+            ]
+            print(" | ".join(columns))
+
+
+class CLI:
+    def __init__(self):
+        self.expense_data = ExpenseData()
+    
+    def display_help(self):
+        print(dedent("""
+            An expense recording system
+
+            Commands:
+
+            add AMOUNT MEMO - record a new expense
+            clear - delete all expenses
+            list - list all expenses
+            delete NUMBER - remove expense with id NUMBER
+            search QUERY - list expenses with a matching memo field
+        """).strip('\n'))
+
+    def run(self, arguments):
+        if not arguments:
+            self.display_help()
+            return
+
+        command = arguments.pop(0)
+        if command == 'list':
+            self.expense_data.list_expenses()
+
+        elif command == 'add':
+            if len(arguments) < 2:
+                print("You must provide an amount and memo.")
+                return
+            amount, memo = arguments
+            self.expense_data.add_expense(amount, memo)
+
+        elif command == 'delete':
+            idnum = arguments
+            if len(idnum) < 1:
+                print("You must provide an id number.")
+                return
+            self.expense_data.delete_expense(idnum[0])
+
+        elif command == 'search':
+            if len(arguments) < 1:
+                print("You must provide a search query.")
+                return
+            self.expense_data.search(arguments[0])
+
+def main():
+    cli = CLI()
+    cli.run(sys.argv[1:])
+
+if __name__ == "__main__":
+    main()
+
+'''
+def display_all_expenses():
+    connection = psycopg2.connect(dbname='expenses')
+    try:
+        with connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                cursor.execute("""
+                    SELECT * FROM expenses
+                    ORDER BY created_on ASC
+                """)
+                results = cursor.fetchall()
+    finally:
+        connection.close()
+
+    for expense in results:
+        columns = [
+            str(expense["id"]).rjust(3),
+            str(expense["created_on"]),
+            str(expense["amount"]).rjust(10),
+            str(expense["memo"])
+        ]
+        print(" | ".join(columns))
+
+def print_help_content():
+    print(dedent("""
+        An expense recording system
+
+        Commands:
+
+        add AMOUNT MEMO - record a new expense
+        clear - delete all expenses
+        list - list all expenses
+        delete NUMBER - remove expense with id NUMBER
+        search QUERY - list expenses with a matching memo field
+    """).strip('\n'))
+
+def add_expense(amount, memo):
+    connection = psycopg2.connect(dbname='expenses')
+    try:
+        with connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                sql = dedent("""
+                    INSERT INTO expenses (amount, memo, created_on)
+                    VALUES (%s, %s, %s)
+                """)
+                # `date.today()`` in same format as SQL's `now()`
+                cursor.execute(sql, (amount, memo, date.today()))
+    finally:
+        connection.close()
+
+def main():
+    command = sys.argv[1] if len(sys.argv) > 1 else None
+
+    if command == 'list':
+        display_all_expenses()
+    elif command == 'add':
+        try:
+            amount = sys.argv[2]
+            memo = sys.argv[3]
+            add_expense(amount, memo)
+        except IndexError as e:
+            print("You MUST provide an amount and memo.")
+            print(f"{type(e).__name__}: {e}")
+    else:
+        print_help_content()
+
+
+'''
