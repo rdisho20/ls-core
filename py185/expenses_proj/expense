@@ -9,7 +9,7 @@ from contextlib import contextmanager
 
 class ExpenseData:
     def __init__(self):
-        pass
+        self._setup_schema()
 
     @contextmanager
     def _database_connect(self):
@@ -22,7 +22,7 @@ class ExpenseData:
 
     def add_expense(self, amount, memo):
         with self._database_connect() as connection:
-            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+            with connection.cursor() as cursor:
                 sql = dedent("""
                     INSERT INTO expenses (amount, memo, created_on)
                     VALUES (%s, %s, %s)
@@ -39,7 +39,11 @@ class ExpenseData:
                 """)
                 results = cursor.fetchall()
 
+        row_count = len(results)
+        self._display_count(row_count)
         self._display_expenses(results)
+        if row_count >= 2:
+            self._display_total(results)
     
     def delete_expense(self, idnum):
         with self._database_connect() as connection:
@@ -61,7 +65,22 @@ class ExpenseData:
                 cursor.execute(sql, (f'%{query}%',))
                 results = cursor.fetchall()
 
+        row_count = len(results)
+        self._display_count(row_count)
         self._display_expenses(results)
+        if row_count >= 2:
+            self._display_total(results)
+    
+    def delete_all_expenses(self):
+        with self._database_connect() as connection:
+            with connection.cursor(cursor_factory=extras.DictCursor) as cursor:
+                cursor.execute("SELECT * FROM expenses")
+                results = cursor.fetchall()
+                cursor.execute("DELETE FROM expenses")
+                print("Expenses have been completely cleared of:")
+        
+        self._display_expenses(results)
+
     
     def _display_expenses(self, results):
         for expense in results:
@@ -72,6 +91,38 @@ class ExpenseData:
                 str(expense["memo"])
             ]
             print(" | ".join(columns))
+    
+    def _display_count(self, row_count):
+        if row_count == 0:
+            print("There are no expenses.")
+        elif row_count == 1:
+            print("There is 1 expense.")
+        else:
+            print(f"There are {row_count} expenses.")
+
+    def _display_total(self, expenses):
+        total = sum(expense["amount"] for expense in expenses)
+        print("-" * 50)
+        print(f"Total" + (" " * 20) + str(round(total, 2)))
+    
+    def _setup_schema(self):
+        with self._database_connect() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT count(*) FROM information_schema.tables
+                    WHERE table_schema = 'public' AND table_name = 'expenses
+                """)
+                result = cursor.fetchone()
+
+                if result[0] == 0:
+                    cursor.execute("""
+                        CREATE TABLE expenses (
+                            id serial PRIMARY KEY,
+                            amount numberic(6, 2) NOT NULL,
+                            memo text NOT NULL,
+                            created_on date NOT NULL
+                        )
+                    """)
 
 
 class CLI:
@@ -119,6 +170,14 @@ class CLI:
                 print("You must provide a search query.")
                 return
             self.expense_data.search(arguments[0])
+        
+        elif command == 'clear':
+            user_input = input("This will remove all expenses. "
+                               "Are you sure? (enter y to confirm) ")
+            if user_input.casefold() == 'y':
+                self.expense_data.delete_all_expenses()
+            else:
+                print("Nothing has been deleted.")
 
 def main():
     cli = CLI()
