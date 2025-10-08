@@ -83,7 +83,7 @@ class DatabasePersistence:
         query = "INSERT INTO todos (list_id, title) VALUES (%s, %s)"
         logger.info("Executing query: %s with list_id: %s with title %s",
                     query, list_id, todo_title)
-        with self._databaseconnection() as connection:
+        with self._database_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (list_id, todo_title))
 
@@ -97,7 +97,7 @@ class DatabasePersistence:
                 cursor.execute(query, (list_id, todo_id))
     
     def update_todo_status(self, list_id, todo_id, new_status):
-        query = dedent("""UPDATE todos SET is_complete = %s
+        query = dedent("""UPDATE todos SET completed = %s
                        WHERE list_id = %s AND id = %s""")
         logger.info("Executing query: %s with new_status: %s, "
                     "and list_id: %s, and id: %s",
@@ -107,7 +107,7 @@ class DatabasePersistence:
                 cursor.execute(query, (new_status, list_id, todo_id))
     
     def mark_all_todos_completed(self, list_id):
-        query = "UPDATE todos SET is_complete = True WHERE list_id = %s"
+        query = "UPDATE todos SET completed = True WHERE list_id = %s"
         logger.info("Executing query: %s with list_id: %s", query, list_id)
         with self._database_connection() as connection:
             with connection.cursor() as cursor:
@@ -139,7 +139,7 @@ class DatabasePersistence:
                         CREATE TABLE todos (
                             id serial PRIMARY KEY,
                             title text NOT NULL,
-                            is_complete boolean NOT NULL DEFAULT false,
+                            completed boolean NOT NULL DEFAULT false,
                             list_id integer NOT NULL
                             REFERENCES lists (id) ON DELETE CASCADE
                         )

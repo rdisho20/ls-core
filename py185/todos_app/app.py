@@ -40,7 +40,7 @@ def require_todo(f):
     @require_list
     def decorated_function(lst, *args, **kwargs):
         todo_id = kwargs.get('todo_id')
-        todo = find_todo_by_id(todo_id)
+        todo = find_todo_by_id(todo_id, lst['todos'])
         if not todo:
             raise NotFound(description="Todo not found")
         return f(lst=lst, todo=todo, *args, **kwargs)
@@ -116,7 +116,7 @@ def update_todo_status(lst, todo, list_id, todo_id):
 @app.route("/lists/<int:list_id>/todos/<int:todo_id>/delete", methods=["POST"])
 @require_todo
 def delete_todo(lst, todo, list_id, todo_id):
-    g.storage.delete_todo_from_list(todo_id, lst)
+    g.storage.delete_todo_from_list(list_id, todo_id)
     flash("The todo has been deleted.", "success")
     return redirect(url_for('show_list', list_id=list_id))
 

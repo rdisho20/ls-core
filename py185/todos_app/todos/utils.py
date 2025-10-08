@@ -12,7 +12,7 @@ def error_for_todo(title):
 
     return None
 
-def find_todo_by_id(self, todo_id, todos):
+def find_todo_by_id(todo_id, todos):
     return next((todo for todo in todos if todo['id'] == todo_id), None)
 
 def is_list_completed(lst):
