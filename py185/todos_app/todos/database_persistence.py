@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class DatabasePersistence:
     def __init__(self):
-        pass
+        self._setup_schema()
 
     @contextmanager
     def _database_connection(self):
@@ -112,3 +112,35 @@ class DatabasePersistence:
         with self._database_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(query, (list_id,))
+
+    def _setup_schema(self):
+        with self._database_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT COUNT(*)
+                    FROM information_schema.tables
+                    WHERE table_schema = 'public' AND table_name = 'lists'
+                """)
+                if cursor.fetchone()[0] == 0:
+                    cursor.execute("""
+                        CREATE TABLE lists (
+                            id serial PRIMARY KEY,
+                            title text NOT NULL UNIQUE
+                        )
+                    """)
+                
+                cursor.execute("""
+                    SELECT COUNT(*)
+                    FROM information_schema.tables
+                    WHERE table_schema = 'public' AND table_name = 'todos'
+                """)
+                if cursor.fetchone()[0] == 0:
+                    cursor.execute("""
+                        CREATE TABLE todos (
+                            id serial PRIMARY KEY,
+                            title text NOT NULL,
+                            is_complete boolean NOT NULL DEFAULT false,
+                            list_id integer NOT NULL
+                            REFERENCES lists (id) ON DELETE CASCADE
+                        )
+                    """)
