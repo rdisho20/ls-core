@@ -28,7 +28,15 @@ class DatabasePersistence:
             connection.close()
 
     def all_lists(self):
-        query = "SELECT * FROM lists"
+        query = """
+            SELECT lists.*,
+                COUNT(todos.id) AS todos_count,
+                COUNT(NULLIF(todos.completed, True)) AS todos_remaining
+            FROM lists
+            LEFT JOIN todos ON todos.list_id = lists.id
+            GROUP BY lists.id
+            ORDER BY lists.title
+        """
         logger.info("Executing query: %s", query)
         with self._database_connection() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
@@ -36,25 +44,29 @@ class DatabasePersistence:
                 results = cursor.fetchall()
         
         lists = [dict(result) for result in results] # converting DictRows -> dict objects @ list
-        for lst in lists:
-            todos = self._find_todos_for_list(lst['id'])
-            lst.setdefault('todos', todos)
-
         return lists
 
     def find_list(self, list_id):
-        query = "SELECT * FROM lists WHERE id = %s"
+        query = """
+            SELECT lists.*,
+                COUNT(todos.id) AS todos_count,
+                COUNT(NULLIF(todos.completed, True)) AS todos_remaining
+            FROM lists
+            LEFT JOIN todos ON todos.list_id = lists.id
+            WHERE lists.id = %s
+            GROUP BY lists.id
+            ORDER BY lists.title
+        """
         logger.info("Executing query: %s with list_id: %s", query, list_id)
         with self._database_connection() as connection:
             with connection.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute(query, (list_id,))
                 lst = dict(cursor.fetchone()) # converting DictRow obj -> dict object
-        
-        todos = self._find_todos_for_list(list_id)
-        lst.setdefault('todos', todos)
+
+        logger.info("find_list returns: %s", lst)
         return lst
 
-    def _find_todos_for_list(self, list_id):
+    def find_todos_for_list(self, list_id):
         query = "SELECT * FROM todos WHERE list_id = %s"
         logger.info("Executing query: %s with list_id: %s", query, list_id)
         with self._database_connection() as connection:
