@@ -157,5 +157,5 @@ def update_list(lst, list_id):
 if __name__ == "__main__":
     if os.environ.get('FLASK_ENV') == 'production':
         app.run(debug=False)
-    else
+    else:
         app.run(debug=True, port=5003)
