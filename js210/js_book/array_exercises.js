@@ -101,7 +101,29 @@ let arr = ["a", "abcd", "abcde", "abc", "ab"];
 console.log(oddLengths(arr));
 */
 
+/*
+let numbers1 = [1, 3, 5, 7, 9, 11];
+let numbers2 = [];
+let numbers3 = [2, 4, 6, 8];
+
+function checkThree(arr) {
+  let result = arr.filter(num => num === 3);
+  return arr.includes(3);
+}
+
+console.log(checkThree(numbers1));
+console.log(checkThree(numbers2));
+console.log(checkThree(numbers3));
+*/
 
 
+let arr = [
+  ["hello", "world"],
+  ["example", "mem", null, 6, 88],
+  [4, 8, 12],
+]
 
+arr[1][3] = 606
+
+console.log(arr)
 
