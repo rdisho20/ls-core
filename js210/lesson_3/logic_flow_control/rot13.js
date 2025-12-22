@@ -48,6 +48,12 @@ d - 100
 h - 104
 */
 
+/*
+const UPPER_RANGE_MIN = 65;
+const UPPER_RANGE_MAX = 90;
+const LOWER_RANGE_MAX = 97;
+const LOWER_RANGE_MAX = 122;
+*/
 
 function isAlphabetic(character) {
   let charCode = character.charCodeAt(0);
@@ -57,6 +63,7 @@ function isAlphabetic(character) {
 
   return false;
 }
+
 
 function rot13(string) {
   let result = '';
