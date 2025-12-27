@@ -11,8 +11,5 @@
   "description": "",
   "dependencies": {
     "readline-sync": "^1.4.10"
-  },
-  "devDependencies": {
-    "eslint": "^9.33.0"
   }
 }

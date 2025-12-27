@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "eslint": "^9.33.0"
+  },
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  }
+}
