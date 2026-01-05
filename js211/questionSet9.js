@@ -25,6 +25,44 @@ console.log(doubled); // Expected: [2, 4, 6, 8, 10]
 */
 
 
-
+/*
 //
+// Original function with syntactic sugar
+function greet(person) {
+  if (!person.hasOwnProperty('greeting')) {
+    console.log(`Hello, ${person.name}!`);
+  } else {
+    console.log(`${person.greeting}, ${person.name}!`);
+  }
+}
+
+greet({ name: 'Bob' });                    // Expected: Hello, Bob!
+greet({ name: 'Alice', greeting: 'Hi' });  // Expected: Hi, Alice!
+*/
+
+
+/*
+// 8
+function reverseAndAppend(arr, elem) {
+  const newArray = [...arr].reverse();
+  newArray.push(elem);
+  return newArray;
+}
+
+const originalArray = [1, 2, 3];
+const newElement = 4;
+const resultArray = reverseAndAppend(originalArray, newElement);
+
+console.log(resultArray);    // Expected: [3, 2, 1, 4]
+console.log(originalArray);  // Expected: [1, 2, 3]
+*/
+
+
+
+// 9
+console.log('1' == 1);
+
+"use strict";
+
+console.log('1' == 1);
 
