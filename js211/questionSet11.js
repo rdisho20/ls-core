@@ -56,8 +56,3 @@ console.log(userProfile); // Verify original object is not mutated
 // Expected Output:  
 // { id: 'user-123', username: 'js_master', lastLogin: '2023-01-01' }
 */
-'use strict';
-
-const NaN = 'what?';
-
-console.log(NaN);
