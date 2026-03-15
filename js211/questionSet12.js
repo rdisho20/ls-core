@@ -136,6 +136,7 @@ function findFileByCriteria(files, criteria) {
       }
       if (criteria[key] !== file[key]) {
         return false;
+        
       }
     }
 

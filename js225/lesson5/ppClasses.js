@@ -220,4 +220,107 @@ console.log(person.greeting());
 console.log(shouter.greeting());
 */
 
+/*
+class Shelter {
+  constructor() {
+    this.adoptions = {};
+  }
+
+  printAdoptions() {
+    for (let [owner, pets] of Object.entries(this.adoptions)) {
+      console.log(`${owner} has adopted the following pets:`)
+      for (let pet of pets) {
+        console.log(pet.info());
+      }
+    }
+  }
+
+  adopt(owner, pet) {
+    if (!this.adoptions.hasOwnProperty(owner.name)) {
+      this.adoptions[owner.name] = [pet];
+    } else {
+      this.adoptions[owner.name].push(pet);
+    }
+
+    owner.pets.push(pet);
+  }
+}
+
+class Pet {
+  constructor(type, name) {
+    this.type = type;
+    this.name = name;
+  }
+
+  info() {
+    return `a ${this.type} named ${this.name}`;
+  }
+}
+
+class Owner {
+  constructor(name) {
+    this.name = name;
+    this.pets = [];
+  }
+
+  numberOfPets() {
+    return this.pets.length;
+  }
+}
+
+let butterscotch = new Pet('cat', 'Butterscotch');
+let pudding      = new Pet('cat', 'Pudding');
+let darwin       = new Pet('bearded dragon', 'Darwin');
+let kennedy      = new Pet('dog', 'Kennedy');
+let sweetie      = new Pet('parakeet', 'Sweetie Pie');
+let molly        = new Pet('dog', 'Molly');
+let chester      = new Pet('fish', 'Chester');
+
+let phanson = new Owner('P Hanson');
+let bholmes = new Owner('B Holmes');
+
+let shelter = new Shelter();
+
+shelter.adopt(phanson, butterscotch);
+shelter.adopt(phanson, pudding);
+shelter.adopt(phanson, darwin);
+shelter.adopt(bholmes, kennedy);
+shelter.adopt(bholmes, sweetie);
+shelter.adopt(bholmes, molly);
+shelter.adopt(bholmes, chester);
+shelter.printAdoptions();
+
+console.log(`${phanson.name} has ${phanson.numberOfPets()} adopted pets.`);
+console.log(`${bholmes.name} has ${bholmes.numberOfPets()} adopted pets.`);
+*/
+
+
+class Banner {
+  constructor(message) {
+    this.message = message;
+  };
+
+  displayBanner() {
+    console.log([this.horizontalRule(), this.emptyLine(), this.messageLine(), this.emptyLine(), this.horizontalRule()].join("\n"));
+  }
+
+  horizontalRule() {
+    return `+-${'-'.repeat(this.message.length)}-+`;
+  }
+
+  emptyLine() {
+    return `| ${' '.repeat(this.message.length)} |`;
+  }
+
+  messageLine() {
+    return `| ${this.message} |`;
+  }
+}
+
+let banner1 = new Banner('To boldly go where no one has gone before.');
+banner1.displayBanner();
+
+let banner2 = new Banner('');
+banner2.displayBanner();
+
 
