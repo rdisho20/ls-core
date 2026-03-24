@@ -1,62 +1,92 @@
-const rlsync = require('readline-sync');
-const prompt = rlsync.setPrompt('==>');
+//const rlsync = require('readline-sync');
+//const prompt = rlsync.setPrompt('==>');
+
+'use strict';
 
 class Expense {
-  static generateId() {
-    //..
-  }
+  #id;
+  #amount;
+  #date;
+  #category;
 
-  constructor(id, amount, category) {
-    this.id = Expense.generateId();
-    this.amount = amount;
-    this.date = new Date(Date.now());
-    this.category = category;
-  }
+  constructor(id, amount, date, category) {
+    if (amount < 0) throw new Error('amount cannot be negative');
 
-  get amount() {
-    return this._amount;
-  }
+    const parsedDate = new Date(date);
+    if (parsedDate > new Date()) throw new Error('cannot be future Date');
 
-  // TODO: how to handle negative number?
-  set amount(number) {
-    if (number < 0) {
-      console.log("Amount cannot be negative.");
-      return this._amount = 0;
+    const trimmedCategory = category.trim();
+    if (trimmedCategory.length === 0) {
+      throw new Error('category must be non-empty string');
     }
 
-    return this._amount = number;
+    this.#id = id; //Expense.generateId();  // ????
+    this.#amount = amount;
+    this.#date = parsedDate;
+    this.#category = category;
+    Object.freeze(this);
   }
 
-  get category() {
-    return this._category;
-  }
-
-  set category(value) {
-    return this._category = value;
-  }
-
-  // how to handle invalid category?
-  /*
-  set category(string) {
-    if (ExpenseManager.validCategory(string)) {
-      return this._category = string;
-    }
-
-    return this._category = undefined;
-  }
-  */
+  get id() { return this.#id; }
+  get amount() { return this.#amount; }
+  get date() { return new Date(this.#date); }
+  get category() { return this.#category; }
 }
-
-let newExpense = new Expense();
-console.log(prompt, newExpense);
 
 
 class ExpenseManager {
-  constructor() {
-    this._expenses = [];
-    this._allowedCategories = [
-      'Food', 'Housing', 'Transportation', 'Entertainment', 'Health',
-    ];
+  #title;
+  #expenses;
+  #nextId;
+  #categories;
+
+  static #DEFAULT_CATEGORIES = [
+    'food', 'housing', 'transportation', 'entertainment', 'health'
+  ];
+
+  constructor(title) {
+    this.#title = title;
+    this.#expenses = [];
+    this.#nextId = 1;
+    this.#categories = new Set (ExpenseManager.#DEFAULT_CATEGORIES);
+  }
+
+  get title() { return this.#title; }
+  get expenses() { return this.#expenses; }
+  get categories() { return this.#categories.slice(); }
+
+  addExpense(expenseData) {
+    const category = expenseData.category.trim().toLowerCase();
+    if(!this.#categories.has(category)) {
+      throw new Error(`Failed to add expense: Unknown category '${category}'`);
+    }
+    const uniqueId = this.#generateId();
+
+    try {
+      const expense = new Expense(
+        uniqueId,
+        expenseData.amount,
+        expenseData.date,
+        category,
+      );
+      this.#expenses.push(expense);
+    } catch (error) {
+      throw new Error(`Failed to add expense: ${error.message}`)
+    }
+  }
+
+  removeExpenseById(id) {
+    this.#expenses = this.#expenses.filter(expense => expense.id !== id);
+  }
+
+  getCategories() {
+    return Array.from(this.#categories);
+  }
+
+  #generateId() {
+    const id = this.#nextId;
+    this.#nextId++;
+    return id;
   }
 
   #validCategory(category) {
@@ -67,19 +97,8 @@ class ExpenseManager {
     return false;
   }
 
-  #generateId() {
-    const expenses = this.expenses;
-    if (expenses.length == 0) return 1;
-    return expenses[expenses.length - 1].id + 1;
-  }
-
-  addNewExpense(amount, category) {
-    // FINISH IMPLEMENTATION
-    const expense = new Expense(amount, category);
-    this._expenses.push(expense);
-  }
-
-  removeExpenseById(number) {
+  /*
+  #checkDuplicateTitle(title) {
     // ..
   }
 
@@ -110,15 +129,11 @@ class ExpenseManager {
   addNewCategory(category) {
     //..
   }
-
-  get expenses() {
-    return this._expenses.slice();
-  }
-
-  get allowedCategories() {
-    return this._allowedCategories.slice();
-  }
+  */
 }
+
+
+export { Expense, ExpenseManager };
 
 
 class BudgetExpenseManager extends ExpenseManager {
