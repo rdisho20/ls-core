@@ -1,4 +1,4 @@
-import { Expense, ExpenseManager } from './main.js';
+import { Expense, ExpenseManager, BudgetExpenseManager } from './main.js';
 
 // Testing Helpers
 function pass(msg) {
@@ -130,7 +130,7 @@ try {
   assert(manager.expenses[0].amount === 10, 'amount should be 10');
   assert(
     manager.expenses[0].date.valueOf() === new Date('2026-03-20').valueOf(),
-    "date should be '2026-03-20'" 
+    "date should be '2026-03-20'"
   );
   assert(manager.expenses[0].category === 'food', "category should be 'food'");
   assert(manager.expenses.length === 1, 'There should be 1 added expense');
@@ -227,7 +227,7 @@ try {
 try {
   console.log("- Disallows unknown categories");
   const manager = new ExpenseManager();
-  manager.addExpense({ amount: 10, date: '2026-03-20', category: 'sports equipment' })
+  manager.addExpense({ amount: 10, date: '2026-03-20', category: 'sports equipment' });
   fail('should throw error when trying to add expense w/ disallowed category');
 } catch (_) {
   pass("expense w/ category 'sports equipment' successfully disallowed");
@@ -282,7 +282,7 @@ try {
   const summary = manager.summarizeExpenses();
   assert(summary.count === 3, 'there should be 3 expenses');
   assert(summary.total === 60, 'total amount should be 60');
-  assert(summary.average === (30 + 20 + 10) / 3, 'total amount should be 60');
+  assert(summary.average === (30 + 20 + 10) / 3, 'average should be 20');
   pass('summarizes expenses w/ total spent, avg amount & count');
 } catch (error) { fail(error.message) }
 
@@ -320,7 +320,7 @@ try {
 
 /* filter expenses by date range */
 try {
-  console.log('- Filter expenses by category');
+  console.log('- Filter expenses by date range');
   const manager = new ExpenseManager();
   /*
   Assumption: Adding an expense from collection of data
@@ -348,13 +348,85 @@ try {
 } catch (error) { fail(error.message) }
 
 
-console.log(`\n=== PART 3: BUDGET EXPENSE MANAGER ===\n`);
+console.log(`\n=== PART 4: BUDGET EXPENSE MANAGER ===\n`);
 
-/*
-- like `ExpenseManager` BUT included budget limit
-- prevent adding expenses that would cause limit excession
-- can show budget limit
-- summarize expenses INCLUDING total budget used
-*/
+/* BEM manages expenses w/ a budget */
+try {
+  console.log('- Budget Expense Manager manages expenses w/ a budget');
+  const manager = new BudgetExpenseManager(100);
+  assert(manager.budgetLimit === 100, 'budget limit should be 100');
+  assert(
+    manager instanceof ExpenseManager,
+    "manager should inherit its type from 'ExpenseManager'"
+  );
+  /*
+  Assumption: Adding an expense from collection of data
+  rather than expense object itself
+  */
+  manager.addExpense({ amount: 20, date: '2026-03-20', category: 'food' });
+  manager.addExpense({ amount: 10, date: '2026-03-22', category: 'health' });
+  manager.addExpense({ amount: 30, date: '2026-03-23', category: 'entertainment' });
+  manager.addExpense({ amount: 30, date: '2026-03-24', category: 'food' });
+  assert(manager.expenses.length === 4, 'there should be 4 expenses');
+  const filteredExpenses = manager.filterExpensesByDateRange('2026-03-20', '2026-03-23');
+  assert(filteredExpenses.length === 3, 'there should be 3 expenses');
+  pass('manages expenses w/ a budget & can show budget limit');
+} catch (error) { fail(error.message) }
+
+/* provides a way to show how much budget remains */
+try {
+  console.log('- Provides a way to show how much budget remains');
+  const manager = new BudgetExpenseManager(100);
+  assert(manager.budgetLimit === 100, 'budget limit should be 100');
+  assert(
+    manager instanceof ExpenseManager,
+    "manager should inherit its type from 'ExpenseManager'"
+  );
+  /*
+  Assumption: Adding an expense from collection of data
+  rather than expense object itself
+  */
+  manager.addExpense({ amount: 20, date: '2026-03-20', category: 'food' });
+  manager.addExpense({ amount: 10, date: '2026-03-22', category: 'health' });
+  manager.addExpense({ amount: 30, date: '2026-03-23', category: 'entertainment' });
+  manager.addExpense({ amount: 30, date: '2026-03-24', category: 'food' });
+  assert(manager.remainingBudget() === 10, 'there should be a remaining budget of 10');
+  pass('successfully retrieved remaining budget');
+} catch (error) { fail(error.message) }
+
+/* prevent adding expenses that would cause limit excession */
+try {
+  console.log('- Prevent adding expenses that would cause limit excession');
+  const manager = new BudgetExpenseManager(100);
+  assert(manager.budgetLimit === 100, 'budget limit should be 100');
+  /*
+  Assumption: Adding an expense from collection of data
+  rather than expense object itself
+  */
+  manager.addExpense({ amount: 125, date: '2026-03-24', category: 'food' });
+  manager.getCategories();
+  fail('should throw error when adding an expense that exceeds budget limit');
+} catch (_) {
+  pass("adding an expense that leads to exceeding budget limit successfully disallowed");
+}
+
+/* summarize expenses (total spent, avg amount, count & total budget used) */
+try {
+  console.log('- Summarize expenses (total spent, avg amount, count & total budget used)');
+  const manager = new BudgetExpenseManager(100);
+  /*
+  Assumption: Adding an expense from collection of data
+  rather than expense object itself
+  */
+  manager.addExpense({ amount: 20, date: '2026-03-20', category: 'food' });
+  manager.addExpense({ amount: 10, date: '2026-03-20', category: 'health' });
+  manager.addExpense({ amount: 30, date: '2026-03-20', category: 'entertainment' });
+  const summary = manager.summarizeExpenses();
+  assert(summary.count === 3, 'there should be 3 expenses');
+  assert(summary.total === 60, 'total amount should be 60');
+  assert(summary.average === (30 + 20 + 10) / 3, 'average should be 20');
+  assert(summary.budgetRemaining === 40, 'remaining budget should be 40');
+  pass('summarizes expenses w/ total spent, avg amount, count & budget used');
+} catch (error) { fail(error.message) }
 
 

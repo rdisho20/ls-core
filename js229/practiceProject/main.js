@@ -1,6 +1,3 @@
-//const rlsync = require('readline-sync');
-//const prompt = rlsync.setPrompt('==>');
-
 'use strict';
 
 class Expense {
@@ -27,10 +24,10 @@ class Expense {
     Object.freeze(this);
   }
 
-  get id() { return this.#id; }
-  get amount() { return this.#amount; }
-  get date() { return new Date(this.#date); }
-  get category() { return this.#category; }
+  get id() { return this.#id }
+  get amount() { return this.#amount }
+  get date() { return new Date(this.#date) }
+  get category() { return this.#category }
 }
 
 
@@ -49,12 +46,12 @@ class ExpenseManager {
     this.#categories = new Set (ExpenseManager.#DEFAULT_CATEGORIES);
   }
 
-  get expenses() { return this.#expenses.slice(); }
-  get categories() { return this.#categories.slice(); }
+  get expenses() { return this.#expenses.slice() }
+  get categories() { return this.#categories.slice() }
 
   addExpense(expenseData) {
     const category = expenseData.category.trim().toLowerCase();
-    if(!this.#categories.has(category)) {
+    if (!this.#categories.has(category)) {
       throw new Error(`Failed to add expense: Unknown category '${category}'`);
     }
     const uniqueId = this.#generateId();
@@ -68,7 +65,7 @@ class ExpenseManager {
       );
       this.#expenses.push(expense);
     } catch (error) {
-      throw new Error(`Failed to add expense: ${error.message}`)
+      throw new Error(`Failed to add expense: ${error.message}`);
     }
   }
 
@@ -96,7 +93,7 @@ class ExpenseManager {
 
   summarizeExpenses() {
     // total, count, avg
-    const total = this.#expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const total = this._getTotalExpenses();
     const count = this.#expenses.length;
     const average = count ? total / count : 0;
     return { total, count, average };
@@ -108,9 +105,9 @@ class ExpenseManager {
   }
 
   filterExpensesByDateRange(startDate, endDate) {
-    return this.#expenses.filter(expense => 
+    return this.#expenses.filter(expense =>
       new Date(startDate) <= expense.date && expense.date <= new Date(endDate)
-    )
+    );
   }
 
   #generateId() {
@@ -118,27 +115,53 @@ class ExpenseManager {
     this.#nextId++;
     return id;
   }
+
+  _getTotalExpenses() {
+    return this.#expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  }
 }
 
-
-export { Expense, ExpenseManager };
-
+/*
+- like `ExpenseManager` BUT included budget limit
+- prevent adding expenses that would cause limit excession
+- can show budget limit
+- summarize expenses INCLUDING total budget used
+*/
 
 class BudgetExpenseManager extends ExpenseManager {
+  #budgetLimit;
+
   constructor(budgetLimit) {
+    if (typeof budgetLimit !== 'number' || budgetLimit <= 0) {
+      throw new Error('Budget limit must be a positive number');
+    }
     super();
-    this.budgetLimit = budgetLimit;
+    this.#budgetLimit = budgetLimit;
   }
 
-  get budgetLimit() {
-    return this._budgetLimit;
+  get budgetLimit() { return this.#budgetLimit }
+
+  remainingBudget() {
+    return this.#budgetLimit - this._getTotalExpenses();
   }
 
-  set budgetLimit(amount) {
-    return this._budgetLimit = amount;
+  addExpense(expenseData) {
+    if (expenseData.amount > this.remainingBudget()) {
+      throw new Error(
+        `Failed to add expense: amount ${expenseData.amount} lead to exceeding budget limit`
+      );
+    }
+
+    super.addExpense(expenseData);
   }
 
-  isOverBudget() {
-    //..
+  summarizeExpenses() {
+    const summary = super.summarizeExpenses();
+    summary.budgetLimit = this.#budgetLimit;
+    summary.budgetRemaining = this.remainingBudget();
+    return summary;
   }
 }
+
+
+export { Expense, ExpenseManager, BudgetExpenseManager };
