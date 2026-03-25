@@ -20,7 +20,7 @@ class Expense {
       throw new Error('category must be non-empty string');
     }
 
-    this.#id = id; //Expense.generateId();  // ????
+    this.#id = id;
     this.#amount = amount;
     this.#date = parsedDate;
     this.#category = category;
@@ -81,6 +81,20 @@ class ExpenseManager {
 
   getCategories() {
     return Array.from(this.#categories);
+  }
+
+  addCategory(category) {
+    if (typeof category !== 'string') {
+      throw new Error('Failed to add category: Category must be a non-empty string');
+    }
+
+    category = category.trim().toLowerCase();
+    
+    if (category === '') {
+      throw new Error('Failed to add category: Category must be a non-empty string');
+    }
+
+    this.#categories.add(category);
   }
 
   #generateId() {

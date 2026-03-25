@@ -13,6 +13,7 @@ function assert(condition, msg) {
   if (!condition) throw new Error(msg);
 }
 
+
 console.log(`\n=== PART 1: EXPENSE ===\n`);
 
 /* has id, amount, date & category */
@@ -107,10 +108,6 @@ try {
 
 console.log(`\n=== PART 2: EXPENSE MANAGER ===\n`);
 
-/*
-- add new allowed category
-*/
-
 /* manages a collection of 'Expense' objects */
 try {
   console.log("- Manages a collection of 'Expense' objects");
@@ -201,7 +198,7 @@ try {
 }
 
 /* retrieve initial allowed categories */
-/* 'food', 'housing', 'transportation', 'entertainment', 'health' */
+// 'food', 'housing', 'transportation', 'entertainment', 'health'
 try {
   console.log("- Retrieve current list of allowed categories");
   const manager = new ExpenseManager();
@@ -217,17 +214,66 @@ try {
   fail(error.message);
 }
 
+/* allows known categories */
+try {
+  console.log('- Allows known categories');
+  const manager = new ExpenseManager();
+  manager.addExpense({ amount: 10, date: '2026-03-20', category: 'food' });
+  assert(manager.expenses.length === 1, 'expenses should have one expense');
+  pass('Allows known categories');
+} catch (error) { fail(error.message) }
+
+/* disallows unknown categories */
+try {
+  console.log("- Disallows unknown categories");
+  const manager = new ExpenseManager();
+  manager.addExpense({ amount: 10, date: '2026-03-20', category: 'sports equipment' })
+  fail('should throw error when trying to add expense w/ disallowed category');
+} catch (_) {
+  pass("expense w/ category 'sports equipment' successfully disallowed");
+}
+
+/* add new allowed category (different type) */
+try {
+  console.log("- Add category non-string type");
+  const manager = new ExpenseManager();
+  manager.addCategory(1);
+  fail('should throw error when trying to add category that is wrong type');
+} catch (_) {
+  pass("adding category of a different data type successfully failed");
+}
+
+/* add new allowed category (empty string) */
+try {
+  console.log("- Add category that is an empty string");
+  const manager = new ExpenseManager();
+  manager.addCategory(' ');
+  fail('should throw error when trying to add category that is an empty string');
+} catch (_) {
+  pass("adding category that is an empty string successfully failed");
+}
+
+/* add new allowed category */
+try {
+  console.log('- Add category');
+  const manager = new ExpenseManager();
+  manager.addCategory('sports equipment');
+  assert(
+    manager.getCategories().includes('sports equipment'),
+    "'sports equipment' should be an allowed category"
+  );
+  pass("'sports equipment' added to allowed categories");
+} catch (error) { fail(error.message) }
 
 
+console.log(`\n=== PART 3: extend 'ExpenseManager' functionality ===\n`);
 
 /*
-try {
-  console.log("- add expense (invalid category)");
-  const expenseManager = new ExpenseManager();
-  const expense = new Expense(1, 10, '2027-03-20', 'sports equipment');
-  expenseManager.addExpense(expense);
-  fail('added new expense w/ invalid category')
-} catch (error) {
-  pass(error.message);
-}
+- summarize expenses (total spent, avg amount, count)
+- filter expenses by date range
+- filter expenses by category
 */
+
+
+
+
