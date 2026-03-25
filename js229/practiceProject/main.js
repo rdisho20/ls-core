@@ -35,7 +35,6 @@ class Expense {
 
 
 class ExpenseManager {
-  #title;
   #expenses;
   #nextId;
   #categories;
@@ -44,15 +43,13 @@ class ExpenseManager {
     'food', 'housing', 'transportation', 'entertainment', 'health'
   ];
 
-  constructor(title) {
-    this.#title = title;
+  constructor() {
     this.#expenses = [];
     this.#nextId = 1;
     this.#categories = new Set (ExpenseManager.#DEFAULT_CATEGORIES);
   }
 
-  get title() { return this.#title; }
-  get expenses() { return this.#expenses; }
+  get expenses() { return this.#expenses.slice(); }
   get categories() { return this.#categories.slice(); }
 
   addExpense(expenseData) {
@@ -89,7 +86,7 @@ class ExpenseManager {
     }
 
     category = category.trim().toLowerCase();
-    
+
     if (category === '') {
       throw new Error('Failed to add category: Category must be a non-empty string');
     }
@@ -97,53 +94,30 @@ class ExpenseManager {
     this.#categories.add(category);
   }
 
+  summarizeExpenses() {
+    // total, count, avg
+    const total = this.#expenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const count = this.#expenses.length;
+    const average = count ? total / count : 0;
+    return { total, count, average };
+  }
+
+  filterExpensesByCategory(category) {
+    category = category.trim().toLowerCase();
+    return this.expenses.filter(expense => expense.category === category);
+  }
+
+  filterExpensesByDateRange(startDate, endDate) {
+    return this.#expenses.filter(expense => 
+      new Date(startDate) <= expense.date && expense.date <= new Date(endDate)
+    )
+  }
+
   #generateId() {
     const id = this.#nextId;
     this.#nextId++;
     return id;
   }
-
-  #validCategory(category) {
-    if (this.allowedCategories.includes(category) && category.length > 0) {
-      return true;
-    }
-
-    return false;
-  }
-
-  /*
-  #checkDuplicateTitle(title) {
-    // ..
-  }
-
-  getTotalSpent() {
-    //..
-  }
-
-  getAverageAmount() {
-    //..
-  }
-
-  getCount() {
-    //..
-  }
-
-  getSummary() {
-    // ..
-  }
-
-  filterExpensesByDateRange(date1, date2) {
-    //..
-  }
-
-  filterExpensesByCategory(category) {
-    //..
-  }
-
-  addNewCategory(category) {
-    //..
-  }
-  */
 }
 
 

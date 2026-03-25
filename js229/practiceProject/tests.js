@@ -268,12 +268,93 @@ try {
 
 console.log(`\n=== PART 3: extend 'ExpenseManager' functionality ===\n`);
 
+/* summarize expenses (total spent, avg amount, count) */
+try {
+  console.log('- Summarize expenses (total spent, avg amount, count)');
+  const manager = new ExpenseManager();
+  /*
+  Assumption: Adding an expense from collection of data
+  rather than expense object itself
+  */
+  manager.addExpense({ amount: 20, date: '2026-03-20', category: 'food' });
+  manager.addExpense({ amount: 10, date: '2026-03-20', category: 'health' });
+  manager.addExpense({ amount: 30, date: '2026-03-20', category: 'entertainment' });
+  const summary = manager.summarizeExpenses();
+  assert(summary.count === 3, 'there should be 3 expenses');
+  assert(summary.total === 60, 'total amount should be 60');
+  assert(summary.average === (30 + 20 + 10) / 3, 'total amount should be 60');
+  pass('summarizes expenses w/ total spent, avg amount & count');
+} catch (error) { fail(error.message) }
+
+/* summarize expenses w/ 0 expenses */
+try {
+  console.log("- Add category that is an empty string");
+  const manager = new ExpenseManager();
+  const summary = manager.summarizeExpenses();
+  assert(summary.count === 0, 'count should be 0');
+  assert(summary.total === 0, 'total should be 0');
+  assert(summary.average === 0, 'average should be 0');
+  pass('summarizes expenses w/ total spent, avg amount & count equals 0');
+} catch (error) { fail(error.message) }
+
+/* filter expenses by category */
+try {
+  console.log('- Filter expenses by category');
+  const manager = new ExpenseManager();
+  /*
+  Assumption: Adding an expense from collection of data
+  rather than expense object itself
+  */
+  manager.addExpense({ amount: 20, date: '2026-03-20', category: 'food' });
+  manager.addExpense({ amount: 10, date: '2026-03-20', category: 'health' });
+  manager.addExpense({ amount: 30, date: '2026-03-20', category: 'entertainment' });
+  manager.addExpense({ amount: 30, date: '2026-03-20', category: 'food' });
+  const filteredExpenses = manager.filterExpensesByCategory('food');
+  assert(filteredExpenses.length === 2, 'there should be 2 expenses');
+  assert(
+    filteredExpenses.every(expense => expense.category === 'food'),
+    "there should only be expenses w/ 'food' category"
+  );
+  pass('filters expenses by category');
+} catch (error) { fail(error.message) }
+
+/* filter expenses by date range */
+try {
+  console.log('- Filter expenses by category');
+  const manager = new ExpenseManager();
+  /*
+  Assumption: Adding an expense from collection of data
+  rather than expense object itself
+  */
+  manager.addExpense({ amount: 20, date: '2026-03-20', category: 'food' });
+  manager.addExpense({ amount: 10, date: '2026-03-22', category: 'health' });
+  manager.addExpense({ amount: 30, date: '2026-03-23', category: 'entertainment' });
+  manager.addExpense({ amount: 30, date: '2026-03-24', category: 'food' });
+  const filteredExpenses = manager.filterExpensesByDateRange('2026-03-20', '2026-03-23');
+  assert(filteredExpenses.length === 3, 'there should be 3 expenses');
+  assert(
+    filteredExpenses[0].date.valueOf() === new Date('2026-03-20').valueOf(),
+    "first expense date should be '2026-03-20'"
+  );
+  assert(
+    filteredExpenses[1].date.valueOf() === new Date('2026-03-22').valueOf(),
+    "second expense date should be '2026-03-22'"
+  );
+  assert(
+    filteredExpenses[2].date.valueOf() === new Date('2026-03-23').valueOf(),
+    "last expense date should be '2026-03-23'"
+  );
+  pass('filters expenses by date range (inclusive)');
+} catch (error) { fail(error.message) }
+
+
+console.log(`\n=== PART 3: BUDGET EXPENSE MANAGER ===\n`);
+
 /*
-- summarize expenses (total spent, avg amount, count)
-- filter expenses by date range
-- filter expenses by category
+- like `ExpenseManager` BUT included budget limit
+- prevent adding expenses that would cause limit excession
+- can show budget limit
+- summarize expenses INCLUDING total budget used
 */
-
-
 
 
