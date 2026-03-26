@@ -7,12 +7,12 @@ class Expense {
   #category;
 
   constructor(id, amount, date, category) {
-    if (amount < 0) throw new Error('amount cannot be negative');
+    if (amount <= 0) throw new Error('amount cannot be negative');
 
     const parsedDate = new Date(date);
     if (parsedDate > new Date()) throw new Error('cannot be future Date');
 
-    const trimmedCategory = category.trim();
+    const trimmedCategory = category.trim().toLowerCase();
     if (trimmedCategory.length === 0) {
       throw new Error('category must be non-empty string');
     }
@@ -20,7 +20,7 @@ class Expense {
     this.#id = id;
     this.#amount = amount;
     this.#date = parsedDate;
-    this.#category = category;
+    this.#category = trimmedCategory;
     Object.freeze(this);
   }
 
@@ -47,7 +47,6 @@ class ExpenseManager {
   }
 
   get expenses() { return this.#expenses.slice() }
-  get categories() { return this.#categories.slice() }
 
   addExpense(expenseData) {
     const category = expenseData.category.trim().toLowerCase();
@@ -157,9 +156,11 @@ class BudgetExpenseManager extends ExpenseManager {
 
   summarizeExpenses() {
     const summary = super.summarizeExpenses();
-    summary.budgetLimit = this.#budgetLimit;
-    summary.budgetRemaining = this.remainingBudget();
-    return summary;
+    return {
+      ...summary,
+      budgetLimit: this.#budgetLimit,
+      budgetRemaining: this.remainingBudget(),
+    };
   }
 }
 
