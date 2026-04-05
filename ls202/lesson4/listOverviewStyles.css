@@ -1,0 +1,26 @@
+nav ul {
+  background-color: powderblue;
+  list-style-type: none;
+  padding-left: 0;
+  width: 200px;
+}
+
+nav li {
+  font-size: 1.25rem;
+}
+
+nav a {
+  box-sizing: border-box;
+  color: blue;
+  display: inline-block;
+  line-height: 2.5;
+  padding: 0 10px;
+  text-decoration: none;
+  width: 100%;
+}
+
+nav a:hover,
+nav a:focus {
+  background-color: blue;
+  color: white;
+}

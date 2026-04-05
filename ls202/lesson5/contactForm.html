@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>My Awesome Page</title>
+    <link rel="stylesheet" href="contactFormStyles.css">
+    <!-- Optional: Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- view in browser w/ opt+B -->
+    <!-- first name, last name, email, address, city, state, zip -->
+    <form action="#" method="post">
+      <fieldset>
+      <dl class="side-by-side left">
+        <dt><label for="first_name">First Name</label></dt>
+        <dd><input type="text" name="first_name" required></dd>
+      </dl><!--
+      --><dl class="side-by-side right">
+        <dt><label for="last_name">Last Name</label></dt>
+        <dd><input type="text" name="last_name" required></dd>
+      </dl>
+      <dl>
+        <dt><label for="email">Email</label></dt>
+        <dd><input type="email" name="email" placeholder="joe@shmo.com" required></dd>
+      </dl>
+      <dl class="side-by-side city">
+        <dt><label for="city">City</label></dt>
+        <dd><input type="text" name="city" required></dd>
+      </dl><!--
+      --><dl class="side-by-side state">
+        <dt>State</dt>
+        <dd>
+          <select name="state" required>
+            <option>AK</option>
+            <option>AL</option>
+            <option>AR</option>
+            <option>AZ</option>
+            <option>CA</option>
+            <option>CO</option>
+            <option>CT</option>
+            <option>DC</option>
+            <option>DE</option>
+            <option>FL</option>
+            <option>GA</option>
+            <option>HI</option>
+            <option>IA</option>
+            <option>ID</option>
+            <option>IL</option>
+            <option>IN</option>
+            <option>KS</option>
+            <option>KY</option>
+            <option>LA</option>
+            <option>MA</option>
+            <option>MD</option>
+            <option>ME</option>
+            <option>MI</option>
+            <option>MN</option>
+            <option>MO</option>
+            <option>MS</option>
+            <option>MT</option>
+            <option>NC</option>
+            <option>ND</option>
+            <option>NE</option>
+            <option>NH</option>
+            <option>NJ</option>
+            <option>NM</option>
+            <option>NV</option>
+            <option>NY</option>
+            <option>OH</option>
+            <option>OK</option>
+            <option>OR</option>
+            <option>PA</option>
+            <option>RI</option>
+            <option>SC</option>
+            <option>SD</option>
+            <option>TN</option>
+            <option>TX</option>
+            <option>UT</option>
+            <option>VA</option>
+            <option>VT</option>
+            <option>WA</option>
+            <option>WI</option>
+            <option>WV</option>
+            <option>WY</option>
+          </select>
+        </dd>
+      </dl><!--
+      --><dl class="side-by-side zipcode">
+        <dt>Zipcode</dt>
+        <dd><input type="text" name="zipcode" maxlength="5" placeholder="#####" required></dd>
+      </dl>
+      <dl>
+        <dt>Which of these colors do you like best?</dt>
+        <dd>
+          <ul>
+            <li><label><input type="radio" name="color" value="red" checked>Red</label></li>
+            <li><label><input type="radio" name="color" value="green">Green</label></li>
+            <li><label><input type="radio" name="color" value="blue">Blue</label></li>
+          </ul>
+        </dd>
+      </dl>
+      <dl>
+        <dt>What web technologies do you want to learn?</dt>
+        <dd>
+          <select size="4" multiple>
+            <option>HTML</option>
+            <option>JavaScript</option>
+            <option>Ruby</option>
+            <option>Rails</option>
+            <option>Python</option>
+            <option>Django</option>
+          </select>
+        </dd>
+      </dl>
+      <dl>
+        <dt>Comment box:</dt>
+        <dd>
+          <textarea cols="80" rows="6"></textarea>
+        </dd>
+      </dl>
+      <dl>
+        <input type="hidden" name="timestamp" value="2018-02-17">
+        <input type="submit" name="send" value="Send">
+        <input type="reset">
+      </dl>
+      </fieldset>
+    </form>
+    <script src="script.js"></script>
+</body>
+</html>

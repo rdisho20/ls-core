@@ -1,0 +1,69 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font: normal 16px Helvetica, Arial, sans-serif;
+}
+
+fieldset {
+  width: 600px;
+  padding: 0;
+  margin: 0 auto;
+  border: 0;
+}
+
+dt {
+  margin-bottom: 5px;
+}
+
+dd {
+  margin: 0 0 25px 0;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  height: 25px;
+  padding-left: 4px;
+  border: 1px solid #cecece;
+}
+
+textarea {
+  height: auto;
+  resize: vertical;
+}
+
+ul {
+  padding-left: 0;
+  list-style: none;
+}
+
+.side-by-side {
+  width: 50%;
+  display: inline-block;
+}
+
+.left {
+  padding-right: 5px;
+}
+
+.right {
+  padding-left: 5px;
+}
+
+.city {
+  width: 50%;
+  padding-right: 5px;
+}
+
+.state {
+  width: 10%;
+  padding: 0 5px;
+}
+
+.zipcode {
+  width: 40%;
+  padding-left: 5px;
+}
