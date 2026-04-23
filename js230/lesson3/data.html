@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Data Attributes</title>
+    <!-- Optional: Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <script src="data.js" defer></script>
+  </head>
+  <body>
+    <ul>
+      <li><a href="#" data-block="gold">Gold Sponsors</a></li>
+      <li><a href="#" data-block="silver">Silver Sponsors</a></li>
+      <li><a href="#" data-block="bronze">Bronze Sponsors</a></li>
+    </ul>
+    
+    <article data-block="gold" style="visibility: visible">
+      <h1>Gold Sponsors</h1>
+    </article>
+    
+    <article data-block="silver" style="visibility: hidden">
+      <h1>Silver Sponsors</h1>
+    </article>
+    
+    <article data-block="bronze" style="visibility: hidden">
+      <h1>Bronze Sponsors</h1>
+    </article>
+  </body>
+</html>

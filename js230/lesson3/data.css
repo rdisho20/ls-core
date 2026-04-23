@@ -1,0 +1,11 @@
+article[data-block='silver'] {
+  visibility: visible;
+}
+
+article[data-block='silver'] {
+  visibility: hidden;
+}
+
+article[data-block='bronze'] {
+  visibility: hidden;
+}
