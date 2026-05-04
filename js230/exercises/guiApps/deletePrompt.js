@@ -5,51 +5,13 @@ let todoItems = [
   {id: 4, title: 'Coffee with John'},
 ];
 
-/*
-const App = {
-  generateList() {
-    const todos = document.getElementById('todos');
-    
-    todoItems.forEach(todo => {
-      let html = `
-        <li id="${todo.id}">${todo.title}
-          <span class="delete-button">
-            <input type="submit" value="Delete">
-          </span>
-        </li>
-      `
-
-      todos.insertAdjacentHTML('beforeend', html);
-    })
-  },
-
-  generateDeleteDialog() {
-    const dialogueOverlay = document.createElement('div');
-    const dialogueBox = document.createElement('div')
-    document.body.appendChild(dialogueOverlay);
-    dialogueOverlay.appendChild(dialogueBox);
-    dialogueOverlay.classList.add('delete-dialogue');
-  },
-
-  init() {
-    this.generateList();
-    this.generateDeleteDialog();
-
-
-  }
-}
-
-App.init();
-*/
-
 class App {
   constructor(todos) {
     this.todosData = todos;
     this.todosList = document.getElementById('todos');
     this.renderTodos();
     this.createDeleteDialogue();
-    console.log(this.dialogueBox);
-    console.log(this.dialogueOverlay);
+    this.handleClicks();
   }
 
   renderTodos() {
@@ -61,7 +23,6 @@ class App {
           </span>
         </li>
       `
-
       this.todosList.insertAdjacentHTML('beforeend', html);
     })
   }
@@ -71,22 +32,57 @@ class App {
     this.dialogueBox = document.createElement('div')
     document.body.appendChild(this.dialogueOverlay);
     this.dialogueOverlay.appendChild(this.dialogueBox);
-    this.dialogueOverlay.classList.add('delete-dialogue');
+    this.dialogueOverlay.classList.add('delete-dialogue-container');
+    this.dialogueBox.classList.add('delete-dialogue-box');
+  }
+
+  displayDialogue(e) {
+    const todo = this.getTodo(e.target.dataset.id)
+    this.todoElement = todo[0];
+    this.todoItem = todo[1];
+    this.dialogueBox.innerHTML = `
+      <p>Are you sure you want to delete "${this.todoItem.title}"?</p>
+      <div class="confirmation-buttons">
+        <button class="yes">Yes</button> <button class="no">No</button>
+      </div>
+    `
+  }
+
+  deleteTodo() {
+    let index = this.todosData.findIndex(todo => 
+      todo.id === this.todoItem.id
+    );
+    this.todosData.splice(index, 1);
+    this.todoElement.remove();
   }
 
   handleClicks() {
     document.addEventListener('click', (e) => {
       if (e.target.tagName !== 'BUTTON') return;
-      /*const todo = */
-      this.dialogueBox.innerHTML = `
-        <p>Are you sure you want to delete ""?</p>
-      `
+      if (e.target.textContent === "Delete") {
+        this.displayDialogue(e);
+        this.dialogueOverlay.style.visibility = 'visible';
+      }
+
+      try {
+        if (e.target.classList.contains('yes')) {
+          this.deleteTodo();
+          this.dialogueOverlay.style.visibility = 'hidden';
+        } else if (e.target.classList.contains('no')) {
+          this.dialogueOverlay.style.visibility = 'hidden';
+        }
+      } catch (error) {
+        console.error(error, error.message);
+        this.dialogueOverlay.style.visibility = 'hidden';
+      }
     })
   }
 
   getTodo(id) {
-    // [...this.todosList.children].find
+    const todoElement = [...this.todosList.children].find(todo => todo.dataset.id == id);
+    const todoItem = this.todosData.find(todo => todo.id == id);
+    return [todoElement, todoItem];
   }
 }
 
-new App(todoItems);
+const todos = new App(todoItems);

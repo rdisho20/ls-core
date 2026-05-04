@@ -28,7 +28,7 @@ li {
   justify-content: space-between;
 }
 
-.delete-dialogue {
+.delete-dialogue-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,9 +42,33 @@ li {
   visibility: hidden;
 }
 
-.delete-dialogue > div {
+.delete-dialogue-box {
   background-color: white;
+  color: black;
   height: 150px;
   width: 400px;
   border-radius: 5px;
+  padding: 20px 40px;
+}
+
+.delete-dialogue-box .confirmation-buttons {
+  width: 200px;
+  text-align: right;
+  margin-left: auto;
+}
+
+.yes {
+  background-color: green;
+  color: white;
+  border-radius: 5px;
+  width: 60px;
+  height: 30px;
+}
+
+.no {
+  background-color: red;
+  color: white;
+  border-radius: 5px;
+  width: 60px;
+  height: 30px;
 }
