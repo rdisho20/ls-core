@@ -67,30 +67,48 @@ fetchUserData()
 
 
 // 5
+/* DEEPLY NESTED solution
+function retryOperation(operationFunc) {
+  function attempt() {
+    return operationFunc();
+  }
+
+  attempt()
+    .then(console.log)
+    .catch(error => {
+      attempt()
+        .then(console.log)
+        .catch(error => {
+          attempt()
+            .then(console.log)
+            .catch(error => console.error(error.message));
+        });
+    })
+}
+*/
+
+/* CLEAN solution
 function retryOperation(operationFunc) {
   let attempts = 0;
-  let success = false;
-  
-  while (attempts <= 2) {
+
+  function attempt() {
     attempts += 1;
 
-    operationFunc()
-      .then(message => {
-        success = true;
-        attempts = 3;
-        console.log(message, 'attempts:', attempts);
-      })
+    return operationFunc()
       .catch(error => {
-        if (attempts === 2) {
-          console.log(error.message);
+        if (attempts === 3) {
+          throw error;
         }
+
+        return attempt();
       })
   }
 
-  if (!success) {
-    console.log("Operation failed");
-  }
+  return attempt()
+    .then(console.log)
+    .catch(error => console.log("Operation failed"))
 }
+
 
 retryOperation(
   () =>
@@ -100,3 +118,31 @@ retryOperation(
         : reject(new Error("Fail!"))
     )
 );
+*/
+
+/*
+// 6
+function mockAsyncOp() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() > 0.5) {
+        resolve("Op succeeded");
+      } else {
+        reject("Op failed");
+      }
+    }, 1000)
+  });
+}
+
+mockAsyncOp()
+  .then(console.log)
+  .catch(console.error)
+  .finally(() => {
+    console.log("Op attempted");
+  });
+*/
+
+
+// 7
+
+
