@@ -5,7 +5,7 @@ body {
 }
 
 ul {
-  /*border: solid 2px red;*/
+  border: solid 2px red;
   text-align: left;
   max-width: 800px;
 }
@@ -71,4 +71,48 @@ li {
   border-radius: 5px;
   width: 60px;
   height: 30px;
+}
+
+.context-menu {
+  position: fixed;
+  display: none;
+  background-color: black;
+  border-radius: 5px;
+  color: white;
+  width: auto;
+  height: auto;
+  left: 0;
+  top: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.context-menu ul {
+  border-radius: 5px;
+  background-color: lightgray;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.context-menu li {
+  background-color: lightgray;
+  border-radius: 5px;
+  color: white;
+  border-bottom: solid 2px white;
+  margin: 0;
+  height: auto;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.context-menu li:hover {
+  background-color: gray;
+}
+
+.context-menu a {
+  text-decoration: none;
+  color: white;
 }

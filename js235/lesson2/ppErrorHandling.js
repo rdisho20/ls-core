@@ -144,5 +144,19 @@ mockAsyncOp()
 
 
 // 7
+function loadData() {
+  return new Promise((resolve, reject) => {
+    if (Math.random() > 0.33) {
+      resolve("Data loaded");
+    } else {
+      reject(new Error("Network Error"))
+    }
+  }).catch(() => {
+    return new Promise(resolve => {
+      resolve("Using cached data");
+    });
+  })
+}
 
+loadData().then(console.log);
 
