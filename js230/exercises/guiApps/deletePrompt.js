@@ -9,6 +9,8 @@ class App {
   constructor(todos) {
     this.todosData = todos;
     this.todosList = document.getElementById('todos');
+    this.boundContextMenuClick = this.contextMenuClickCallback.bind(this);
+    this.boundDialogueOverlayClick = this.dialogueOverlayCallback.bind(this);
     this.renderTodos();
     this.createDeleteDialogue();
     this.creatContextMenus();
@@ -34,9 +36,15 @@ class App {
       let html = `
         <div data-id="${todo.id}" class="context-menu">
           <ul>
-            <li><a href="#">Edit Todo</a></li>
-            <li><a href="#">Show Details</a></li>
-            <li class="delete"><a href="#">Delete</a></li>
+            <li class="edit-todo">
+              <a href="#" class="edit-todo">Edit Todo</a>
+            </li>
+            <li class="show-details">
+              <a href="#" class="show-details">Show Details</a>
+            </li>
+            <li class="delete" data-id=${todo.id}>
+              <a href="#" class="delete" data-id="${todo.id}">Delete</a>
+            </li>
           </ul>
         </div>
       `
@@ -61,6 +69,7 @@ class App {
         <button class="yes">Yes</button> <button class="no">No</button>
       </div>
     `
+    this.dialogueOverlay.style.visibility = 'visible';
   }
 
   deleteTodo() {
@@ -73,11 +82,17 @@ class App {
 
   handleClicks() {
     document.addEventListener('click', (e) => {
-      this.hideContextMenu();
+      if (!e.target.closest('.context-menu')) {
+        this.hideContextMenu();
+      }
+      if (e.target.closest('.context-menu')) {
+        if (e.target.classList.contains('delete')) {
+          this.hideContextMenu();
+        }
+      }
       if (e.target.tagName !== 'BUTTON') return;
       if (e.target.classList.contains("delete")) {
         this.displayDialogue(e);
-        this.dialogueOverlay.style.visibility = 'visible';
       }
 
       if (e.target.classList.contains('yes')) {
@@ -88,10 +103,7 @@ class App {
       }
     })
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.classList.contains('delete-dialogue-container')) return;
-      this.dialogueOverlay.style.visibility = 'hidden';
-    })
+    this.dialogueOverlay.addEventListener('click', this.boundDialogueOverlayClick);
   }
 
   handleContextMenu() {
@@ -100,6 +112,7 @@ class App {
       e.preventDefault();
       try {
         if (this.contextMenu.dataset.id !== e.target.dataset.id) {
+          console.log("checking ids");
           this.contextMenu.style.display = 'none';
           this.contextMenu = this.getContextMenu(e.target.dataset.id);
         }
@@ -109,24 +122,8 @@ class App {
       this.contextMenu.style.display = 'block';
       this.contextMenu.style.left = e.clientX + 'px';
       this.contextMenu.style.top = e.clientY + 'px';
+      this.contextMenu.addEventListener('click', this.boundContextMenuClick);
     })
-
-    this.todosList.addEventListener('click', this.contextMenuClickCallback, true);
-  }
-
-  contextMenuClickCallback(e) {
-    console.log("handle context menu 2nd handler listening...");
-    if (!e.target.classList.contains('context-menu')) return;
-    if (e.target.tagName === "LI" || e.target.tagName === "A") {
-      e.preventDefault();
-      try {
-        console.log('TRYING');
-        this.displayDialogue(e);
-      } catch (error) {
-        console.log("Error:", error.message)
-        return;
-      }
-    }
   }
 
   getTodo(id) {
@@ -137,7 +134,6 @@ class App {
 
   getContextMenu(id) {
     const contextMenus = document.querySelectorAll(".context-menu");
-    console.log(contextMenus);
     return [...contextMenus].find(menu => {
       return menu.dataset.id === id;
     })
@@ -146,8 +142,24 @@ class App {
   hideContextMenu() {
     try {
       this.contextMenu.style.display = 'none';
-      //document.removeEventListener('click', this.contextMenuClickCallback);
+      this.contextMenu.removeEventListener('click', this.boundContextMenuClick);
       return;
+    } catch (error) {
+      return;
+    }
+  }
+
+  dialogueOverlayCallback(e) {
+    if (!e.target.classList.contains('delete-dialogue-container')) return;
+    this.dialogueOverlay.style.visibility = 'hidden';
+  }
+
+  contextMenuClickCallback(e) {
+    console.log("handle context menu 2nd handler listening...");
+    if (!e.target.classList.contains('delete')) return;
+    e.preventDefault();
+    try {
+      this.displayDialogue(e);
     } catch (error) {
       return;
     }
