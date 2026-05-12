@@ -24,7 +24,6 @@ class Stopwatch {
     this.#minutes = 0;
     this.#seconds = 0;
     this.#centiseconds = 0;
-    this.startTime = null;
   }
 
   reset() {
@@ -32,7 +31,6 @@ class Stopwatch {
     this.#minutes = 0;
     this.#seconds = 0;
     this.#centiseconds = 0;
-    this.startTime = null;
   }
 
   get hours() {
@@ -64,74 +62,133 @@ class Stopwatch {
 class App {
   constructor() {
     this.stopwatch = new Stopwatch();
+    this.handleReset();
+    this.handleStartStop();
     this.init();
+    this.boundCentisecondsInterval = this.centisecondsInterval.bind(this);
+    this.boundSecondsInterval = this.secondsInterval.bind(this);
+    this.boundMinutesInterval = this.minutesInterval.bind(this);
+    this.boundHoursInterval = this.hoursInterval.bind(this);
   }
 
   start() {
-    /*
-    run centiseconds immediatly
-    seconds delayed by 1000 milliseconds
-    minutes delayed by 60000 milliseconds
-    hours delayed by 3600000 milliseconds
-
-    re-render html for every centisecond passed (same for other units)
-    */
-
-    this.centisecondRoundInterval = setInterval(() => {
-      this.stopwatch.centisecondsStartTime = Date.now();
-      this.processCentiseconds();
-    }, 1000);
-
-    this.secondRoundInterval = setInterval(() => {
-      this.stopwatch.secondsStartTime = Date.now();
-      this.processSeconds();
-    }, 1000);
+    this.stopwatch.centisecondsStartTime = Date.now();
+    this.stopwatch.secondsStartTime = Date.now();
+    this.stopwatch.minutesStartTime = Date.now();
+    this.stopwatch.hoursStartTime = Date.now();
+    this.processCentiseconds();
+    this.processSeconds();
+    this.processMinutes();
+    this.processHours();
   }
 
-  processCentiseconds() {
-    // process Centiseconds (1 round completed)
-    // every millisecond a new interval is created
-    this.centisecondId = setInterval(() => {
-      this.stopwatch.centiseconds = Math.floor((Date.now() - this.stopwatch.centisecondsStartTime) / 10);
-      this.updateHTML('centiseconds');
-    }, 10);
+  processCentiseconds() { this.centisecondsId = setInterval(this.boundCentisecondsInterval, 10) }
+  processSeconds() { this.secondsId = setInterval(this.boundSecondsInterval, 1000) }
+  processMinutes() { this.minutesId = setInterval(this.boundMinutesInterval, 60000) }
+  processHours() { this.hoursId = setInterval(this.boundHoursInterval, 3600000) }
 
-    setTimeout(() => {
-      clearInterval(this.centisecondId);
-      this.stopwatch.centiseconds = 0;
-      this.updateHTML('centiseconds');
-    }, 990)
+  centisecondsInterval(offset) {
+    this.stopwatch.centiseconds = Math.floor((Date.now() - this.stopwatch.centisecondsStartTime) / 10);
+    if (this.stopwatch.centiseconds > 99) this.initNextRound('centiseconds');
+    this.updateHTML('centiseconds');
   }
 
-  processSeconds() {
-    // interval(s) created recursively every second
-    // if click reset button, no new intervals, but seconds start display counting
-    // single interval removed at 59 second mark
-    this.secondId = setInterval(() => {
-      this.stopwatch.seconds = Math.floor((Date.now() - this.stopwatch.secondsStartTime) / 1000);
-      console.log(this.stopwatch.seconds);
-      this.updateHTML('seconds');
-    }, 1000);
+  secondsInterval(offset) {
+    this.stopwatch.seconds = Math.floor((Date.now() - this.stopwatch.secondsStartTime) / 1000);
+    if (this.stopwatch.seconds > 59) this.initNextRound('seconds');
+    this.updateHTML('seconds');
+  }
 
-    setTimeout(() => {
-      clearInterval(this.secondId);
-      this.stopwatch.seconds = 0;
-      this.updateHTML('seconds');
-    }, 59990)
+  minutesInterval(offset) {
+    this.stopwatch.minutes = Math.floor((Date.now() - this.stopwatch.minutesStartTime) / 60000);
+    if (this.stopwatch.minutes > 59) this.initNextRound('minutes');
+    this.updateHTML('minutes');
+  }
+
+  hoursInterval() {
+    this.stopwatch.hours = Math.floor((Date.now() - this.stopwatch.hoursStartTime) / 3600000);
+    // if (this.stopwatch.hours > 59) this.initNextRound('hours');
+    this.updateHTML('hours');
+  }
+
+  initNextRound(unit) {
+    this.stopwatch[`${unit}StartTime`] = Date.now();
+    switch (unit) {
+      case 'centiseconds':
+        this.stopwatch[`${unit}`] = Math.floor((Date.now() - this.stopwatch[`${unit}StartTime`]) / 10);
+        break;
+      case 'seconds':
+        this.stopwatch[`${unit}`] = Math.floor((Date.now() - this.stopwatch[`${unit}StartTime`]) / 1000);
+        break;
+      case 'minutes':
+        this.stopwatch[`${unit}`] = Math.floor((Date.now() - this.stopwatch[`${unit}StartTime`]) / 60000);
+        break;
+      case 'hours':
+        this.stopwatch[`${unit}`] = Math.floor((Date.now() - this.stopwatch[`${unit}StartTime`]) / 3600000);
+        break;
+    }
   }
 
   handleReset() {
     document.querySelector(".reset").addEventListener('click', (e) => {
       try {
-        //clearInterval(this.centisecondId);
-        clearInterval(this.centisecondRoundInterval);
-        //clearInterval(this.secondId);
-        clearInterval(this.secondRoundInterval);
+        this.clearIntervals();
         this.resetStopwatch();
+        document.querySelector(".start-stop").textContent = 'Start';
       } catch (error) {
         // do nothing...
       }
     })
+  }
+
+  handleStartStop() {
+    document.querySelector(".start-stop").addEventListener('click', (e) => {
+      if (e.currentTarget.textContent === 'Start') {
+        if (this.centisecondsId !== null) this.resumeClock();
+        else this.start();
+        e.currentTarget.textContent = 'Stop';
+      } else if (e.currentTarget.textContent === 'Stop') {
+        this.pauseClock();
+        e.currentTarget.textContent = 'Start';
+      }
+    })
+  }
+
+  pauseClock() {
+    // this.elapsedBeforePause = this.start
+    this.clearIntervals();
+  }
+
+  resumeClock() {
+    /*
+    When resuming, need to continue from previous Date.now() and NOT a current Date.now() ??
+
+    to continue from time left off, take milliseconds elapsed (centiseconds * 10)
+    and that is our offset
+
+    for the centiseconds, get its current value (this.stopwatch.centiseconds) as offset
+    then start the centiseconds clock, where when checking its current value,
+      initialize the next round if > 99 + 'offset'
+    */
+
+    /*
+    this.stopwatch.centisecondsStartTime = ;
+    this.stopwatch.secondsStartTime = ;
+    this.stopwatch.minutesStartTime = ;
+    this.stopwatch.hoursStartTime = ;
+    */
+
+    this.centisecondsId = setInterval(this.boundCentisecondsInterval, 10);
+    this.secondsId = setInterval(this.boundSecondsInterval, 1000);
+    this.minutesId = setInterval(this.boundMinutesInterval, 60000);
+    this.hoursId = setInterval(this.boundHoursInterval, 3600000);
+  }
+
+  clearIntervals() {
+    clearInterval(this.centisecondsId);
+    clearInterval(this.secondsId);
+    clearInterval(this.minutesId);
+    clearInterval(this.hoursId);
   }
 
   renderHTML() {
@@ -156,19 +213,34 @@ class App {
 
   init() {
     this.renderHTML();
-    this.handleReset();
+    this.centisecondsId = null;
+    this.secondsId = null;
+    this.minutesId = null;
+    this.hoursId = null;
+    this.elapsedBeforePause = null;
   }
 }
 
 const stopwatchApp = new App();
 
-//stopwatchApp.start();
 
+/* For archives -- using setTimeout for each round not producing expected output
 setTimeout(() => {
-  stopwatchApp.start();
-}, 1000)
+  clearInterval(this.centisecondId);
+  this.stopwatch.centiseconds = 0;
+  this.updateHTML('centiseconds');
+}, 990)
+*/
 
-
+/* For archives -- using setTimeout for each round not producing expected output
+// ... an issue w/ all other setTimeout executions piling up on minitask que behind all
+// setTimeouts of centiseconds round
+setTimeout(() => {
+  clearInterval(this.secondId);
+  this.stopwatch.seconds = 0;
+  this.updateHTML('seconds');
+}, 59990)
+*/
 
 
 
