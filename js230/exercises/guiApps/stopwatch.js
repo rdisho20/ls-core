@@ -76,6 +76,7 @@ class App {
     this.stopwatch.secondsStartTime = Date.now();
     this.stopwatch.minutesStartTime = Date.now();
     this.stopwatch.hoursStartTime = Date.now();
+    this.startTime = Date.now();
     this.processCentiseconds();
     this.processSeconds();
     this.processMinutes();
@@ -87,19 +88,19 @@ class App {
   processMinutes() { this.minutesId = setInterval(this.boundMinutesInterval, 60000) }
   processHours() { this.hoursId = setInterval(this.boundHoursInterval, 3600000) }
 
-  centisecondsInterval(offset) {
+  centisecondsInterval() {
     this.stopwatch.centiseconds = Math.floor((Date.now() - this.stopwatch.centisecondsStartTime) / 10);
     if (this.stopwatch.centiseconds > 99) this.initNextRound('centiseconds');
     this.updateHTML('centiseconds');
   }
 
-  secondsInterval(offset) {
+  secondsInterval() {
     this.stopwatch.seconds = Math.floor((Date.now() - this.stopwatch.secondsStartTime) / 1000);
     if (this.stopwatch.seconds > 59) this.initNextRound('seconds');
     this.updateHTML('seconds');
   }
 
-  minutesInterval(offset) {
+  minutesInterval() {
     this.stopwatch.minutes = Math.floor((Date.now() - this.stopwatch.minutesStartTime) / 60000);
     if (this.stopwatch.minutes > 59) this.initNextRound('minutes');
     this.updateHTML('minutes');

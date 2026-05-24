@@ -1,0 +1,53 @@
+body {
+  font-size: 16px;
+  font-family: 'Times New Roman', Times, serif;
+  box-sizing: border-box;
+  margin: 0;
+  color: white;
+}
+
+header {
+  display: block;
+  background-color: rgb(234, 187, 101);
+  height: auto;
+  width: auto;
+  padding: 1px 15px;
+  border-radius: 10px;
+}
+
+ul {
+  display: inline-block;
+  padding: 0;
+}
+
+span {
+  margin-left: 5px;
+  display: inline-block;
+}
+
+.menu li {
+  list-style: none;
+  display: inline-block;
+  margin: 0 20px 0 0;
+}
+
+.cars {
+  color: black;
+  margin: 30px;
+}
+
+.car img {
+  width: 100%;
+}
+
+.car {
+  display: inline-block;
+  width: 200px;
+  margin: 0 0 20px 20px;
+  border-radius: 4px;
+}
+
+.car h2, .car p, .car button {
+  margin: 0;
+  margin-top: 4px;
+}

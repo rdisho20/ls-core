@@ -34,7 +34,7 @@ const pr = new Promise((resolve, reject) => {
 console.log(1)
 async function main() {
   console.log(3);
-  // const result = await pr;
+  const result = await pr;
   // console.log(5);
   // console.log(result);
   return pr

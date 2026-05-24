@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile Fetcher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to the User Profile Fetcher</h1>
+  <p>Enter a user ID to fetch the profile:</p>
+  
+  <form id="userForm">
+    <label for="usernameInput">Username: </label>
+    <input type="text" id="usernameInput" placeholder="Enter username">
+
+    <label for="passwordInput">Password: </label>
+    <input type="password" id="passwordInput" placeholder="Enter password">
+    <button type="submit">Fetch Profile</button>
+  </form>
+
+  <div id="userInfo"></div>
+  <div id="errorMessage" style="color: red; display: none;"></div>
+
+  <!-- External server logic -->
+  <script src="server.js"></script>
+
+  <script>
+    function retryNTimes(fn, n, ...args) {
+      let attempts = 0;
+
+      function attempt() {
+        console.log(`Attempt number: ${attempts + 1}`);
+        return fn(...args)
+          .then((data) => data) // Resolve if successful
+          .catch((error) => {
+            if (attempts >= n) {
+              return Promise.reject(error); // Reject if max attempts reached
+            }
+            attempts++;
+            return attempt(); // Retry
+          });
+      }
+
+      return attempt();
+    }
+
+    // Handle form submission
+    document.getElementById('userForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const userInfoDiv = document.getElementById('userInfo');
+      const errorMessageDiv = document.getElementById('errorMessage');
+
+      userInfoDiv.textContent = '';
+      errorMessageDiv.textContent = '';
+
+      const username = document.getElementById('usernameInput').value.trim();
+      const password = document.getElementById('passwordInput').value.trim();
+
+      retryNTimes(authenticate, 2, username, password)
+        .then((userId) => {
+          userInfoDiv.textContent = 'Login Successful! Fetching your data...';
+          return retryNTimes(fetchUserProfile, 2, userId);
+        })
+        .then((userData) => {
+          userInfoDiv.textContent = `Hello, ${userData.name}!\nYou are ${userData.age} years old!`;
+        })
+        .catch((error) => {
+          errorMessageDiv.textContent = `Error: ${error.message}`;
+          errorMessageDiv.style.display = 'block';
+        });
+    });
+  </script>
+</body>
+</html>
