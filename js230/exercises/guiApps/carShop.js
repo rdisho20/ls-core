@@ -7,9 +7,22 @@ const CARS = [
   { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 25000 },
   { make: 'Audi', image: 'images/audi-a4-2013.jpg', model: 'A4', year: 2013, price: 26000 },
 ];
-
+const makesToModels = mapMakesToModels();
 const nav = document.querySelector('nav');
-let filters;
+
+
+function mapMakesToModels() {
+  const map = CARS.reduce((accum, car) => {
+    if (!accum[car.make]) {
+      accum[car.make] = new Set();
+    }
+    
+    accum[car.make].add(car.model);
+    return accum;
+  }, {})
+
+  return map;
+}
 
 
 function generateCarsHTML() {
@@ -34,7 +47,7 @@ function generateCarsHTML() {
 }
 
 
-function generateMenu(set) {
+function buildSelectMenu(set) {
   set = Array.from(set).sort(
     (a, b) => {
       if (typeof a === 'number') {
@@ -69,7 +82,7 @@ function generateFilterSelectionMenus() {
       CARS.map(elem => elem[item.textContent.toLowerCase()])
     )
 
-    const menuElement = generateMenu(menuSet);
+    const menuElement = buildSelectMenu(menuSet);
     menuElement.className = `${item.textContent.toLowerCase()}`;
     item.insertAdjacentElement('beforeend', menuElement);
   })
@@ -77,7 +90,7 @@ function generateFilterSelectionMenus() {
 
 
 function getSelectedFilters() {
-  const navListElements = nav.children[0].children;
+  const navListElements = document.querySelectorAll('.menu li');
   const selections = [...navListElements].reduce((accum, item) => {
     const key = item.querySelector('span').className;
     const value = item.querySelector('select').value;
@@ -87,6 +100,25 @@ function getSelectedFilters() {
   }, {})
 
   return selections;
+}
+
+
+function restrictModelMenu(filters) {
+  const modelSelectMenu = document.querySelectorAll('.menu li .model select option');
+  const makeSelection = filters.make;
+  if (makeSelection === 'Any') {
+    modelSelectMenu.forEach(item => item.style.display = '')
+    return;
+  }
+
+  const models = makesToModels[makeSelection];
+  modelSelectMenu.forEach(item => {
+    if (!models.has(item.textContent)) {
+      item.style.display = 'none';
+    } else {
+      item.style.display = '';
+    }
+  })
 }
 
 
@@ -112,18 +144,15 @@ function toggleCars(filters) {
 }
 
 
-function restrictMakeMenu(model) {
-  //..
-}
-
-
 document.addEventListener('DOMContentLoaded', (e) => {
   generateCarsHTML();
   generateFilterSelectionMenus();
+  let filters;
 
   nav.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
       filters = getSelectedFilters();
+      restrictModelMenu(filters);
       toggleCars(filters);
     }
   })
