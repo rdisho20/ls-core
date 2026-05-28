@@ -50,27 +50,47 @@
       const errorMessageDiv = document.getElementById('errorMessage');
       errorMessageDiv.style.display = 'none';
 
-      // Get form input 
-      const username = document.getElementById('usernameInput').value.trim();
-      const password = document.getElementById('passwordInput').value.trim();
+      // Get form input
+      const usernameInput = document.getElementById('usernameInput').value;
+      const username = usernameInput.trim();
+      const passwordInput = document.getElementById('passwordInput').value;
+      const password = passwordInput.trim();
 
-      authenticate(username, password, (errorMessage, userId) => {
+      function retryNTimes(fn, n, callback, ...args) {
+        let attempts = 0;
+
+        function attempt() {
+          fn(...args, (error, data) => {
+            if (!error || attempts >= n) {
+              callback(error, data)
+            } else {
+              attempts++;
+              attempt();
+            }
+          })
+        }
+
+        attempt();
+      }
+
+      retryNTimes(authenticate, 2, (errorMessage, userId) => {
         if (userId) {
-          userInfoDiv.textContent = 'Login Successful! Fetching your data...';
+          userInfoDiv.textContent = `Login successful! Fetching your profile...`;
 
-          fetchUserProfile(userId, (errorMessage, userData) => {
+          retryNTimes(fetchUserProfile, 2, (errorMessage, userId) => {
             if (errorMessage) {
+              console.log('error, why are we not getting the right user?')
               errorMessageDiv.textContent = `Error: ${errorMessage}`;
               errorMessageDiv.style.display = 'block';
             } else {
-              userInfoDiv.textContent = `Hello, ${userData.name}!\nYou are ${userData.age} years old!`;
+              userInfoDiv.textContent = `Hello, ${userId.name}!\nYou are ${userId.age} years old!`;
             }
-          })
+          }, userId);
         } else {
-          errorMessageDiv.textContent = errorMessage;
+          errorMessageDiv.textContent = `Error: ${errorMessage}`;
           errorMessageDiv.style.display = 'block';
         }
-      });
+      }, username, password);
     });
   </script>
 </body>

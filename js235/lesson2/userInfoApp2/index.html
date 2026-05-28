@@ -36,61 +36,22 @@
   <script src="server.js"></script>
 
   <script>
-    /*
-    async function retryNTimes(fn, n, ...args) {  // MY first try (still works, but throw error instead of return it)
-      let attempts = 0;
-
-      async function attempt() {
-        console.log(`Attempt number: ${attempts + 1}`);
-        try {
-          let result = await fn(...args);
-          return result;
-        } catch (error) {
-          if (attempts >= n) {
-            return error;
-          }
-          attempts++;
-          return attempt();
-        }
-      }
-
-      return attempt();
-    }
-
-    function retryNTimes(fn, n, ...args) {
+    function retryNTimes(fn, n, callback, ...args) {
       let attempts = 0;
 
       function attempt() {
         console.log(`Attempt number: ${attempts + 1}`);
-        return fn(...args)
-          .then((data) => data) // Resolve if successful
-          .catch((error) => {
-            if (attempts >= n) {
-              return Promise.reject(error); // Reject if max attempts reached
-            }
+        fn(...args, (error, data) => {
+          if (!error || attempts >= n) {
+            callback(error, data);
+          } else {
             attempts++;
-            return attempt(); // Retry
-          });
-      }
-
-      return attempt();
-    }
-    */
-
-    async function retryNTimes(fn, n, ...args) {
-      let attempts = 0;
-
-      while (attempts <= n) {
-        try {
-          console.log(`Attempt number: ${attempts + 1}`);
-          return await fn(...args); // Try calling the function
-        } catch (error) {
-          if (attempts >= n) {
-            throw error; // Reject if max attempts reached
+            attempt();
           }
-          attempts++;
-        }
+        });
       }
+
+      attempt();
     }
 
     // Handle form submission
@@ -106,34 +67,79 @@
       const username = document.getElementById('usernameInput').value.trim();
       const password = document.getElementById('passwordInput').value.trim();
 
-      /*
+      function retryNTimes(fn, n, ...args) {
+        let attempts = 0;
+
+        function attempt() {
+          return fn(...args)
+            .then(data => data)
+            .catch(error => {
+              if (attempts >= n) {
+                return Promise.reject(error)
+              }
+              attempts++;
+              return attempt();
+            })
+        }
+
+        return attempt();
+      }
+
       retryNTimes(authenticate, 2, username, password)
-        .then((userId) => {
+        .then(userId => {
           userInfoDiv.textContent = 'Login Successful! Fetching your data...';
-          return retryNTimes(fetchUserProfile, 2, userId);
+          return retryNTimes(fetchUserProfile, 2, userId)
         })
-        .then((userData) => {
+        .then(userData => {
           userInfoDiv.textContent = `Hello, ${userData.name}!\nYou are ${userData.age} years old!`;
         })
-        .catch((error) => {
-          errorMessageDiv.textContent = `Error: ${error.message}`;
+        .catch(error => {
+          errorMessageDiv.textContent = error.message;
+          errorMessageDiv.style.display = 'block';
+        });
+
+      
+      /*
+      authenticate(username, password)
+        .then(userId => {
+          userInfoDiv.textContent = 'Login Successful! Fetching your data...';
+
+          fetchUserProfile(userId)
+            .then(userData => {
+              userInfoDiv.textContent = `Hello, ${userData.name}!\nYou are ${userData.age} years old!`;
+            })
+            .catch(error => {
+              errorMessageDiv.textContent = `Error: ${error.message}`;
+              errorMessageDiv.style.display = 'block';
+            })
+        })
+        .catch(error => {
+          errorMessageDiv.textContent = error.message;
           errorMessageDiv.style.display = 'block';
         });
       */
 
-      async function authenticateAndFetchUserProfile(username, password) {
-        try {
-          let userId = await retryNTimes(authenticate, 2, username, password);
+      /*
+      retryNTimes(authenticate, 2, (errorMessage, userId) => {
+        if (userId) {
           userInfoDiv.textContent = 'Login Successful! Fetching your data...';
-          let userData = await retryNTimes(fetchUserProfile, 2, userId);
-          userInfoDiv.textContent = `Hello, ${userData.name}!\nYou are ${userData.age} years old!`;
-        } catch (error) {
-          errorMessageDiv.textContent = `Error: ${error.message}`;
+
+          retryNTimes(fetchUserProfile, 2, (errorMessage, userData) => {
+            if (errorMessage) {
+              errorMessageDiv.textContent = `Error: ${errorMessage}`;
+              errorMessageDiv.style.display = 'block';
+            } else {
+              userInfoDiv.textContent = `Hello, ${userData.name}!\nYou are ${userData.age} years old!`;
+            }
+          }, userId)
+
+        } else {
+          errorMessageDiv.textContent = errorMessage;
           errorMessageDiv.style.display = 'block';
         }
-      }
-
-      authenticateAndFetchUserProfile(username, password);
+      }, username, password);
+      */
+        
     });
   </script>
 </body>
