@@ -1,16 +1,33 @@
 import debounce from './debounce.js';
 
+class Autocomplete {
+  constructor(url, inputElement) {
+    this.input = inputElement;
+    this.url = url;
 
+    this.listUI = null;
+    this.overlay = null;
 
-const Autocomplete = {
-  wrapInput: function() {
+    this.visible = false;
+    this.matches = [];
+
+    this.wrapInput();
+    this.createUI();
+
+    this.valueChanged = debounce(this.valueChanged.bind(this), 300);
+
+    this.bindEvents();
+    this.reset();
+  }
+
+  wrapInput() {
     let wrapper = document.createElement('div');
     wrapper.classList.add('autocomplete-wrapper');
     this.input.parentNode.appendChild(wrapper);
     wrapper.appendChild(this.input);
-  },
+  }
 
-  createUI: function() {
+  createUI() {
     let listUI = document.createElement('ul');
     listUI.classList.add('autocomplete-ui');
     this.input.parentNode.appendChild(listUI);
@@ -22,15 +39,15 @@ const Autocomplete = {
 
     this.input.parentNode.appendChild(overlay);
     this.overlay = overlay;
-  },
+  }
 
-  bindEvents: function() {
+  bindEvents() {
     this.input.addEventListener('input', this.valueChanged);
     this.input.addEventListener('keydown', this.handleKeydown.bind(this));
     this.listUI.addEventListener('mousedown', this.mouseSelectCountry.bind(this));
-  },
+  }
 
-  valueChanged: async function() {
+  async valueChanged() {
     let value = this.input.value;
     this.previousValue = value;
 
@@ -43,9 +60,9 @@ const Autocomplete = {
     } else {
       this.reset();
     }
-  },
+  }
 
-  handleKeydown: function(event) {
+  handleKeydown(event) {
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
@@ -82,20 +99,20 @@ const Autocomplete = {
         this.reset();
         break;
     }
-  },
+  }
 
-  mouseSelectCountry: function(event) {
+  mouseSelectCountry(event) {
     this.input.value = event.target.textContent;
     this.reset();
-  },
+  }
 
-  fetchMatches: async function(query) {
+  async fetchMatches(query) {
     let response = await fetch(`${this.url}${encodeURIComponent(query)}`);
     let data = await response.json();
     return data;
-  },
+  }
 
-  draw: function() {
+  draw() {
     while (this.listUI.lastChild) {
       this.listUI.removeChild(this.listUI.lastChild);
     }
@@ -124,14 +141,14 @@ const Autocomplete = {
       li.textContent = match.name;
       this.listUI.appendChild(li);
     })
-  },
+  }
 
-  generateOverlayContent: function(value, match) {
+  generateOverlayContent(value, match) {
     let end = match.name.slice(value.length);
     return value + end;
-  },
+  }
 
-  reset: function () {
+  reset() {
     this.visible = false;
     this.matches = [];
     this.bestMatchIndex = null;
@@ -139,28 +156,10 @@ const Autocomplete = {
     this.previousValue = null;
 
     this.draw();
-  },
-
-  init: function() {
-    this.input = document.querySelector('input');
-    this.url = '/countries?matching=';
-
-    this.listUI = null;
-    this.overlay = null;
-
-    this.visible = false;
-    this.matches = [];
-
-    this.wrapInput();
-    this.createUI();
-
-    this.valueChanged = debounce(this.valueChanged.bind(this), 300);
-
-    this.bindEvents();
-    this.reset();
   }
-};
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-  Autocomplete.init();
+  const input = document.querySelector('input');
+  const autocomplete = new Autocomplete("/countries?matching=", input);
 });
