@@ -2,6 +2,59 @@ import templates from './templates.js'
 
 let photos;
 
+const slideshow = {
+  init() {
+    this.slideshow = document.getElementById('slideshow');
+    let slides = this.slideshow.querySelectorAll('figure');
+    this.firstSlide = slides[0];
+    this.lastSlide = slides[slides.length - 1];
+    this.currentSlide = this.firstSlide;
+    this.bind();
+  },
+
+  prevSlide(event) {
+    event.preventDefault();
+    let prev = this.currentSlide.previousElementSibling || this.lastSlide;
+    this.changeSlide(prev);
+  },
+
+  nextSlide(event) {
+    event.preventDefault();
+    let next = this.currentSlide.nextElementSibling || this.firstSlide;
+    this.changeSlide(next);
+  },
+
+  changeSlide(newSlide) {
+    this.fadeOut(this.currentSlide);
+    this.fadeIn(newSlide);
+    this.renderPhotoContent(newSlide.getAttribute('data-id'));
+    this.currentSlide = newSlide;
+  },
+
+  fadeOut(slide) {
+    slide.classList.add('hide');
+    slide.classList.remove('show');
+  },
+
+  fadeIn(slide) {
+    slide.classList.remove('hide');
+    slide.classList.add('show');
+  },
+
+  async renderPhotoContent(idx) {
+    renderPhotoInformation(Number(idx));
+    let comments = await fetchCommentsFor(idx);
+    renderPhotoComments(comments);
+  },
+
+  bind() {
+    let prevButton = this.slideshow.querySelector('a.prev');
+    let nextButton = this.slideshow.querySelector('a.next');
+    prevButton.addEventListener('click', event => this.prevSlide(event));
+    nextButton.addEventListener('click', event => this.nextSlide(event));
+  }
+};
+
 async function fetchPhotos() {
   const response = await fetch('/photos');
   return response.json();
@@ -37,43 +90,68 @@ async function main() {
   let comments = await fetchCommentsFor(activePhotoId);
   renderPhotoComments(comments);
 
-  document.querySelector('#slideshow ul').addEventListener('click', (e) => {
-    function findVisiblePhoto() {
-      const photos = document.querySelector('#slides').children;
-      const photo = [...photos].find(photo => getComputedStyle(photo).opacity === '1');
-      return photo;
-    }
-
-    const currentPhoto = findVisiblePhoto();
-    /*
-    [DONE] get 'forefront' photo 
-      given the target, move up parent to `#slideshow` then, queryselect slides and get `children`
-      find the element w/ the opacity of '1' and get its id
-      now you have currently visible photo
-
-    [ACTIVE] Given the currently visible photo, determine next/previous based on id
-      toggle current photo's opacity to 0, next/previous photo to 1 (HELPER: findNewActivePhoto)
-
-      (HELPER) to findNewActivePhoto, input string 'next' or 'prev', and current visible photo's id
-        then using the dataset, find newActivePhoto based on id (sub 1 / add 1) and toggle opacity to '1'
-
-    FUTURE animation classes:
-    #slides .hide {
-      opacity: 0;
-      transition: opacity 800ms;
-    }
-
-    #slides .show {
-      opacity: 1;
-      transition: opacity 800ms;
-    }
-    */
-    if (e.target.textContent === 'Prev') {
-      // ..
-    } else if (e.target.textContent === 'Next') {
-      // ..
-    }
-  })
+  slideshow.init();
 }
 
 document.addEventListener('DOMContentLoaded', main);
+
+/* My solution
+
+// outside `main
+function findVisiblePhoto() {
+  const photos = document.querySelector('#slides').children;
+  let photo = [...photos].find(photo => getComputedStyle(photo).opacity === '1');
+  return photo;
+}
+
+function findNewActivePhoto(selection, visiblePhotoId) {
+  let newPhotoId;
+  let newActivePhoto;
+  visiblePhotoId = parseInt(visiblePhotoId, 10);
+
+  console.log(visiblePhotoId);
+
+  if (selection === 'Prev') {
+    newPhotoId = visiblePhotoId - 1 <= 0 ? photos.length : visiblePhotoId - 1;
+    newActivePhoto = document.querySelector(`[data-id="${newPhotoId}"]`);
+  } else if (selection === 'Next') {
+    newPhotoId = visiblePhotoId + 1 > photos.length ? 1 : visiblePhotoId + 1;
+    newActivePhoto = document.querySelector(`[data-id="${newPhotoId}"]`);
+  }
+
+  return newActivePhoto;
+}
+
+// inside `main`
+
+  let isAnimating = false;
+
+  document.querySelector('#slides').addEventListener('transitionend', (e) => {
+    isAnimating = false;
+  });
+
+  document.querySelector('#slideshow ul').addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    if (isAnimating === true) {
+      return;
+    }
+    
+    isAnimating = true;
+
+    const currentPhoto = findVisiblePhoto();
+    console.log('current photo:', currentPhoto);
+    const newActivePhoto = findNewActivePhoto(e.target.textContent, currentPhoto.dataset.id);
+
+    currentPhoto.classList.add('hide');
+    currentPhoto.classList.remove('show');
+    newActivePhoto.classList.add('show');
+    newActivePhoto.classList.remove('hide');
+
+    renderPhotoInformation(parseInt(newActivePhoto.dataset.id, 10));
+
+    let comments = await fetchCommentsFor(newActivePhoto.dataset.id);
+    renderPhotoComments(comments);
+  })
+
+*/
