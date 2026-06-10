@@ -81,6 +81,73 @@ function renderPhotoComments(comments) {
   commentList.innerHTML = templates.comments(comments);
 }
 
+async function updateLikesTotals(photoId) {
+  const response = await fetch('/photos/like', {
+    'method': 'POST',
+    'headers': { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+    'body': `photo_id=${photoId}`,
+  })
+  return response.json();
+}
+
+async function updateFavoritesTotals(photoId) {
+  const response = await fetch('/photos/favorite', {
+    'method': 'POST',
+    'headers': { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+    'body': `photo_id=${photoId}`,
+  })
+  return response.json();
+}
+
+async function handleActionsOnPhoto(event) {
+  event.preventDefault();
+  let photo = photos.find(item => item.id === Number(event.target.dataset.id));
+
+  let buttonType = event.target.getAttribute('data-property');
+  if (!buttonType) return;
+
+  if (buttonType === "likes") {
+    const data = await updateLikesTotals(photo.id);
+    photo.likes = data.total;
+  } else if (buttonType === "favorites") {
+    const data = await updateFavoritesTotals(photo.id);
+    photo.favorites = data.total;
+  }
+
+  renderPhotoInformation(photo.id);
+}
+
+async function postComment(photoId, { name, email, body }) {
+  name = encodeURIComponent(name);
+  email = encodeURIComponent(email);
+  body = encodeURIComponent(body);
+  const response = await fetch('/comments/new', {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/x-www-form-urlencoded',
+    },
+    body: `photo_id=${photoId}&name=${name}&email=${email}&body=${body}`
+  })
+
+  return response.json();
+}
+
+async function handleSubmitComment(event) {
+  event.preventDefault();
+  const formElement = event.target;
+  const formData = {
+    name: formElement.name.value,
+    email: formElement.email.value,
+    body: formElement.body.value,
+  }
+  const photoId = slideshow.currentSlide.getAttribute('data-id'); 
+  const responseData = await postComment(photoId, formData);
+  const html = templates.comment(responseData);
+  const commentList = document.querySelector('#comments ul');
+  commentList.insertAdjacentHTML('beforeend', html);
+  formElement.reset();
+}
+
 async function main() {
   photos = await fetchPhotos();
   let activePhotoId = photos[0].id;
@@ -93,9 +160,14 @@ async function main() {
   slideshow.init();
 }
 
-document.addEventListener('DOMContentLoaded', main);
+document.addEventListener('DOMContentLoaded', () => {
+  main();
 
-/* My solution
+  document.querySelector('#information').addEventListener('click', handleActionsOnPhoto);
+  document.querySelector('#comments').addEventListener('submit', handleSubmitComment);
+});
+
+/* My solution for slideshow
 
 // outside `main
 function findVisiblePhoto() {
