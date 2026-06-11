@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    function timeout() {
+      return new Promise((_, reject) => {
+        setTimeout(() => {
+          reject('Server timed out: Please refresh the page to try again');
+        }, 5000)
+      })
+    }
+
+    async function getAllAvailableSchedules() {
+      const counts = {};
+      try {
+        const response = await Promise.race([
+          fetch('/api/schedules'), timeout()
+        ])
+        const json = await response.json();
+        if (json.length === 0) {
+          alert('No schedules are available for booking.');
+        } else {
+          json.forEach(item => {
+            const key = `staff ${item.staff_id}`;
+            counts[key] = (counts[key] || 0) + 1;
+          })
+          alert(Object.entries(counts).map(([id, count]) => `${id}: ${count}`).join('\n'));
+        }
+      } catch (err) {
+        alert(err);
+      } finally {
+        alert('The request has completed.');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await getAllAvailableSchedules();
+    })
+
+  </script>
+</body>
+</html>
