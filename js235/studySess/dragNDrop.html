@@ -1,0 +1,40 @@
+<!-- Question​: The family is playing chess, and Thing needs to be able to move. Implement simplified drag-and-drop functionality. 
+  The user should be able to drag the div with the id thing and drop it onto any other div with the class square. 
+  When dropped, Thing should be appended to the target square. The square it was moved from should become empty. 
+
+https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Addams Chess</title>
+  <style>
+    #chessboard { display: flex; flex-wrap: wrap; width: 240px; border: 1px solid black; }
+    .square { width: 80px; height: 80px; box-sizing: border-box; border: 1px solid #ccc; }
+    #thing {
+      cursor: grab;
+      width: 100%; height: 100%;
+      background: #eee url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19.6,10.19A2.4,2.4,0,0,0,17.2,7.79a2.4,2.4,0,0,0-2.4,2.4,2.38,2.38,0,0,0,.1.75,2.4,2.4,0,0,0-4.8,0,2.38,2.38,0,0,0,.1-.75,2.4,2.4,0,0,0-2.4-2.4A2.4,2.4,0,0,0,5.4,10.19C4.1,10.6,4,14.4,4,14.4V20a1,1,0,0,0,1,1H8.55a1,1,0,0,0,.9-.55,1,1,0,0,1,1.71,0,1,1,0,0,0,.9.55h.89a1,1,0,0,0,.9-.55,1,1,0,0,1,1.71,0,1,1,0,0,0,.9.55H20a1,1,0,0,0,1-1s.11-3.8-1.19-4.21Z'/%3E%3C/svg%3E") center/60% no-repeat;
+    }
+    .square.over { background-color: lightgreen; }
+  </style>
+</head>
+<body>
+  <div id="chessboard">
+    <div class="square" id="a1">
+      <div id="thing" draggable="true"></div>
+    </div>
+    <div class="square" id="b1"></div>
+    <div class="square" id="c1"></div>
+    <div class="square" id="a2"></div>
+    <div class="square" id="b2"></div>
+    <div class="square" id="c2"></div>
+  </div>
+
+  <script>
+    // Your JavaScript here
+  </script>
+</body>
+</html>

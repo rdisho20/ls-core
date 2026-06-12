@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <title>Exercise 5</title>
+    <style>
+    </style>
+  </head>
+  <body>
+    <h1>Schedules</h1>
+    <form action="/api/bookings" method="post" id="schedule-booking-form">
+      <label>Please select one schedule:
+        <select id="schedule-select" name="id">
+        </select>
+      </label>
+      <label>
+        Email:
+        <input type="email" name="student_email" required>
+        <button type="submit">Submit</button>
+      </label>
+    </form>
+    <div id="new-student" style="background-color: gray" hidden>
+      <h1>Please provide new student details</h1>
+      <form action="/api/students" method="post" id="new-student-form">
+        <label>
+          Email: <input type="email" id="student-email" name="email" required>
+        </label>
+        <label>
+          Name: <input id="student-email" name="name" required>
+        </label>
+        <label>
+          Email:
+          <input type="email" name="booking_sequence" required>
+        </label>
+      </form>
+    </div>
+    <script>
+      async function fetchAvailableSchedules() {
+        const response = await fetch('/api/schedules');
+        const json = await response.json();
+        return json.filter(item => !item.student_email)
+      }
+
+      async function fetchStaffMember(id) {
+        const response = await fetch('/api/staff_members');
+        const json = await response.json();
+        const staff = json.filter(staff => staff.id === id);
+        return staff.pop();
+      }
+
+      function populateSchedulesMenu(schedules) {
+        const selectMenu = document.getElementById('schedule-select');
+        schedules.forEach(async schedule => {
+          const staff = await fetchStaffMember(schedule['staff_id']);
+          const html = `
+            <option value="${schedule.id}">${staff.name} | ${schedule.date} | ${schedule.time}</option>
+          `;
+          selectMenu.insertAdjacentHTML('beforeend', html);
+        });
+      }
+
+      async function postBooking(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const json = JSON.stringify(Object.fromEntries(formData.entries()));
+        console.log(json);
+        /*
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: json,
+        })
+        */
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        const schedules = await fetchAvailableSchedules();
+        populateSchedulesMenu(schedules);
+        const scheduleForm = document.getElementById('schedule-booking-form');
+        scheduleForm.addEventListener('submit', postBooking);
+      });
+
+    </script>
+  </body>
+</html>

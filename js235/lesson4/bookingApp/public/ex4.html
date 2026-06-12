@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <title>Exercise 4</title>
+    <style>
+      form {
+        padding: 1em 0;
+      }
+
+      fieldset {
+        padding: 1.5em;
+        width: 100%;
+      }
+
+      div {
+        align-items: center;
+        margin-bottom: 0.5em;
+      }
+
+      label {
+        display: inline-block;
+        width: 100px;
+        text-align: right;
+        font-weight: bold;
+        color: #f0595b;
+        margin-right: 10px;
+      }
+
+      input, select {
+        flex: 1;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        max-width: 200px;
+      }
+
+      input[type="submit"],
+      button {
+        display: inline-block;
+        margin-top: 15px;
+        color: #fff;
+        border-radius: 5px;
+        width: 100px;
+        height: 50px;
+        border: none;
+        cursor: pointer;
+      }
+
+      input[type="submit"] {
+        background: #f0595b;
+      }
+
+      button {
+        background: #5CAFDE;
+      }
+    </style>
+  </head>
+  <body>
+
+    <button id="btnAdd">Add more schedules</button>
+    <form method="post" action="/api/schedules">
+      <div id="schedules"></div>
+      <input id="btnSubmit" type="submit">
+    </form>
+    <script>
+      let menuId = 0;
+
+      function insertScheduleForm(scheduleForm) {
+        document.getElementById('schedules').insertAdjacentElement('beforeend', scheduleForm);
+      }
+
+      async function populateStaffMembers(scheduleForm) {
+        const response = await fetch('/api/staff_members');
+        const body = await response.json();
+
+        insertScheduleForm(scheduleForm);
+
+        const selectMenu = document.getElementById(`staff_${menuId}`);
+        console.log(selectMenu);
+        body.forEach(staff => {
+          const html = `
+            <option value="${staff.name}" data-id="${staff.id}">${staff.name}</option>
+          `;
+          selectMenu.insertAdjacentHTML('beforeend', html);
+        });
+      }
+
+      async function addScheduleInput(event) {
+        const fieldset = document.createElement('FIELDSET');
+        menuId += 1;
+        fieldset.id = `schedule_${menuId}`;
+        const html = `
+          <legend>Schedule ${menuId}</legend>
+          <div>
+            <label for="staff_${menuId}">Staff Name:</label>
+            <select id="staff_${menuId}" name="staff_${menuId}"></select>
+          </div>
+
+          <div>
+            <label for="date_${menuId}">Date:</label>
+            <input type="text" id="date_${menuId}" name="date_${menuId}" placeholder="mm-dd-yy">
+          </div>
+
+          <div>
+            <label for="time_${menuId}">Time:</label>
+            <input type="text" id="time_${menuId}" name="time_${menuId}" placeholder="hh:mm">
+          </div>
+        `;
+
+        fieldset.insertAdjacentHTML('beforeend', html);
+        await populateStaffMembers(fieldset);
+      }
+
+      async function getStaffIdByName(name) {
+        const response = await fetch('/api/staff_members');
+        const body = await response.json();
+        const staff = body.find(staff => staff.name === name);
+        return staff.id;
+      }
+
+      async function getScheduleData() {
+        const schedules = document.getElementById('schedules');
+        if (schedules.textContent.length === 0) {
+          alert('Please add a schedule');
+          return;
+        }
+
+        const data = []
+        const forms = schedules.querySelectorAll('fieldset');
+        for (let idx = 0; idx < forms.length; idx++) {
+          const id = idx + 1;
+          const name = document.getElementById(`staff_${id}`).value;
+          const staffId = await getStaffIdByName(name);
+          const date = document.getElementById(`date_${id}`).value;
+          const time = document.getElementById(`time_${id}`).value;
+          data.push({ 'staff_id': Number(staffId), date, time })
+        }
+
+        return { schedules: data };
+      }
+
+      async function postSchedules(event) {
+        event.preventDefault();
+        const data = await getScheduleData();
+
+        if (!data) return;
+
+        const json = JSON.stringify(data);
+        const form = event.target;
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Content-type': 'application/json; charset=utf-8'
+          },
+          body: json,
+        })
+
+        switch (response.status) {
+          case 201: {
+            const message = await response.text();
+            alert(message);
+            
+            // reset form
+            document.getElementById('schedules').replaceChildren();
+            menuId = 0;
+            break;
+          }
+          case 400: {
+            const message = await response.text();
+            alert(message);
+            //alert('Please check your inputs.');
+            break;
+          }
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        document.getElementById('btnAdd').addEventListener('click', addScheduleInput);
+        document.querySelector('form').addEventListener('submit', postSchedules);
+      })
+    </script>
+  </body>
+</html>

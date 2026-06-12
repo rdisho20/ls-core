@@ -65,19 +65,31 @@
         }
 
         try {
+          if (!jsonData.name || !jsonData.email) {
+            throw new Error('InvalidInput: Staff can not be created. Check your inputs');
+          }
+
+          const json = JSON.stringify(jsonData);
           const response = await fetch(form.action, {
             method: 'POST',
             headers: {
               'Content-type': 'application/json; charset=utf-8'
             },
-            body: JSON.stringify(jsonData),
+            body: json,
           })
 
-          if (!jsonData.name || !jsonData.email) {
-            throw new Error('InvalidInput: Staff can not be created. Check your inputs');
+          switch (response.status) {
+            case 201: {
+              let data = await response.json();
+              alert(`Successfully created staff w/ id: ${data.id}`);
+              form.reset();
+              break;
+            }
+            case 400: {
+              alert(await response.text());
+              break;
+            }
           }
-
-          console.log(`Staff member ${jsonData.name} added`);
         } catch (err) {
           alert(err.message);
         } finally {
