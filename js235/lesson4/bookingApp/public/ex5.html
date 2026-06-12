@@ -16,22 +16,23 @@
       <label>
         Email:
         <input type="email" name="student_email" required>
-        <button type="submit">Submit</button>
       </label>
+      <button type="submit">Submit</button>
     </form>
-    <div id="new-student" style="background-color: gray" hidden>
+    <div id="new-student" style="background-color: rgb(192, 192, 192)" hidden>
       <h1>Please provide new student details</h1>
       <form action="/api/students" method="post" id="new-student-form">
         <label>
           Email: <input type="email" id="student-email" name="email" required>
         </label>
         <label>
-          Name: <input id="student-email" name="name" required>
+          Name: <input id="student-name" name="name" required>
         </label>
         <label>
-          Email:
-          <input type="email" name="booking_sequence" required>
+          Booking:
+          <input type="text" name="booking_sequence" required>
         </label>
+        <button type="submit">Submit</button>
       </form>
     </div>
     <script>
@@ -50,6 +51,8 @@
 
       function populateSchedulesMenu(schedules) {
         const selectMenu = document.getElementById('schedule-select');
+        selectMenu.innerHTML = '';
+
         schedules.forEach(async schedule => {
           const staff = await fetchStaffMember(schedule['staff_id']);
           const html = `
@@ -59,13 +62,25 @@
         });
       }
 
+      function getBookingSequence(message) {
+        const sequence = message.split(' ').pop();
+        return sequence;
+      };
+
+      function toggleNewStudentDiv() {
+        const newStudentDiv = document.getElementById('new-student');
+        if (newStudentDiv.hidden) {
+          newStudentDiv.hidden = false;
+        } else {
+          newStudentDiv.hidden = true;
+        }
+      }
+
       async function postBooking(event) {
         event.preventDefault();
         const form = event.target;
         const formData = new FormData(form);
         const json = JSON.stringify(Object.fromEntries(formData.entries()));
-        console.log(json);
-        /*
         const response = await fetch(form.action, {
           method: 'POST',
           headers: {
@@ -73,15 +88,103 @@
           },
           body: json,
         })
-        */
+
+        const message = await response.text();
+
+        switch (response.status) {
+          case 204: {
+            alert('Successfully booked!');
+            form.reset();
+            await init();
+            break;
+          }
+          case 404: {
+            alert(message);
+            const sequence = getBookingSequence(message);
+            const newStudentForm = document.getElementById('new-student-form');
+            newStudentForm['booking_sequence'].value = sequence;
+            newStudentForm.email.value = form['student_email'].value;
+            toggleNewStudentDiv();
+            break;
+          }
+        }
+      }
+
+      async function postNewStudent(event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        const json = JSON.stringify(Object.fromEntries(formData.entries()));
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: json,
+        })
+
+        const message = await response.text();
+
+        switch (response.status) {
+          case 201: {
+            toggleNewStudentDiv();
+            alert(message);
+            const bookingForm = document.getElementById('schedule-booking-form');
+            bookingForm.dispatchEvent(new Event('submit', { cancelable: true }));
+            form.reset();
+            break;
+          }
+          case 403: {
+            alert(message);
+            break;
+          }
+        }
+      }
+
+      async function init() {
+        const schedules = await fetchAvailableSchedules();
+        populateSchedulesMenu(schedules);
       }
 
       document.addEventListener('DOMContentLoaded', async () => {
-        const schedules = await fetchAvailableSchedules();
-        populateSchedulesMenu(schedules);
+        await init();
         const scheduleForm = document.getElementById('schedule-booking-form');
         scheduleForm.addEventListener('submit', postBooking);
+        const newStudentForm = document.getElementById('new-student-form');
+        newStudentForm.addEventListener('submit', postNewStudent);
       });
+
+      /*
+      Correct for most part... just want to modify where LSBot suggests:
+
+        Your function is correct as a toggle.
+
+        The risk is **context**:
+
+        - On `404`, you want: **show**
+        - On `201`, you want: **hide**
+
+        But `toggleNewStudentDiv()` means “do the opposite of current state.”
+
+        So if state is unexpected, it does the wrong thing.
+
+        Example:
+
+        ```js
+        // form is already visible
+        // another 404 happens
+        toggleNewStudentDiv(); // hides it, but you wanted show
+        ```
+
+        Safer means intent-based:
+
+        ```js
+        newStudentDiv.hidden = false; // definitely show
+        newStudentDiv.hidden = true;  // definitely hide
+        ```
+
+        Your logic works if the current state is always exactly what you expect.
+      */
 
     </script>
   </body>
