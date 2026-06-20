@@ -1,0 +1,31 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="outer">
+      Outer
+      <div id="middle">
+      Middle
+      <div id="inner">
+        Inner
+      </div>
+      </div>
+    </div>
+    <script>
+      document.getElementById('inner').addEventListener('click', event => {
+        event.stopPropagation();
+        console.log('Inner clicked');
+      });
+
+      document.getElementById('middle').addEventListener('click', event => {
+        event.stopPropagation();
+        console.log('Middle clicked');
+      });
+
+      document.getElementById('outer').addEventListener('click', event => {
+        event.stopPropagation();
+        console.log('Outer clicked');
+      });
+    </script>
+  </body>
+</html>

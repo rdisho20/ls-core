@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <title>Exercise 6</title>
+    <style>
+    </style>
+  </head>
+  <body>
+    <h1>Select Schedule</h1>
+      <select id="select-schedule">
+      </select>
+    <h1>Cancel Booking</h1>
+    <form action="/api/bookings/:booking_id" method="put" id="cancel-booking">
+      <select id="select-booking">
+      </select>
+      <button>Cancel Booking</button>
+    </form>
+    <h1>Cancel Schedule</h1>
+    <form action="/api/schedules/:schedule_id" method="cancel-schedule">
+      <input name="schedule" disabled>
+      <button type="submit">Delete Schedule</button>
+    </form>
+    <script>
+      // get schedules, populate select menu
+      // get bookings, populate select menu
+      async function fetchBookingsByDate(date) {
+        const response = await fetch(`/api/schedules/${date}`);
+        const json = await response.json();
+        return json;
+      }
+
+      async function fetchSchedules() {
+        const response = await fetch('/api/schedules');
+        const json = await response.json();
+        return json;
+      }
+
+      function populateSchedules(data) {
+        const menu = document.getElementById('select-schedule');
+        menu.insertAdjacentHTML('beforeend', `
+          <option>-- Select Schedule --</option>
+        `)
+        data.forEach(({ id, staff_id, student_email, date, time }) => {
+          const html = `
+            <option data-id="${id}">
+              Student: ${(student_email ? student_email : 'available')} | Date: ${date} | Time: ${time}
+            </option>
+          `;
+
+          menu.insertAdjacentHTML('beforeend', html);
+        })
+      }
+
+      // [ACTIVE] booking_id is actually schedule_id, so for each data property set the booking w/ its corresponding schedule_id
+      // [TODO] add event listener for event 'change' on select-schedule menu, to populate Bookings by date
+      function populateBookingsByDate(date, menu, [...data]) {
+        const [name, email, time] = [data[0], data[1], data[2]];
+        menu.insertAdjacentHTML('beforeend', `
+          <option data-date="${date}">${name} | ${email} | ${time}</li>
+        `);
+      }
+
+      function populateBookings(data) {
+        const menu = document.getElementById('select-schedule');
+        menu.insertAdjacentHTML('beforeend', `
+          <option>-- Select Booking --</option>
+        `)
+        data.forEach(({ id, staff_id, student_email, date, time }) => {
+          const html = `
+            <option data-id="${id}">
+              Student: ${(student_email ? student_email : 'available')} | Date: ${date} | Time: ${time}
+            </option>
+          `;
+
+          menu.insertAdjacentHTML('beforeend', html);
+        })
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        const dataMapped = {};
+        const schedules = await fetchSchedules();
+        populateSchedules(schedules);
+
+        document.addEventListener('change', async (event) => {
+          // [TODO] anytime the schedule select menu changes, populate bookings using the date from the schedule
+          const bookings = await fetchBookingsByDate(date);
+        })
+      })
+    </script>
+  </body>
+</html>

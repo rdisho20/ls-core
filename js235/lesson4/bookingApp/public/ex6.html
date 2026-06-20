@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+    <title>Exercise 6</title>
+    <style>
+    </style>
+  </head>
+  <body>
+    <h1>Bookings</h1>
+    <ul id="dates">
+    </ul>
+    <script>
+      // get schedules by date?  then populate under appropriate date item?
+      async function fetchDatesWithBookings() {
+        const response = await fetch('/api/bookings');
+        const json = await response.json();
+        return json;
+      }
+
+      async function fetchBookingsByDate(date) {
+        const response = await fetch(`/api/bookings/${date}`);
+        const json = await response.json();
+        return json;
+      }
+
+      function populateDatesWithBookings(dates) {
+        const list = document.getElementById('dates');
+
+        dates.forEach(async date => {
+          const li = document.createElement('LI');
+          const nestedUl = document.createElement('UL');
+
+          li.textContent = date;
+          nestedUl.dataset.date = date;
+          nestedUl.hidden = true;
+
+          li.insertAdjacentElement('beforeend', nestedUl);
+          list.insertAdjacentElement('beforeend', li);
+
+          const bookingsByDate = await fetchBookingsByDate(date);
+          bookingsByDate.forEach(booking => {
+            populateBookingsByDate(date, nestedUl, booking);
+          })
+        });
+      }
+
+      function populateBookingsByDate(date, list, [...data]) {
+        const [name, email, time] = [data[0], data[1], data[2]];
+        list.insertAdjacentHTML('beforeend', `
+          <li data-date="${date}">${name} | ${email} | ${time}</li>
+        `);
+      }
+
+      async function init() {
+        const dates = await fetchDatesWithBookings();
+        populateDatesWithBookings(dates);
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        await init();
+
+        document.getElementById('dates').addEventListener('click', event => {
+          const datesList = event.currentTarget;
+          if (event.target.tagName !== 'LI') return;
+          if (event.target.parentElement !== datesList) return;
+          event.target.firstElementChild.hidden = false;
+        })
+
+        document.body.addEventListener('click', event => {
+          if (event.target.tagName === 'UL' || event.target.tagName === 'LI') return;
+          document.querySelectorAll('[data-date]').forEach(booking => {
+            booking.hidden = true;
+          })
+        })
+      });
+    </script>
+  </body>
+</html>

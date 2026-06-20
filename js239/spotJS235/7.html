@@ -1,0 +1,30 @@
+<body>
+  <form name="query-country">
+    <input id="country" name="country">
+    <button type="submit">Query!</button>
+  </form>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.querySelector('form');
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const input = document.getElementById('country');
+        const cityName = input.value;
+
+        try {
+          const response = await fetch(`https://fake-weather-api.com/city/${cityName}`);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const weatherData = await response.json();
+          console.log(weatherData);
+        } catch (error) {
+          console.error('Failed to fetch weather data:', error);
+        }
+      })
+    })
+  </script>
+</body>

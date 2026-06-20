@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <style>
+      .completed {
+        text-decoration: line-through;
+        color: #888;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>To-Do List</h2>
+    <form id="add-todo">
+      <input type="text" name="new-todo" placeholder="Add a new item" required>
+      <button type="submit">Add</button>
+    </form>
+    <ul id="todos">
+      <li>Buy milk</li>
+      <li>Walk the dog</li>
+      <li>Do laundry</li>
+    </ul>
+    <script>
+      function createNewTodo(value) {
+        const li = document.createElement('LI');
+        li.textContent = value;
+
+        return li;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('add-todo');
+        const ul = document.getElementById('todos');
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const input = e.currentTarget.querySelector('input');
+          const value = input.value;
+          const todo = createNewTodo(value);
+          ul.insertAdjacentElement('beforeend', todo);
+          input.value = '';
+        });
+
+        ul.addEventListener('click', (e) => {
+          if (e.target.tagName !== 'LI') return;
+          e.target.classList.toggle('completed');
+        })
+      });
+    </script>
+  </body>
+</html>

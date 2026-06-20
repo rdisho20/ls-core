@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <style>
+      .hidden { display: none; }
+      #modal { position: fixed; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+      .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; position: relative; }
+      #close-modal-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+    </style>
+  </head>
+  <body>
+    <button id="open-modal-btn">Open Modal</button>
+
+    <div id="modal" class="hidden">
+      <div class="modal-content">
+        <span id="close-modal-btn">&times;</span>
+        <p>This is a modal window. Press 'Escape' or click the 'X' to close.</p>
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const button = document.getElementById('open-modal-btn');
+        const modal = document.getElementById('modal');
+        const exitButton = document.getElementById('close-modal-btn');
+
+        button.addEventListener('click', (e) => {
+          modal.classList.remove('hidden');
+        })
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key !== 'Escape') return;
+          modal.classList.add('hidden');
+        })
+
+        exitButton.addEventListener('click', (e) => {
+          modal.classList.add('hidden');
+        })
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <label for="message">Your Message:</label>
+    <textarea id="message" maxlength="200"></textarea>
+    <p>Characters: <span id="char-count">0</span></p>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const textArea = document.getElementById('message');
+        const countElement = document.getElementById('char-count');
+
+        textArea.addEventListener('input', (e) => {
+          const value = e.target.value;
+          countElement.textContent = value.length;
+        });
+      });
+    </script>
+  </body>
+</html>

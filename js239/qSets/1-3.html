@@ -1,0 +1,27 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <div id="link-container">
+      <p>Click the links below:</p>
+      <a href="https://launchschool.com" data-action="disabled">Disabled Link 1</a>
+      <br>
+      <a href="https://google.com">Enabled Link</a>
+      <br>
+      <a href="https://developer.mozilla.org" data-action="disabled">Disabled Link 2</a>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const div = document.getElementById('link-container');
+        const anchors = [...document.querySelectorAll('a')];
+
+        div.addEventListener('click', (e) => {
+          if (e.target.dataset.action === "disabled") {
+            e.preventDefault();
+            console.log("Navigation is disabled for this link.");
+          }
+        })
+      })
+    </script>
+  </body>
+</html>
