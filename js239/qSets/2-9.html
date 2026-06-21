@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <title>On the River</title>
+    <style>
+      body {
+        background-color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main-content">
+      <p class="intro">This is an introduction.</p>
+      <p>This is a standard paragraph.</p>
+      <p class="intro">This is another introduction.</p>
+      <p>Another standard paragraph.</p>
+      <!-- This is a comment -->
+    </div>
+    <script>
+      const div = document.getElementById('main-content');
+
+      div.childNodes.forEach(node => {
+        console.log(node.nodeType, node.nodeName)
+      })
+    </script>
+  </body>
+</html>

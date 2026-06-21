@@ -1,0 +1,22 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+    <div id="container">
+      <h1>Main Content</h1>
+      <p>Introduction to the topic.</p>
+      <ul id="item-list">
+        <li>Item 1</li>
+        <li>Item 2</li>
+      </ul>
+      <p>Conclusion paragraph.</p>
+    </div>
+    <script>
+      const li = document.createElement('LI');
+      li.textContent = 'Item 3';
+      const ul = document.getElementById('item-list');
+      ul.insertAdjacentElement('beforeend', li);
+    </script>
+  </body>
+</html>
