@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <style>
+      #tracking-area {
+        width: 400px;
+        height: 300px;
+        border: 2px solid navy;
+        background-color: lightblue;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="tracking-area">
+      <p>Move your mouse here</p>
+    </div>
+    <p>X: <span id="coord-x">0</span></p>
+    <p>Y: <span id="coord-y">0</span></p>
+    <script>
+      const trackingArea = document.getElementById('tracking-area');
+      const xSpan = document.getElementById('coord-x');
+      const ySpan = document.getElementById('coord-y');
+
+      trackingArea.addEventListener('mousemove', e => {
+        xSpan.textContent = e.clientX;
+        ySpan.textContent = e.clientY;
+      })
+    </script>
+  </body>
+</html>

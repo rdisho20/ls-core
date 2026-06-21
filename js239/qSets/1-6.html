@@ -12,7 +12,15 @@
       </div>
     </div>
     <script>
+      const gallery = document.getElementById('gallery');
 
+      gallery.addEventListener('click', (e) => {
+        const img = e.target;
+        const mainImg = document.getElementById('main-image');
+        if (img.tagName !== 'IMG') return;
+        mainImg.src = img.src;
+        mainImg.alt = img.alt;
+      })
     </script>
   </body>
 </html>

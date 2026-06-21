@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <style>
+      .highlight {
+        background-color: #e0f2fe;
+        border-color: #3b82f6;
+      }
+      input, textarea {
+        border: 1px solid #ccc;
+        transition: background-color 0.3s, border-color 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="div1">  
+      <div id="div2">  
+        <p id="p-tag">Click me!</p>  
+      </div>  
+    </div>
+    <script>
+      const div1 = document.getElementById('div1');  
+      const div2 = document.getElementById('div2');  
+      const pTag = document.getElementById('p-tag');  
+
+      div1.addEventListener('click', () => {  
+        alert('DIV 1 Bubbling');  
+      });  
+
+      div2.addEventListener('click', () => {  
+        alert('DIV 2 Bubbling');  
+      });  
+
+      pTag.addEventListener('click', () => {  
+        alert('P Tag Bubbling');  
+      });  
+
+      div1.addEventListener('click', () => {  
+        alert('DIV 1 Capturing');  
+      }, true);  
+
+      div2.addEventListener('click', () => {  
+        alert('DIV 2 Capturing');  
+      }, true);  
+
+      pTag.addEventListener('click', () => {  
+        alert('P Tag Capturing');  
+      }, true);
+    </script>
+  </body>
+</html>

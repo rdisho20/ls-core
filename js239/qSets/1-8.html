@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <style>
+      .panel {
+        display: none;
+        padding: 0 18px;
+        background-color: white;
+        overflow: hidden;
+      }
+      .accordion-btn.active + .panel {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="accordion">
+      <div>
+        <button class="accordion-btn">Section 1</button>
+        <div class="panel">
+          <p>Content for section 1...</p>
+        </div>
+      </div>
+      <div>
+        <button class="accordion-btn">Section 2</button>
+        <div class="panel">
+          <p>Content for section 2...</p>
+        </div>
+      </div>
+      <div>
+        <button class="accordion-btn">Section 3</button>
+        <div class="panel">
+          <p>Content for section 3...</p>
+        </div>
+      </div>
+    </div>
+    <script>
+      const accordion = document.getElementById('accordion');
+
+      accordion.addEventListener('click', e => {
+        // Guard clause: only proceed if a button was clicked
+        if (!e.target.classList.contains('accordion-btn')) {
+          return;
+        }
+
+        const clickedButton = e.target;
+        
+        // Check if the clicked button was already active before any changes
+        const wasActive = clickedButton.classList.contains('active');
+
+        // First, remove the 'active' class from all buttons
+        document.querySelectorAll('.accordion-btn').forEach(button => {
+          button.classList.remove('active');
+        });
+
+        // If the clicked button was NOT active, add the 'active' class to it.
+        // This ensures clicking an open panel closes it, and clicking a
+        // closed panel opens it while keeping others closed.
+        if (!wasActive) {
+          clickedButton.classList.add('active');
+        }
+      });
+    </script>
+  </body>
+</html>

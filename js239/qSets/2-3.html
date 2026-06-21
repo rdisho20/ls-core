@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <style>
+      body {
+        background-color: white;
+      }
+    </style>
+    <body>
+      <article>
+        <h2>Article Title</h2>
+        <p>First paragraph.</p>
+        <div class="meta">
+          <p>Author: John Doe</p>
+        </div>
+        <p>Second paragraph.</p>
+      </article>
+      <script>
+        const div = document.querySelector('.meta');
+        const article = div.parentNode;
+        article.style.border = '2px solid black';
+      </script>
+    </body>
+  </head>
+</html>

@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <style>
+      .highlight {
+        background-color: #e0f2fe;
+        border-color: #3b82f6;
+      }
+      input, textarea {
+        border: 1px solid #ccc;
+        transition: background-color 0.3s, border-color 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="contact-form">
+      <label for="name">Name:</label>
+      <input type="text" id="name">
+    
+      <label for="email">Email:</label>
+      <input type="email" id="email">
+    
+      <label for="message">Message:</label>
+      <textarea id="message"></textarea>
+    </form>
+    <script>
+      const form = document.getElementById('contact-form');
+      console.log('hi');
+
+      form.addEventListener('focus', e => {
+        if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') return;
+        const input = e.target;
+        input.classList.add('highlight');
+      }, true);
+      /*
+      form.addEventListener('blur', e => {
+        [...form.elements].forEach(elem => {
+          if (elem.classList.contains('highlight')) {
+            elem.classList.remove('highlight');
+          }
+        })
+      }, true);
+      */
+
+      form.addEventListener('blur', e => {
+      // A guard clause here is good for consistency
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+        e.target.classList.remove('highlight');
+      }
+    });
+    </script>
+  </body>
+</html>
