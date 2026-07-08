@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>  
+    <ul id="settings-list">
+      <li>
+        <div class="display-mode">
+          <span>Username: Guest</span>
+          <button class="toggle-edit">Toggle Edit</button>
+        </div>
+        <form class="edit-mode hidden">
+          <input type="text" value="Guest">
+          <button type="submit">Save</button>
+        </form>
+      </li>
+      <li>
+        <div class="display-mode">
+          <span>Theme: Light</span>
+          <button class="toggle-edit">Toggle Edit</button>
+        </div>
+        <form class="edit-mode hidden">
+          <input type="text" value="Light">
+          <button type="submit">Save</button>
+        </form>
+      </li>
+    </ul>
+    <script>
+      const ul = document.getElementById('settings-list');
+      ul.addEventListener('click', (e) => {
+        if (e.target.classList.contains('toggle-edit')) {
+          const parent = e.target.closest('li');
+          [...parent.children].forEach(item => {
+            if (item.classList.contains('hidden')) {
+              item.classList.remove('hidden');
+            } else {
+              item.classList.add('hidden');
+            }
+          })
+        }
+        if (e.target.textContent === 'Save') {
+          e.preventDefault();
+          const parent = e.target.closest('li');
+          const span = parent.querySelector('span');
+          const input = parent.querySelector('input');
+          span.textContent = input.value;
+          [...parent.children].forEach(item => {
+            if (item.classList.contains('hidden')) {
+              item.classList.remove('hidden');
+            } else {
+              item.classList.add('hidden');
+            }
+          })
+        }
+      })
+    </script>
+  </body>
+</html>

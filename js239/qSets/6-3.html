@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <style>
+    </style>
+  </head>
+  <body>
+    <div id="interactive-area">
+      <p>This is a paragraph. Clicking here should do nothing.</p>
+      <button data-action="copy">Copy Text</button>
+      <span>This is a span.</span>
+      <button data-action="log">Log Message</button>
+      <a href="#" data-action="alert">Show Alert</a>
+    </div>
+    <textarea id="log-area" rows="5"></textarea>
+
+    <script>
+      const div = document.getElementById('interactive-area');
+      div.addEventListener('click', (e) => {
+        switch (e.target.dataset.action) {
+          case 'copy':
+            const span = document.querySelector('span');
+            const textArea = document.querySelector('textarea');
+            textArea.textContent += span.textContent;
+            break;
+          case 'log':
+            console.log('message logged!');
+            break;
+          case 'alert':
+            e.preventDefault();
+            alert("Alert!");
+        }
+      })
+    </script>
+  </body>
+</html>

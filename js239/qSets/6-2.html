@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <style>
+    </style>
+  </head>
+  <body>
+    <div id="elem1">1
+      <div id="elem2">2
+        <div id="elem3">3
+          <div id="elem4">4</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const elem1 = document.getElementById('elem1');
+      const elem4 = document.getElementById('elem4');
+
+      elem1.addEventListener('click', (e) => {
+        console.log(e.currentTarget.id);
+      }, true);
+      elem4.addEventListener('click', (e) => {
+        console.log(e.currentTarget.id);
+      });
+    </script>
+  </body>
+</html>

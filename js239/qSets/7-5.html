@@ -1,0 +1,27 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+    <ul id="menu">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Products</a></li>
+      <li><a href="#">About Us</a></li>
+    </ul>
+    <script>
+      const menu = document.getElementById('menu');
+      menu.addEventListener('click', (e) => {
+        if (e.target.tagName === 'LI' || e.target.tagName === 'A') {
+          switch (e.target.tagName) {
+            case 'LI':
+              console.log(e.target.textContent);
+              break;
+            case 'A':
+              console.log(e.target.closest('li').textContent);
+              break;
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <style>
+    </style>
+  </head>
+  <body>
+    <ul id="admin-menu">
+      <li>
+        <span>Users</span>
+        <button class="activate">Activate</button>
+        <button class="deactivate">Deactivate</button>
+      </li>
+      <li>
+        <span>Products</span>
+        <button class="activate">Activate</button>
+        <button class="deactivate">Deactivate</button>
+        <ul>
+          <li>
+            <span>Category A</span>
+            <button class="activate">Activate</button>
+            <button class="deactivate">Deactivate</button>
+          </li>
+          <li>
+            <span>Category B</span>
+            <button class="activate">Activate</button>
+            <button class="deactivate">Deactivate</button>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <script>
+      const adminMenu = document.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON') {
+          const button = e.target;
+          const span = button.closest('li').firstElementChild;
+          if (button.classList.contains('activate')) {
+            console.log(`Activating: ${span.textContent}`);
+          } else if (button.classList.contains('deactivate')) {
+            console.log(`Deactivating: ${span.textContent}`);
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

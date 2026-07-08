@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <style>
+      .collapsed > ul {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="file-tree">
+      <li class="folder collapsed">
+        <span>Folder 1</span>
+        <ul>
+          <li>File 1A.txt</li>
+          <li>File 1B.txt</li>
+        </ul>
+      </li>
+      <li class="folder collapsed">
+        <span>Folder 2</span>
+        <ul>
+          <li class="folder collapsed">
+            <span>Subfolder 2A</span>
+            <ul>
+              <li>File 2A-1.txt</li>
+            </ul>
+          </li>
+          <li>File 2B.txt</li>
+        </ul>
+      </li>
+      <li>File 3.txt</li>
+    </ul>
+    <script>
+      const fileTree = document.getElementById('file-tree');
+      fileTree.addEventListener('click', (e) => {
+        if (e.target.tagName === 'SPAN') {
+          const parent = e.target.closest('li');
+          if (parent.classList.contains('collapsed')) {
+            parent.classList.remove('collapsed');
+          } else {
+            parent.classList.add('collapsed');
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

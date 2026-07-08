@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <style>
+      .hidden {
+        display: none;
+      }
+      #modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+      }
+      #modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="open-modal">Open Modal</button>
+
+    <div id="modal-backdrop" class="hidden">
+      <div id="modal-content">
+        <h2>Modal Title</h2>
+        <p>Click outside this box to close.</p>
+        <input type="text" placeholder="You can click here...">
+        <button>...or here.</button>
+      </div>
+    </div>
+
+    <script>
+      const button = document.getElementById('open-modal');
+      button.addEventListener('click', (e) => {
+        const backdrop = document.querySelector('#modal-backdrop');
+        if (backdrop.classList.contains('hidden')) backdrop.classList.remove('hidden');
+      })
+
+      const modalBackdrop = document.getElementById('modal-backdrop');
+      modalBackdrop.addEventListener('click', (e) => {
+        if (e.currentTarget === e.target) {
+          if (!modalBackdrop.classList.contains('hidden')) modalBackdrop.classList.add('hidden');
+        }
+      })
+    </script>
+  </body>
+</html>

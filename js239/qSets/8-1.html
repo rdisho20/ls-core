@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <style>
+      .highlight {
+        background-color: #f0f0a0;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="categories">
+      <li>Fruits
+        <ul>
+          <li>Apples</li>
+          <li>Bananas
+            <ul>
+              <li>Cavendish</li>
+              <li>Plantain</li>
+            </ul>
+          </li>
+          <li>Oranges</li>
+        </ul>
+      </li>
+      <li>Vegetables
+        <ul>
+          <li>Carrots</li>
+          <li>Broccoli</li>
+        </ul>
+      </li>
+    </ul>
+    <script>
+      const categories = document.getElementById('categories');
+      categories.addEventListener('click', (e) => {
+        if (e.target.tagName !== 'LI') return;
+        const otherLi = document.querySelector('li.highlight');
+        if (otherLi) otherLi.classList.remove('highlight');
+        const li = e.target;
+        li.classList.add('highlight');
+      })
+    </script>
+  </body>
+</html>

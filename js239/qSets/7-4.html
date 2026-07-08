@@ -1,0 +1,24 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+    <p>Selected item: <span id="selection">None</span></p>
+    <ul id="item-list">
+      <li>Apple</li>
+      <li>Orange</li>
+      <li>Banana</li>
+      <li>Grape</li>
+    </ul>
+    <script>
+      const itemList = document.getElementById('item-list');
+      itemList.addEventListener('click', (e) => {
+        if (e.target.tagName === 'LI') {
+          const content = e.target.textContent;
+          const span = document.getElementById('selection');
+          span.textContent = content;
+        }
+      })
+    </script>
+  </body>
+</html>

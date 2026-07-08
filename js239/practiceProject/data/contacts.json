@@ -1,0 +1,30 @@
+[
+  {
+    "id": 2,
+    "full_name": "Victor Reyes",
+    "email": "vpr@example.com",
+    "phone_number": "09876543210",
+    "tags": "work,friend"
+  },
+  {
+    "id": 3,
+    "full_name": "Pete Hanson",
+    "email": "ph@example.com",
+    "phone_number": "54321098761",
+    "tags": "work,friend"
+  },
+  {
+    "full_name": "Ryan ",
+    "phone_number": "1234567891",
+    "email": "hr@starlightgaming.com",
+    "tags": "friend,work",
+    "id": 4
+  },
+  {
+    "full_name": "bluesteel ",
+    "phone_number": "1234567891",
+    "email": "contact@bluetech.com",
+    "tags": "",
+    "id": 5
+  }
+]

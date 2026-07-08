@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <style>
+    </style>
+  </head>
+  <body>
+    <nav id="main-nav">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li class="submenu-parent"><a href="#">Services</a>
+          <!-- This submenu should trigger tracking -->
+          <ul>
+            <li><a href="#">Web Design</a></li>
+            <li><a href="#">SEO</a></li>
+          </ul>
+        </li>
+        <li class="submenu-parent protected"><a href="#">About</a>
+          <!-- This submenu is protected -->
+          <ul>
+            <li><a href="#">Our Team</a></li>
+            <li><a href="#">Our History</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+
+    <script>
+      const nav = document.getElementById('main-nav');
+      nav.addEventListener('click', (e) => {
+        console.log(`Tracking click on: ${e.target.tagName}`)
+      });
+
+      const protected = document.querySelector('.protected');
+      protected.addEventListener('click', (e) => {
+        e.stopPropagation();
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<html>
+  <head>
+
+  </head>
+  <body>
+    <ul id="level-1">
+      <li>Item A</li>
+      <li id="level-2-container">Item B
+        <ul id="level-2">
+          <li id="level-3">Item B.1</li>
+        </ul>
+      </li>
+      <li>Item C</li>
+    </ul>
+    <script>
+      document.querySelector('#level-1').addEventListener('click', event => {
+        alert('Level 1 UL clicked');
+      });
+
+      document.querySelector('#level-2').addEventListener('click', event => {
+        alert('Level 2 UL clicked');
+      });
+
+      document.querySelector('#level-3').addEventListener('click', event => {
+        alert('Level 3 LI clicked');
+      });
+    </script>
+  </body>
+</html>

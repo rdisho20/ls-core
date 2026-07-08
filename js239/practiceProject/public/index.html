@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <!--<script src="/javascripts/jquery.js"></script>-->
+  <!--<script src="/javascripts/handlebars.js"></script>-->
+  <style>
+    body {
+      font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    }
+
+    label {
+      display: block;
+      margin: 7px 7px 7px 0;
+    }
+
+    #create-contact {
+      border: solid 2px black;
+      padding: 20px;
+      margin-top: 30px;
+      width: auto;
+      display: inline-block;
+      background-color: lightblue;
+    }
+
+    #contacts {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    p.no-contacts {
+      color: gray;
+      text-align: left;
+    }
+
+    .contact-card {
+      border: dashed 2px black;
+      padding: 20px;
+      margin: 30px 20px 0 0;
+      display: inline-block;
+      background-color: papayawhip;
+      width: 250px;
+      height: auto;
+      vertical-align: top;
+    }
+
+    ul {
+      padding-left: 0;
+    }
+
+    li {
+      margin-top: 10px;
+      margin-left: 20px;
+      list-style-type: square;
+    }
+
+    li.tag-label {
+      margin-left: 0;
+      list-style-type: none;
+    }
+
+    li.no-tags {
+      color: gray;
+    }
+
+    span.attribute {
+      color: blue;
+      font-weight: bold;
+    }
+
+    .edit-overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1;
+    }
+
+    .edit-form{
+      position: fixed;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: solid 2px black;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .edit-form form{
+      background-color: papayawhip;
+      padding: 20px;
+      margin: 0;
+      opacity: 1;
+    }
+
+    .tags-container {
+      margin-bottom: 10px;
+    }
+
+    .tags-container > div{
+      display: inline;
+    }
+
+    /*
+    .edit-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0,0,0,.33);
+      z-index: 1;
+    }
+
+    .edit-form {
+      z-index: 2;
+      position: fixed;
+      padding: auto;
+      background: transparent;
+      transform: translate(-50%, -50%);
+    }
+
+    .edit-form > form {
+      background-color: papayawhip;
+      padding: 20px;
+      height: auto;
+      width: auto;
+      margin: 0 auto;
+    }
+    */
+  </style>
+</head>
+<body>
+  <h1>Contact Manager App</h1>
+  <div id="search-contacts">
+    <h3>Search for a contact:</h3>
+    <form id="search" method="get" action="/api/contacts/:id">
+      <input name="search-user">
+      <button type="submit">Search</button>
+    </form>
+    <h4>Filter by Tags:</h4>
+    <div class="tags-container">
+    </div>
+    <h4>ADD a Tag:</h4>
+    <form id="add-tag" action="#">
+      <input name="add-tag">
+      <button type="submit">Add</button>
+    </form>
+    <div id="contacts">
+      <p class="no-contacts" hidden>No contacts to show</p>
+    </div>
+  </div>
+
+  <div id="create-contact">
+    <h2>Create New Contact</h2>
+    <form id="create-contact-form" method="post" action="/api/contacts/">
+      <label name="full_name">
+        Full Name: 
+        <input name="full_name" placeholder="Please Enter Full Name" required>
+      </label>
+      <label name="email">
+        Email: 
+        <input name="email" type="email" placeholder="example@example.com" required>
+      </label>
+      <label name="phone_number">
+        Phone number:
+        <input name="phone_number" maxlength="10">
+      </label>
+      <button type="submit">Create</button>
+    </form>
+  </div>
+  
+  <script src="/javascripts/main.js"></script>
+</body>
+</html>

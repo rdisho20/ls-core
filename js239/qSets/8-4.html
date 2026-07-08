@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <style>
+      .collapsed > ul {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="todo-list">
+      <li data-id="101">
+        <span>Task 1: Project Setup</span>
+        <a href="#">Remove</a>
+      </li>
+      <li data-id="102">
+        <span>Task 2: Core Logic</span>
+        <a href="#">Remove</a>
+        <ul>
+          <li data-id="201">
+            <span>Sub-task 2.1: Authentication</span>
+            <a href="#">Remove</a>
+          </li>
+          <li data-id="202">
+            <span>Sub-task 2.2: API Endpoints</span>
+            <a href="#">Remove</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <script>
+      const ul = document.getElementById('todo-list');
+      ul.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
+          e.preventDefault();
+          const parent = e.target.closest('li');
+          const dataIdAtt = parent.dataset.id;
+          console.log("Removing task with ID:", dataIdAtt);
+        }
+      })
+    </script>
+  </body>
+</html>

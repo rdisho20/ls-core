@@ -1,0 +1,64 @@
+<html>
+  <head>
+    <style>
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>  
+    <table id="data-table">
+     <thead>
+       <tr>
+         <th>Name</th>
+         <th>Role</th>
+         <th>Actions</th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <td>Alice</td>
+         <td>Admin</td>
+         <td>
+           <button class="move-up">Up</button>
+           <button class="move-down">Down</button>
+         </td>
+       </tr>
+       <tr>
+         <td>Bob</td>
+         <td>Editor</td>
+         <td>
+           <button class="move-up">Up</button>
+           <button class="move-down">Down</button>
+         </td>
+       </tr>
+       <tr>
+         <td>Charlie</td>
+         <td>Viewer</td>
+         <td>
+           <button class="move-up">Up</button>
+           <button class="move-down">Down</button>
+         </td>
+       </tr>
+     </tbody>
+    </table>
+    <script>
+      const tBody = document.querySelector('tbody');
+      tBody.addEventListener('click', (e) => {
+        if (e.target.classList.contains('move-up')) {
+          const parent = e.target.closest('tr');
+          const sibling = parent.previousElementSibling;
+          if (sibling) {
+            tBody.insertBefore(parent, sibling);
+          }
+        } else if (e.target.classList.contains('move-down')) {
+          const parent = e.target.closest('tr');
+          const sibling = parent.nextElementSibling;
+          if (sibling) {
+            tBody.insertBefore(sibling, parent);
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
