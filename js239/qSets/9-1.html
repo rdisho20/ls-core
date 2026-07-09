@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <style>
+      .highlight {
+        background-color: yellow;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="main-list">
+      <li id="item-1"><span>First</span> Item</li>
+      <li id="item-2"><span>Second</span> Item</li>
+      <li id="item-3"><span>Third</span> Item</li>
+      <li id="item-4"><span>Fourth</span> Item</li>
+    </ul>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const list = document.getElementById('main-list');
+
+        list.addEventListener('click', e => {
+          if (e.target.tagName === 'LI' || e.target.tagName === 'SPAN') {
+            [...list.children].forEach(li => {
+              li.classList.remove('highlight');
+            });
+            
+            if (e.target.tagName === 'SPAN') {
+              e.target.parentNode.classList.add('highlight');
+            } else {
+              e.target.classList.add('highlight');
+            }
+          }
+        })
+      })
+    </script>
+  </body>
+</html>

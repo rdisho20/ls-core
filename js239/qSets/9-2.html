@@ -1,0 +1,31 @@
+<html>
+  <body>
+    <ul id="category-list">
+      <li>
+        Category 1 <button>Delete</button>
+        <ul>
+          <li>Sub-category 1.1 <button>Delete</button></li>
+          <li>Sub-category 1.2 <button>Delete</button></li>
+        </ul>
+      </li>
+      <li>
+        Category 2 <button>Delete</button>
+        <ul>
+          <li>Sub-category 2.1 <button>Delete</button></li>
+        </ul>
+      </li>
+      <li>Category 3 <button>Delete</button></li>
+    </ul>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const list = document.querySelector('#category-list');
+
+        list.addEventListener('click', e => {
+          if (e.target.tagName !== 'BUTTON') return;
+          const listItem = e.target.closest('li');
+          listItem.remove();
+        })
+      })
+    </script>
+  </body>
+</html>

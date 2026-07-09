@@ -1,0 +1,20 @@
+<html>
+  <body>
+    <ul id="team-roster">
+      <li>Player 1 <span class="action promote">^</span> <span class="action demote">v</span></li>
+      <li>Player 2 <span class="action promote">^</span> <span class="action demote">v</span></li>
+      <li>Player 3 <span class="action promote">^</span> <span class="action demote">v</span></li>
+    </ul>
+    <script>
+      const roster = document.querySelector('#team-roster');
+
+      roster.addEventListener('click', e => {
+        if (e.target.classList.contains('promote')) {
+          console.log(`promoting ${e.target.closest('li').textContent}`)
+        } else if (e.target.classList.contains('demote')) {
+          console.log(`demoting ${e.target.closest('li').textContent}`)
+        }
+      });
+    </script>
+  </body>
+</html>
