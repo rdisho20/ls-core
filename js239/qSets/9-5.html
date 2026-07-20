@@ -1,0 +1,33 @@
+<html>
+  <body>
+    <div id="card-container">
+      <div class="card" data-id="101">
+        <div class="card-header">Card One</div>
+        <div class="card-content">Some content here.</div>
+        <div class="card-footer"><button>Details</button></div>
+      </div>
+      <div class="card" data-id="102">
+        <div class="card-header">Card Two</div>
+        <div class="card-content">More content here.</div>
+        <div class="card-footer"><button>Details</button></div>
+      </div>
+    </div>
+    <script>
+      const container = document.querySelector('#card-container');
+      container.addEventListener('click', e => {
+        if (e.target.tagName === 'BUTTON' && e.target.parentNode.classList.contains('card-footer')) {
+          const card = e.target.parentNode.parentNode;
+          console.log(`Details for card #${card.dataset.id}`);
+        } else {
+          if (e.target.tagName === 'BUTTON') {
+            const card = e.target.parentNode.parentNode;
+            console.log(`Clicked on card #${card.dataset.id}`);
+          } else {
+            const card = e.target.parentNode;
+            console.log(`Clicked on card #${card.dataset.id}`);
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

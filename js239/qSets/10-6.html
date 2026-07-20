@@ -1,0 +1,32 @@
+<div id="workspace">
+  <div class="section">
+    <h3>To-Do</h3>
+    <ul class="item-list">
+      <li>Task 1</li>
+    </ul>
+    <button class="add-item">Add To-Do</button>
+  </div>
+  <div class="section">
+    <h3>In Progress</h3>
+    <ul class="item-list">
+      <li>Task 2</li>
+    </ul>
+    <button class="add-item">Add In Progress</button>
+  </div>
+</div>
+<script>
+  const workspace = document.getElementById('workspace');
+  workspace.addEventListener('click', e => {
+    if (e.target.classList.contains('add-item')) {
+      const li = document.createElement('li');
+      li.textContent = 'New Task';
+      const section = e.target.closest('.section');
+      const ul = section.querySelector('ul');
+      ul.append(li);
+    }
+
+    if (e.target.tagName === 'LI') {
+      e.target.classList.toggle('completed');
+    }
+  })
+</script>

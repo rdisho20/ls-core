@@ -1,0 +1,24 @@
+<button id="add">Add Item</button>
+<ol id="list"></ol>
+
+<template id="item-template">
+  <li>
+    <span>New Item</span>
+    <button class="remove">Remove</button>
+  </li>
+</template>
+<script>
+  const button = document.getElementById('add');
+  const template = document.getElementById('item-template');
+  const ol = document.getElementById('list');
+  ol.addEventListener('click', e => {
+    if (!e.target.classList.contains('remove')) return;
+    e.target.closest('li').remove();
+  })
+  button.addEventListener('click', e => {
+    let content = template.content;
+    content = [...content.children].pop();
+    content = content.cloneNode(true);
+    ol.insertAdjacentElement('afterbegin', content);
+  })
+</script>

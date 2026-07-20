@@ -1,0 +1,36 @@
+<style>
+  .highlight { background-color: yellow; }
+  .path-highlight { background-color: lightblue; }
+  #tree div { border: 1px solid black; padding: 10px; margin: 5px; }
+</style>
+<div id="tree">
+  <div>1
+    <div>1.1</div>
+    <div>1.2
+      <div>1.2.1</div>
+      <div>1.2.2</div>
+    </div>
+  </div>
+  <div>2
+    <div>2.1</div>
+  </div>
+</div>
+<script>
+  const tree = document.querySelector('#tree');
+  tree.addEventListener('click', e => {
+    document.querySelectorAll('.highlight').forEach(elem => {
+      elem.classList.remove('highlight');
+    })
+    document.querySelectorAll('.path-highlight').forEach(elem => {
+      elem.classList.remove('path-highlight');
+    })
+    if (e.target.id === 'tree') return;
+
+    e.target.classList.add('highlight');
+    let currentParent = e.target.parentNode;
+    while (currentParent !== tree) {
+      currentParent.classList.add('path-highlight');
+      currentParent = currentParent.parentNode;
+    }
+  })
+</script>

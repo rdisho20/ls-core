@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <style>
+      .modal { display: none; }
+      .modal.visible { display: block; }
+    </style>
+  </head>
+  <body>
+    <main id="content">
+      <article data-topic="science">
+        <h2>Science Daily</h2>
+        <p>This is a paragraph about science. Read more for a <span class="trigger-modal" data-modal-id="sci-modal">special report</span>.</p>
+      </article>
+      <article data-topic="history">
+        <h2>History Weekly</h2>
+        <p>This is a paragraph about history. There is more information available in our <span class="trigger-modal" data-modal-id="hist-modal">deep dive</span>.</p>
+        <p>Another paragraph here.</p>
+      </article>
+    </main>
+
+    <div id="sci-modal" class="modal">Science Modal Content</div>
+    <div id="hist-modal" class="modal">History Modal Content</div>
+    <script>
+      function showModal(id) {
+        document.querySelectorAll('.modal').forEach(modal => {
+          modal.classList.remove('visible');
+        });
+
+        const modalToShow = document.getElementById(id);
+        if (modalToShow) {
+          modalToShow.classList.add('visible');
+          console.log(`Showing modal: ${id}`);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        const mainContent = document.querySelector('#content');
+
+        mainContent.addEventListener('click', e => {
+          if (!e.target.closest('span.trigger-modal')) return;
+          const id = e.target.dataset.modalId;
+          showModal(id);
+        });
+      });
+    </script>
+  </body>
+</html>

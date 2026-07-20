@@ -1,0 +1,46 @@
+<div id="list-container">
+  <ul class="sortable-list">
+    <li>Item 1
+      <button class="up">Up</button>
+      <button class="down">Down</button>
+    </li>
+    <li>Item 2
+      <button class="up">Up</button>
+      <button class="down">Down</button>
+      <ul class="sortable-list">
+        <li>Item 2.1
+          <button class="up">Up</button>
+          <button class="down">Down</button>
+        </li>
+        <li>Item 2.2
+          <button class="up">Up</button>
+          <button class="down">Down</button>
+        </li>
+      </ul>
+    </li>
+    <li>Item 3
+      <button class="up">Up</button>
+      <button class="down">Down</button>
+    </li>
+  </ul>
+</div>
+<script>
+  const div = document.querySelector('#list-container');
+  div.addEventListener('click', e => {
+    if (e.target.tagName !== 'BUTTON') return;
+    if (e.target.classList.contains('up')) {
+      const li = e.target.closest('li');
+      const ul = li.parentNode;
+      if (li === [...ul.children][0]) return;
+      const prev = li.previousElementSibling;
+      ul.insertBefore(li, prev);
+    } else if (e.target.classList.contains('down')) {
+      const li = e.target.closest('li');
+      const ul = li.parentNode;
+      const children = [...ul.children];
+      if (li === [children][children.length - 1]) return;
+      const next = li.nextElementSibling;
+      ul.insertBefore(next, li);
+    }
+  })
+</script>

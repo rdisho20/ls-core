@@ -1,0 +1,32 @@
+<style>
+  .content { display: none; }
+  .visible { display: block; }
+  .toggle { cursor: pointer; font-weight: bold; }
+</style>
+
+<ul id="accordion">
+  <li class="toggle">Section 1</li>
+  <ul class="content">
+    <li>Content 1.1</li>
+    <li>Content 1.2</li>
+  </ul>
+
+  <li class="toggle">Section 2</li>
+  <ul class="content">
+    <li class="toggle">Section 2.1 (Nested)</li>
+    <ul class="content">
+      <li>Content 2.1.1</li>
+    </ul>
+    <li>Content 2.2</li>
+  </ul>
+</ul>
+<script>
+  const ul = document.getElementById('accordion');
+  ul.addEventListener('click', e => {
+    if (!e.target.classList.contains('toggle')) return;
+    if (e.target.nextElementSibling.classList.contains('content')) {
+      const sibling = e.target.nextElementSibling;
+      sibling.classList.toggle('visible');
+    }
+  })
+</script>
