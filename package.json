@@ -3,6 +3,7 @@
     "eslint": "^9.33.0"
   },
   "dependencies": {
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "typescript": "^7.0.2"
   }
 }
